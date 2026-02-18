@@ -1,20 +1,52 @@
-/* Базовые настройки */
+/* =========================
+   БАЗОВАЯ ПАЛИТРА И ПЕРЕМЕННЫЕ
+   ========================= */
+
+:root {
+    /* Base */
+    --bg: #ffffff;
+    --bg-soft: #f6f8f7;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #d6dde0;
+
+    /* Primary (Green) */
+    --primary: #0f3d2e;
+    --primary-hover: #1e6f5c;
+    --primary-soft: rgba(15, 61, 46, 0.08);
+
+    /* Accent (Gold) */
+    --accent: #B6BFB9;
+    --accent-soft: rgba(182, 191, 185, 0.28);
+
+    /* Footer */
+    --footer: #0b1f18;
+    --footer-text: #e7efe9;
+}
+
+/* =========================
+   БАЗОВЫЕ НАСТРОЙКИ
+   ========================= */
+
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
     min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-soft);
+    color: var(--text);
 }
 
+/* =========================
+   HEADER
+   ========================= */
+
 header {
-    padding-bottom: 20px;
-    padding-top: 20px;
+    padding: 20px 0;
 }
 
 .header-inner {
-    max-width: 1100px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
@@ -23,77 +55,69 @@ header {
     position: relative;
 }
 
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Expand info block */
+
 .header-expand {
     position: absolute;
     left: 20px;
     --collapsed-h: 32px;
-    top: 50%;
+    top: 25%;
     transform: translateY(calc(-1 * var(--collapsed-h) / 2));
-    padding: 8px;
     width: 160px;
     height: var(--collapsed-h);
+    padding: 6px 10px;
     border-radius: 6px;
-    transition: height 0.3s ease;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 6px 10px;
     overflow: hidden;
+    transition: height 0.3s ease;
+    z-index: 9999;
 }
 
 .header-expand:hover {
     height: 110px;
-    border: 1px solid #333;
-    background: #f4f7f6;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    z-index: 9999;
 }
 
-.header-expand span {
+.header-expand span,
+.header-expand a,
+.header-email,
+.header-hours {
     font-size: 12px;
-    color: #333;
+    color: var(--muted);
 }
 
-.header-expand a{
-    font-size: 12px;
-    color: #333 !important;
+.header-expand a {
     text-decoration: none;
     margin-top: 5px;
     display: flex;
 }
 
 .header-expand a:hover {
-    color: black;
-    font-weight: 700;
+    color: var(--text);
+    font-weight: 600;
 }
 
 .header-expand a svg {
     height: 12px;
-    margin-left: 0px;
+    width: 12px;
 }
 
-.header-expand-list {
-    width: 100%;
-}
-
-.header-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.header-separator {
-    border: none;
-    border-top: 1px solid #d0d0d0;
-    margin: 8px 0;
-}
-
-.header-email,
-.header-hours {
-    font-size: 12px;
-    color: #333;
+.header-expand-list{
+    z-index: 9999;
 }
 
 .header-expand-icon-container {
-    border: 1px solid #333;
+    border: 1px solid var(--border);
     border-radius: 50px;
     display: flex;
     align-items: center;
@@ -108,18 +132,35 @@ header {
     transform: rotate(180deg);
 }
 
-
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
+.header-separator {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 8px 0;
 }
 
-/* Шапка сайта */
+/* =========================
+   NAVBAR
+   ========================= */
+
 .navbar {
-    background-color: #13382c;
-    padding: 20px 0;
-    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    /* основной цвет */
+    background:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.025),
+            rgba(0, 0, 0, 0.035)),
+        var(--primary);
+
+    /* микро-форма */
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+        0 1px 2px rgba(0, 0, 0, 0.05);
+
+    color: #ffffff;
 }
 
 .nav-wrap {
@@ -128,13 +169,8 @@ header {
     align-items: center;
 }
 
-.nav_icons {
-    height: 40px;
-    width: 40px;
-}
-
 .logo {
-    font-weight: bold;
+    font-weight: 700;
     font-size: 20px;
     display: flex;
     align-items: center;
@@ -147,7 +183,7 @@ header {
 }
 
 .logo-k {
-    color: #4ade80;
+    color: var(--accent);
 }
 
 .nav {
@@ -161,71 +197,85 @@ header {
     color: white;
     text-decoration: none;
     font-size: 14px;
-    opacity: 0.8;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-align: left;
+    opacity: 0.9;
     min-width: 160px;
+    padding: 22px 8px;
+    text-align: center;
 }
 
-.nav a.active {
+.nav a:hover {
     opacity: 1;
-    border-bottom: 2px solid #4ade80;
-    padding-bottom: 5px;
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 .btn-top {
     background: transparent;
-    border: 1px solid white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     color: white;
     padding: 8px 15px;
     cursor: pointer;
+    border-radius: 6px;
 }
 
-/* Главный блок (Hero) */
+/* =========================
+   HERO
+   ========================= */
+
 .hero {
     height: 400px;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
         url(/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png);
     background-size: cover;
     background-position: center;
     display: flex;
     align-items: center;
+    justify-content: center;
     color: white;
 }
 
 .tag {
-    background: rgba(74, 222, 128, 0.2);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     padding: 5px 10px;
     font-size: 12px;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .hero h1 {
     font-size: 40px;
     margin: 15px 0;
+    line-height: 1.15;
 }
 
 .btn-main {
-    background-color: #13382c;
-    color: white;
+    background-color: var(--accent);
+    color: #1a1a1a;
     border: none;
-    padding: 15px 25px;
-    font-weight: bold;
+    padding: 15px 26px;
+    font-weight: 700;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 10px;
 }
 
+.btn-main:hover {
+    filter: brightness(0.96);
+}
+
+/* =========================
+   PROJECTS
+   ========================= */
+
 .projects {
-    margin-top: 40px;
+    background: var(--bg-soft);
+    padding: 40px 0;
 }
 
 .projects h2 {
     font-size: 20px;
     margin-bottom: 30px;
+    color: var(--text);
 }
 
 .projects-gallery {
@@ -241,20 +291,20 @@ header {
 }
 
 .project-image {
-    
     min-width: 200px;
     height: 480px;
     object-fit: contain;
     border-radius: 12px;
+    background: var(--bg);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
 .projects-arrow {
     width: 36px;
     height: 36px;
-    border: 1px solid #333;
+    border: 1px solid var(--border);
     border-radius: 50%;
-    background: #fff;
+    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -269,41 +319,101 @@ header {
     transform: rotate(-90deg);
 }
 
-.site-footer {
-    margin-top: 50px;
-    padding: 20px 0;
-    background: #3a3a3a;
-    color: #f2f2f2;
+/* =========================
+   SERVICES
+   ========================= */
+
+.services {
+    padding: 50px 0 60px;
+    background: var(--bg-soft);
 }
 
-.footer-inner {
+.services h2 {
+    font-size: 20px;
+    margin-bottom: 18px;
+    color: var(--text);
+}
+
+/* 4 раздела как nav */
+.services-nav {
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+    gap: 18px;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
 }
 
-.footer-brand {
-    font-weight: bold;
+.services-nav-item {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
     font-size: 14px;
+    min-width: 160px;
+    text-align: center;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
 }
 
-.footer-links {
-    display: flex;
-    gap: 20px;
+.services-nav-item:hover {
+    border-color: rgba(15, 61, 46, 0.35);
 }
 
-.footer-links a {
-    color: #f2f2f2;
+.services-nav-item.is-active {
+    background: var(--primary);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* карточки как на фото */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.service-card {
+    display: block;
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg);
     text-decoration: none;
-    font-size: 13px;
-    opacity: 0.85;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-.footer-links a:hover {
-    opacity: 1;
-    color: #ffffff;
+.service-card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
 }
+
+/* нижняя плашка */
+.service-card-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 14px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    background: rgba(15, 61, 46, 0.92);
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.18s ease;
+}
+
+/* =========================
+   CARDS
+   ========================= */
 
 .grid {
     display: flex;
@@ -313,7 +423,7 @@ header {
 }
 
 .card {
-    background: white;
+    background: var(--bg);
     padding: 30px 20px;
     border-radius: 12px;
     text-align: center;
@@ -325,12 +435,7 @@ header {
 }
 
 .card-active {
-    border-bottom: 5px solid #4ade80;
-}
-
-.icon {
-    font-size: 30px;
-    margin-bottom: 15px;
+    border-bottom: 5px solid var(--accent);
 }
 
 .card h3 {
@@ -340,10 +445,59 @@ header {
 
 .card p {
     font-size: 13px;
-    color: #777;
+    color: var(--muted);
 }
 
-/* Адаптация под мобилки */
+/* =========================
+   FOOTER
+   ========================= */
+
+.site-footer {
+    padding: 20px 20px;
+    background: var(--footer);
+    color: var(--footer-text);
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.footer-brand {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-logo {
+    width: 20px;
+    height: 20px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: var(--footer-text);
+    text-decoration: none;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
 @media (max-width: 768px) {
     .grid {
         flex-direction: column;
@@ -356,6 +510,5 @@ header {
 
     .nav {
         display: none;
-        /* Прячем меню на мобильных */
     }
 }

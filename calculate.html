@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Küche aufbauen – S.K. SERVICE</title>
+    <link rel="icon" type="image/png" href="/img/logo_no_background.png">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style_calculate.css" />
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="header-expand" aria-label="">
+            <div class="header-expand-list">
+                <div class="header-item">
+                    <span>Fachberatung & Service</span>
+                    <a class="header-phone" href="tel:+4912345678">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M6.6 3.6L9.1 6.1c.5.5.6 1.3.2 2L8.1 10c1.3 2.5 3.4 4.6 5.9 5.9l1.9-1.2c.7-.4 1.5-.3 2 .2l2.5 2.5c.6.6.6 1.5 0 2.1l-1.3 1.3c-1 1-2.5 1.4-3.9 1C10.6 20.8 3.2 13.4 2.2 6.8c-.3-1.4.1-2.9 1-3.9L4.5 1.6c.6-.6 1.5-.6 2.1 0z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span>+49 12345678</span>
+                    </a>
+                </div>
+                <hr class="header-separator">
+                <div class="header-item">
+                    <a class="header-email" href="mailto:service@sk-service.de">service@sk-service.de</a>
+                </div>
+                <hr class="header-separator">
+                <div class="header-item">
+                    <span class="header-hours">Mo–Fr: 08:00–18:00</span>
+                </div>
+            </div>
+            <div class="header-expand-icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 6.5L8 10.5L12 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="logo">
+            <img class="logo_img" src="/img/logo_no_background.png" alt="S.K. SERVICE Logo">
+            <span>S.K. SERVICE</span>
+        </div>
+    </div>
+</header>
+
+<nav class="navbar">
+    <div class="container nav-wrap">
+        <nav class="nav">
+            <a href="#"><span>Küchenservice</span></a>
+            <a href="#"><span>Möbelservice</span></a>
+            <a href="#"><span>Handwerker</span></a>
+            <a href="#"><span>Gartenservice</span></a>
+        </nav>
+    </div>
+</nav>
+
+<main>
+    <section class="form-hero">
+        <div class="container">
+            <div class="form-hero-inner">
+                <a class="back-link" href="index.html">← Zurück</a>
+                <span class="tag">Kostenberechnung</span>
+                <h1>Küche aufbauen</h1>
+                <p>Gib ein paar Details ein – wir nutzen das später für die Preisberechnung</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="calc">
+        <div class="container">
+            <div class="calc-layout">
+                <form class="calc-card" action="#" method="post">
+                    <h2>Angaben zur Küche</h2>
+
+                    <div class="calc-grid">
+                        <div class="field">
+                            <label for="kitchenCondition">Küchenzustand</label>
+                            <select id="kitchenCondition" name="kitchenCondition">
+                                <option value="">Bitte wählen…</option>
+                                <option value="new">Neue Küche</option>
+                                <option value="used">Gebrauchte Küche</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="date">Wunschtermin</label>
+                            <input id="date" name="date" type="date">
+                        </div>
+
+                        <div class="field">
+                            <label for="kitchenType">Küchentyp</label>
+                            <select id="kitchenType" name="kitchenType">
+                                <option value="">Bitte wählen…</option>
+                                <option value="zeile">Küchenzeile</option>
+                                <option value="l-form">L-Form</option>
+                                <option value="u-form">U-Form</option>
+                                <option value="insel">Mit Insel</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="upperCabinets">Anzahl der Oberschränke</label>
+                            <input id="upperCabinets" name="upperCabinets" type="number" min="0" placeholder="z.B. 4">
+                        </div>
+
+                        <div class="field">
+                            <label for="appliances">Elektrogeräte</label>
+                            <select id="appliances" name="appliances">
+                                <option value="">Bitte wählen…</option>
+                                <option value="none">Ohne Geräte</option>
+                                <option value="some">Teilweise</option>
+                                <option value="full">Komplett (Herd, Ofen, Spülmaschine, etc.)</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="lowerCabinets">Anzahl der Unterschränke</label>
+                            <input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
+                        </div>
+
+                        <div class="field">
+                            <label for="worktopAdjust">Arbeitsplatte anpassen?</label>
+                            <select id="worktopAdjust" name="worktopAdjust">
+                                <option value="">Bitte wählen…</option>
+                                <option value="yes">Ja</option>
+                                <option value="no">Nein</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="worktopPickup">Arbeitsplatte vom Baumarkt abholen?</label>
+                            <select id="worktopPickup" name="worktopPickup">
+                                <option value="">Bitte wählen…</option>
+                                <option value="yes">Ja</option>
+                                <option value="no">Nein</option>
+                            </select>
+                        </div>
+
+                        <div class="field field-full">
+                            <label for="notes">Zusätzliche Hinweise</label>
+                            <textarea id="notes" name="notes" rows="4" placeholder="z.B. Altbau, keine Aufzug, Wasseranschluss rechts…"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="calc-actions">
+                        <button id="btn-main" class="btn-main" type="button">Preis berechnen</button>
+                        <button class="btn-secondary" type="reset">Zurücksetzen</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-brand">
+            <img class="footer-logo" src="/img/logo_no_background.png" alt="S.K. SERVICE Logo">
+            <span>S.K. SERVICE</span>
+        </div>
+        <nav class="footer-links">
+            <a href="#">Datenschutz</a>
+            <a href="#">Impressum</a>
+            <a href="#">AGB</a>
+        </nav>
+    </div>
+</footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
