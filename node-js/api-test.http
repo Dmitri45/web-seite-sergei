@@ -1,0 +1,19 @@
+### Test calculate total
+POST http://localhost:4000/api/calculate
+Content-Type: application/json
+
+{
+  "kitchenCondition": "new",
+  "date": "2026-03-15",
+  "kitchenType": "I-form",
+  "upperCabinets": "4",
+  "lowerCabinets": "5",
+  "appliances": "full",
+  "worktopMaterial": "stein",
+  "worktopPickup": "yes",
+  "notes": "Altbau",
+  "assembly": "yes",
+  "smallCabinets": "5",
+  "largeCabinets": "0",
+  "transportation": "no"
+}

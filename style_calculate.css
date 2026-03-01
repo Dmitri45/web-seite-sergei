@@ -3,13 +3,14 @@
    ========================= */
 
 .form-hero {
-    padding: 44px 0 30px;
+    padding: 80px 0 80px;
     background:
         linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.48)),
         url(/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png);
     background-size: cover;
     background-position: center;
     color: #fff;
+
 }
 
 .form-hero-inner {
@@ -45,6 +46,7 @@
 
 .calc-card,
 .summary-card {
+    margin-top: -80px;
     background: var(--bg);
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: 14px;
@@ -162,5 +164,162 @@
 
     .calc-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(15, 61, 46, 0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 16px;
+}
+
+/* Result Display */
+.result-display,
+.error-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.result-card,
+.error-card {
+    background: var(--bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.result-card h2,
+.error-card h2 {
+    margin: 0 0 20px;
+    font-size: 24px;
+    color: var(--text);
+}
+
+.price-display {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(15, 61, 46, 0.05);
+    border-radius: 12px;
+}
+
+.error-card p {
+    color: #d9534f;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.result-card .btn-main,
+.error-card .btn-main {
+    margin-top: 10px;
+}
+
+/* Kitchen Survey */
+.survey-card {
+    margin-top: -80px;
+    background: var(--bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    padding: 22px;
+}
+
+.survey-card h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    color: var(--text);
+}
+
+.survey-card p {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.survey-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.survey-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 12px;
+    border: 2px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.survey-btn:hover {
+    border-color: rgba(15, 61, 46, 0.3);
+    background: rgba(15, 61, 46, 0.02);
+}
+
+.survey-btn.active {
+    border-color: var(--accent);
+    background: rgba(15, 61, 46, 0.08);
+    color: var(--accent);
+}
+
+.survey-label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.survey-desc {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .survey-options {
+        grid-template-columns: 1fr;
+    }
+
+    .survey-card {
+        padding: 24px;
     }
 }

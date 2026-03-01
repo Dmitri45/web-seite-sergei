@@ -76,84 +76,28 @@
     <section class="calc">
         <div class="container">
             <div class="calc-layout">
-                <form class="calc-card" action="#" method="post">
-                    <h2>Angaben zur Küche</h2>
-
-                    <div class="calc-grid">
-                        <div class="field">
-                            <label for="kitchenCondition">Küchenzustand</label>
-                            <select id="kitchenCondition" name="kitchenCondition">
-                                <option value="">Bitte wählen…</option>
-                                <option value="new">Neue Küche</option>
-                                <option value="used">Gebrauchte Küche</option>
-                            </select>
+                <!-- Опрос о состоянии кухни -->
+                <div class="kitchen-survey" id="kitchenSurvey">
+                    <div class="survey-card">
+                        <h2>Welche Küche?</h2>
+                        <p>Bitte wählen Sie den Zustand Ihrer Küche</p>
+                        
+                        <div class="survey-options">
+                            <button type="button" class="survey-btn" data-value="new">
+                                <span class="survey-label">Neue Küche</span>
+                                <span class="survey-desc">Küche komplett zerlegt - alle Teile einzeln verpackt</span>
+                            </button>
+                            <button type="button" class="survey-btn" data-value="used">
+                                <span class="survey-label">Gebrauchte Küche</span>
+                                <span class="survey-desc">Schränke bereits zusammengebaut - nur Montage nötig</span>
+                            </button>
                         </div>
-
-                        <div class="field">
-                            <label for="date">Wunschtermin</label>
-                            <input id="date" name="date" type="date">
-                        </div>
-
-                        <div class="field">
-                            <label for="kitchenType">Küchentyp</label>
-                            <select id="kitchenType" name="kitchenType">
-                                <option value="">Bitte wählen…</option>
-                                <option value="zeile">Küchenzeile</option>
-                                <option value="l-form">L-Form</option>
-                                <option value="u-form">U-Form</option>
-                                <option value="insel">Mit Insel</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="upperCabinets">Anzahl der Oberschränke</label>
-                            <input id="upperCabinets" name="upperCabinets" type="number" min="0" placeholder="z.B. 4">
-                        </div>
-
-                        <div class="field">
-                            <label for="appliances">Elektrogeräte</label>
-                            <select id="appliances" name="appliances">
-                                <option value="">Bitte wählen…</option>
-                                <option value="none">Ohne Geräte</option>
-                                <option value="some">Teilweise</option>
-                                <option value="full">Komplett (Herd, Ofen, Spülmaschine, etc.)</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="lowerCabinets">Anzahl der Unterschränke</label>
-                            <input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
-                        </div>
-
-                        <div class="field">
-                            <label for="worktopAdjust">Arbeitsplatte anpassen?</label>
-                            <select id="worktopAdjust" name="worktopAdjust">
-                                <option value="">Bitte wählen…</option>
-                                <option value="yes">Ja</option>
-                                <option value="no">Nein</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="worktopPickup">Arbeitsplatte vom Baumarkt abholen?</label>
-                            <select id="worktopPickup" name="worktopPickup">
-                                <option value="">Bitte wählen…</option>
-                                <option value="yes">Ja</option>
-                                <option value="no">Nein</option>
-                            </select>
-                        </div>
-
-                        <div class="field field-full">
-                            <label for="notes">Zusätzliche Hinweise</label>
-                            <textarea id="notes" name="notes" rows="4" placeholder="z.B. Altbau, keine Aufzug, Wasseranschluss rechts…"></textarea>
-                        </div>
+                        
+                        <button id="continueBtn" class="btn-main" style="display: none; margin-top: 20px;">Weiter</button>
                     </div>
+                </div>
 
-                    <div class="calc-actions">
-                        <button id="btn-main" class="btn-main" type="button">Preis berechnen</button>
-                        <button class="btn-secondary" type="reset">Zurücksetzen</button>
-                    </div>
-                </form>
+            </div>
 
             </div>
         </div>
@@ -174,6 +118,7 @@
     </div>
 </footer>
 
+    <script src="templates.js"></script>
     <script src="script.js"></script>
 
 </body>
