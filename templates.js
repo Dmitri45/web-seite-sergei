@@ -223,14 +223,28 @@ function getTransportationSurvey() {
 						<div id="transportFromAutocomplete" class="autocomplete-container"></div>
 					</div>
 
+					<div id="transportIntermediateAddresses"></div>
+
 					<div class="field">
 						<label>Nach (Adresse)</label>
 						<div id="transportToAutocomplete" class="autocomplete-container"></div>
 					</div>
 				</div>
 
-				<button id="btn-main" class="btn-main" style="display: none; margin-top: 20px;">Preis berechnen</button>
+				<div class="transport-actions" id="transportActions" style="display: none; margin-top: 20px;">
+					<button id="btn-main" class="btn-main" type="button">Preis berechnen</button>
+					<button id="addIntermediateAddressBtn" class="btn-secondary" type="button">Zwischeziel hinzufügen</button>
+				</div>
 			</div>
+		</div>
+	`;
+}
+
+function getIntermediateAddressTemplate(index) {
+	return `
+		<div class="field">
+			<label>Zwischeziel ${index + 1}</label>
+			<div id="transportViaAutocomplete-${index}" class="autocomplete-container"></div>
 		</div>
 	`;
 }
