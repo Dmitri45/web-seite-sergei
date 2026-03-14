@@ -314,6 +314,12 @@
     text-align: center;
 }
 
+.autocomplete-container {
+	width: 100%;
+	position: relative;
+}
+
+
 @media (max-width: 600px) {
     .survey-options {
         grid-template-columns: 1fr;

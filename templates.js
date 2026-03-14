@@ -219,12 +219,13 @@ function getTransportationSurvey() {
 
 				<div id="transportFields" style="display: none; margin-top: 20px;">
 					<div class="field">
-						<label for="transportFrom">Von (Adresse)</label>
-						<input id="transportFrom" name="transportFrom" type="text" placeholder="z.B. Bahnhofstr. 10, 10115 Berlin">
+						<label>Von (Adresse)</label>
+						<div id="transportFromAutocomplete" class="autocomplete-container"></div>
 					</div>
+
 					<div class="field">
-						<label for="transportTo">Nach (Adresse)</label>
-						<input id="transportTo" name="transportTo" type="text" placeholder="z.B. Hauptstr. 5, 10115 Berlin">
+						<label>Nach (Adresse)</label>
+						<div id="transportToAutocomplete" class="autocomplete-container"></div>
 					</div>
 				</div>
 
@@ -233,6 +234,85 @@ function getTransportationSurvey() {
 		</div>
 	`;
 }
+
+function getLoadingTemplate() {
+	return `
+		<div id="loading-indicator" class="loading-indicator">
+			<div class="spinner"></div>
+			<p>Berechnung läuft...</p>
+		</div>
+	`;
+}
+
+function getResultTemplate(price) {
+	return `
+		<div id="result-display" class="result-display">
+			<div class="result-card">
+				<h2>Berechneter Preis</h2>
+				<div class="price-display">${price} €</div>
+				<button class="btn-main" onclick="location.reload()">Neue Berechnung</button>
+			</div>
+		</div>
+	`;
+}
+
+function getErrorTemplate(message) {
+	return `
+		<div id="error-display" class="error-display">
+			<div class="error-card">
+				<h2>Fehler</h2>
+				<p>${message}</p>
+				<button class="btn-main" onclick="location.reload()">Erneut versuchen</button>
+			</div>
+		</div>
+	`;
+}
+
+
+function getServiceCardTemplate(label, href, imgSrc) {
+	return `
+		<a class="service-card" href="${href}" aria-label="${label}">
+			<img src="${imgSrc}" alt="${label}">
+			<div class="service-card-label">${label}</div>
+		</a>
+	`;
+}
+
+const SERVICES_BY_CATEGORY = {
+	kitchen: [
+		{ label: 'Küchentransport',  href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Küche abbauen',    href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Küche aufbauen',   href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Küche anpassen',   href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+	],
+	furniture: [
+		{ label: 'Möbel aufbauen',               href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Möbel entsorgen',              href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Umzugshelfer',                 href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Transport von kleinen Sachen', href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+	],
+	trades: [
+		{ label: 'Zäune aufbauen', href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Fugenreinigung', href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+	],
+	garden: [
+		{ label: 'Gartenhütten schleifen/streichen',        href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Gartenhütten aufbauen',                   href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Hecken schneiden',                        href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Hecken entfernen',                        href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Wurzeln entfernen',                       href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Kleine Bäume fällen',                     href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Rollrasen inkl. Bodenvorbereitung',        href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Rasen mähen',                             href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Sträucher schneiden',                     href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Entsorgung von Grünschnitt',              href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Pflastern',                               href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Überdachung',                             href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Arbeiten mit Minibagger',                 href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Holzhäcksler',                            href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+		{ label: 'Jegliche Gartenarbeiten',                 href: 'calculate.html', img: '/img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
+	],
+};
 
 function renderForm(kitchenType) {
     const formContainer = document.querySelector('.calc-layout');
