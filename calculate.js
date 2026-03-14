@@ -6,8 +6,25 @@ let selectedTransportation = '';
 let selectedAssembly = '';
 let currentForm = null;
 
-let selectedTransportFrom = '';
-let selectedTransportTo = '';
+let selectedTransportFrom = null;
+let selectedTransportVia = [];
+let selectedTransportTo = null;
+
+function mapLocationToTransportPoint(location) {
+	if (!location) return null;
+
+	const address = location.properties?.formatted || '';
+	const coordinates = location.geometry?.coordinates || [];
+	const lon = coordinates[0];
+	const lat = coordinates[1];
+
+	if (!address || lat == null || lon == null) return null;
+
+	return {
+		address,
+		coordinates: { lat, lon }
+	};
+}
 
 function createAddressAutocomplete(elementId) {
 	return new autocomplete.GeocoderAutocomplete(
@@ -144,43 +161,75 @@ function renderTransportationSurvey() {
 }
 
 function resetTransportSelection() {
-	selectedTransportFrom = '';
-	selectedTransportTo = '';
+	selectedTransportFrom = null;
+	selectedTransportVia = [];
+	selectedTransportTo = null;
+
+	const intermediateContainer = document.getElementById('transportIntermediateAddresses');
+	if (intermediateContainer) {
+		intermediateContainer.innerHTML = '';
+	}
+}
+
+function appendIntermediateAddressField(survey, index) {
+	const container = survey.querySelector('#transportIntermediateAddresses');
+	if (!container) return null;
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = getIntermediateAddressTemplate(index);
+	const field = tempDiv.firstElementChild;
+
+	if (field) {
+		container.appendChild(field);
+	}
+
+	return field;
 }
 
 function setTransportationVisibility(survey, isTransportNeeded) {
 	const transportFields = survey.querySelector('#transportFields');
-	const calculateBtn = survey.querySelector('#btn-main');
+	const transportActions = survey.querySelector('#transportActions');
 
 	if (transportFields) {
 		transportFields.style.display = isTransportNeeded ? 'block' : 'none';
 	}
 
-	if (calculateBtn) {
-		calculateBtn.style.display = 'block';
+	if (transportActions) {
+		transportActions.style.display = 'flex';
 	}
 }
 
 function handleFromLocationSelect(location) {
-	if (!location) return;
+	const transportPoint = mapLocationToTransportPoint(location);
+	if (!transportPoint) return;
 
-	const formatted = location.properties?.formatted || '';
-	const coordinates = location.geometry?.coordinates || [];
-
-	const lon = coordinates[0];
-	const lat = coordinates[1];
-
-	selectedTransportFrom = formatted;
-	console.log('Адрес:', formatted);
-	console.log('Координаты:', coordinates);
-	console.log('Широта (lat):', lat);
-	console.log('Долгота (lon):', lon);
-	console.log('Полный объект location:', location);
+	selectedTransportFrom = transportPoint;
 }
 
 function handleToLocationSelect(location) {
-	if (!location) return;
-	selectedTransportTo = location.properties?.formatted || '';
+	const transportPoint = mapLocationToTransportPoint(location);
+	if (!transportPoint) return;
+	selectedTransportTo = transportPoint;
+}
+
+function createIntermediateLocationHandler(index) {
+	return (location) => {
+		const transportPoint = mapLocationToTransportPoint(location);
+		if (!transportPoint) return;
+		selectedTransportVia[index] = transportPoint;
+	};
+}
+
+function addIntermediateAddressAutocomplete(survey, state) {
+	const index = state.intermediateAutocompletes.length;
+	const field = appendIntermediateAddressField(survey, index);
+	if (!field) return;
+
+	const elementId = `transportViaAutocomplete-${index}`;
+	const intermediateAutocomplete = createAddressAutocomplete(elementId);
+	intermediateAutocomplete.on('select', createIntermediateLocationHandler(index));
+
+	state.intermediateAutocompletes.push(intermediateAutocomplete);
 }
 
 function initTransportAutocompletesIfNeeded(state) {
@@ -193,6 +242,15 @@ function initTransportAutocompletesIfNeeded(state) {
 		state.toAutocomplete = createAddressAutocomplete('transportToAutocomplete');
 		state.toAutocomplete.on('select', handleToLocationSelect);
 	}
+}
+
+function bindAddIntermediateAddressHandler(survey, state) {
+	const addIntermediateAddressBtn = survey.querySelector('#addIntermediateAddressBtn');
+	if (!addIntermediateAddressBtn) return;
+
+	addIntermediateAddressBtn.addEventListener('click', () => {
+		addIntermediateAddressAutocomplete(survey, state);
+	});
 }
 
 function bindTransportationChoiceHandlers(survey, state) {
@@ -235,6 +293,7 @@ function addTransportationDataIfNeeded(data) {
 	if (selectedTransportation !== 'yes') return;
 
 	data.transportFrom = selectedTransportFrom;
+	data.transportVia = selectedTransportVia.filter(point => point?.address);
 	data.transportTo = selectedTransportTo;
 }
 
@@ -267,10 +326,12 @@ function showTransportationSurvey() {
 
 	const transportState = {
 		fromAutocomplete: null,
+		intermediateAutocompletes: [],
 		toAutocomplete: null
 	};
 
 	bindTransportationChoiceHandlers(survey, transportState);
+	bindAddIntermediateAddressHandler(survey, transportState);
 	bindTransportationCalculateHandler(survey);
 }
 
@@ -358,3 +419,6 @@ function removeFeedbackBlocks() {
 }
 
 init();
+
+// TODO: Разобраться с отправляемыми координатами (Point, LineString, центр объекта)
+// TODO: После этого реализовать соответствующую обработку координат на сервере
