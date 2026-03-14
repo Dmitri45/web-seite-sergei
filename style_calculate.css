@@ -123,6 +123,18 @@
     filter: brightness(0.98);
 }
 
+.transport-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.transport-actions .btn-main,
+.transport-actions .btn-secondary {
+    margin: 0;
+}
+
 .summary-card h3 {
     margin: 0 0 10px;
     font-size: 16px;
