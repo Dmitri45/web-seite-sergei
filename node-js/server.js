@@ -15,16 +15,20 @@ app.use(express.json());
 // Раздача статических файлов из корня проекта
 app.use(express.static(path.join(__dirname, '..')));
 
-const { calculateTotal } = require('./kitchenCalculator');
+const { calculateTotal } = require('./calculators/kitchenCalculator');
+const { getRouteMatrixAndCalculatePrice } = require('./calculators/transportCalculator');
 
-app.post("/api/calculate", (req, res) => {
+app.post("/api/calculate", async (req, res) => {
   try {
     const data = req.body;
 
     // простая валидация
     
     const result = calculateTotal(data);
-    // возвращаем ответ
+    
+    if (data.transport == 'yes'){ 
+     result += await getRouteMatrixAndCalculatePrice(data.transport); }
+ 
     res.json(result);
 
   } catch (err) {
