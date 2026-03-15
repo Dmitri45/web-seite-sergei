@@ -1,0 +1,343 @@
+/* =========================
+   FORM PAGE (KÜCHE AUFBAUEN)
+   ========================= */
+
+.form-hero {
+    padding: 80px 0 80px;
+    background:
+        linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.48)),
+        url(img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+
+}
+
+.form-hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 14px;
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.back-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.calc {
+    padding: 34px 0 70px;
+}
+
+.calc-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 860px);
+    gap: 18px;
+    align-items: start;
+    justify-content: center;
+}
+
+.calc-card,
+.summary-card {
+    margin-top: -80px;
+    background: var(--bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    padding: 22px;
+}
+
+.calc-card h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 12px;
+    background: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    border-color: rgba(15, 61, 46, 0.45);
+    box-shadow: 0 0 0 4px rgba(15, 61, 46, 0.10);
+}
+
+.field-full {
+    grid-column: 1 / -1;
+}
+
+.calc-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 15px 26px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.btn-secondary:hover {
+    filter: brightness(0.98);
+}
+
+.transport-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.transport-actions .btn-main,
+.transport-actions .btn-secondary {
+    margin: 0;
+}
+
+.summary-card h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+.summary-card p {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.summary-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.summary-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--accent);
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .calc-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .calc-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(15, 61, 46, 0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 16px;
+}
+
+/* Result Display */
+.result-display,
+.error-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.result-card,
+.error-card {
+    background: var(--bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.result-card h2,
+.error-card h2 {
+    margin: 0 0 20px;
+    font-size: 24px;
+    color: var(--text);
+}
+
+.price-display {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(15, 61, 46, 0.05);
+    border-radius: 12px;
+}
+
+.error-card p {
+    color: #d9534f;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.result-card .btn-main,
+.error-card .btn-main {
+    margin-top: 10px;
+}
+
+/* Kitchen Survey */
+.survey-card {
+    margin-top: -80px;
+    background: var(--bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    padding: 22px;
+}
+
+.survey-card h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    color: var(--text);
+}
+
+.survey-card p {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.survey-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.survey-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 12px;
+    border: 2px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.survey-btn:hover {
+    border-color: rgba(15, 61, 46, 0.3);
+    background: rgba(15, 61, 46, 0.02);
+}
+
+.survey-btn.active {
+    border-color: var(--accent);
+    background: rgba(15, 61, 46, 0.08);
+    color: var(--accent);
+}
+
+.survey-label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.survey-desc {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    text-align: center;
+}
+
+.autocomplete-container {
+	width: 100%;
+	position: relative;
+}
+
+
+@media (max-width: 600px) {
+    .survey-options {
+        grid-template-columns: 1fr;
+    }
+
+    .survey-card {
+        padding: 24px;
+    }
+}
