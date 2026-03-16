@@ -1,7 +1,8 @@
 const axios = require('axios'); // Не забудь npm install axios
+const e = require('express');
 
 const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImUzOTQwODUyYTQxYzQ3OWFiZjkyMDY1NDcyM2JlZGI0IiwiaCI6Im11cm11cjY0In0=';
-const BASE_COORDS = [51.56523808298011, 6.779844555473214];
+const BASE_COORDS = [6.779844555473214, 51.56523808298011];
 
 async function getRouteMatrixAndCalculatePrice(object) {
     // Собираем точки маршрута: from, via[], to
@@ -29,11 +30,11 @@ async function getRouteMatrixAndCalculatePrice(object) {
         ]);
     }
     try {
-        // Вызов OpenRouteService через Axios
+        let allPoints = [BASE_COORDS, ...clientPoints, BASE_COORDS]; 
+        console.log(allPoints);
+        
         const orsResponse = await axios.post('https://api.openrouteservice.org/v2/matrix/driving-car', {
-            locations: [BASE_COORDS, ...clientPoints, BASE_COORDS],
-            sources: [0],
-            destinations: clientPoints.map((_, i) => i + 1),
+            locations: allPoints,
             metrics: ['distance'],
             units: 'km'
         }, {
@@ -44,9 +45,25 @@ async function getRouteMatrixAndCalculatePrice(object) {
         // В Axios данные лежат сразу в .data
         console.log('Ответ ORS:', orsResponse.data); // Логируем весь ответ для отладки
         const distances = orsResponse.data.distances;
-        
-        return distances;
-    }  
+
+        let total = 0;
+        let totalKm = 0;
+
+        for (let i = 0; i < distances.length - 1; i++) {
+        const segment = distances[i][i + 1];
+        totalKm += segment;
+        if (segment > 40) {
+            total += segment * 0.5; // 0.5 евро за км сверх 40 км
+        }
+        else {
+            total += segment * 0.25; 
+        }
+        }
+        console.log('Расстояния между точками (км):', distances);
+        console.log('Общее расстояние (км):', totalKm);
+        console.log('Расчетная стоимость транспорта:', total);
+        return total;
+    }
     catch (err) {
         // Если ORS прислал ошибку, Axios попадет сюда автоматически
         console.error('Ошибка:', err.response?.data || err.message);
