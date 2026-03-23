@@ -24,11 +24,11 @@ app.post("/api/calculate", async (req, res) => {
 
     // простая валидация
     
-    const result = calculateTotal(data);
-    
-    if (data.transport == 'yes'){ 
-     result += await getRouteMatrixAndCalculatePrice(data.transport); }
- 
+    let result = calculateTotal(data);
+
+    if (data.transportation == 'yes'){ 
+     result.price += await getRouteMatrixAndCalculatePrice(data); }
+     
     res.json(result);
 
   } catch (err) {

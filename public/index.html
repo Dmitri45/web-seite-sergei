@@ -63,69 +63,129 @@
 
     <main>
         <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <span class="tag">Digitaler Handwerkerservice</span>
-                    <h1>PROFESSIONELLER SERVICE.<br>DIGITAL GEPLANT.</h1>
-                    <p>Berechnung und Beauftragung von Dienstleistungen in wenigen Кlicks.</p>
-                    <button class="btn-main">Service jetzt starten</button>
-                </div>
-            </div>
-        </section>
-        <section class="projects">
-            <div class="container">
-                <h2>UNSERE ABGESCHLOSSENEN PROJEKTE:</h2>
-                <div class="projects-gallery">
-                    <button class="projects-arrow projects-arrow-left" aria-label="Vorherige Projekte">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M4 6.5L8 10.5L12 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div class="projects-track">
-                        <img class="project-image" src="img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png"
-                            alt="Projekt 1">
+            <div class="hero-bg">
+                <div class="container">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-inner">
+                        <div class="hero-eyebrow">S.K. SERVICE</div>
+                        <h1 class="hero-title">Wir erledigen, was Sie beschäftigt.</h1>
+                        <div class="hero-subtitle">Festpreis, pünktlich, professionell — von der Küche bis zum Garten. Berechnen Sie Ihre Kosten online in 2 Minuten und fordern Sie ein Angebot an.</div>
+                        <div class="hero-actions">
+                            <button class="btn-main">Preis berechnen</button>
+                            <button class="btn-secondary" onclick="document.getElementById('contact-modal').style.display='block'">Angebot anfordern</button>
+                        </div>
+                        <div class="hero-trust">
+                            <div class="hero-trust-stars">
+                                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                                <span class="hero-trust-score">4,9 von 5</span>
+                            </div>
+                            <div class="hero-trust-desc">Über 300 zufriedene Kunden</div>
+                        </div>
                     </div>
-                    <button class="projects-arrow projects-arrow-right" aria-label="Nächste Projekte">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M4 6.5L8 10.5L12 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
                 </div>
             </div>
         </section>
-                </section>
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-kicker">WIE ES FUNKTIONIERT</div>
+        <h2>3 Schritte zum fertigen Projekt</h2>
+
+        <div class="steps-grid">
+            <div class="step-item">
+                <div class="step-badge">1</div>
+                <div class="step-content">
+                    <h3>Dienstleistung wählen</h3>
+                    <p>Wählen Sie die passende Kategorie und den gewünschten Service aus.</p>
+                </div>
+            </div>
+
+            <div class="step-arrow" aria-hidden="true">→</div>
+
+            <div class="step-item">
+                <div class="step-badge">2</div>
+                <div class="step-content">
+                    <h3>Preis berechnen</h3>
+                    <p>Unser Online-Kalkulator gibt in 2 Minuten eine genaue Kostenschätzung.</p>
+                </div>
+            </div>
+
+            <div class="step-arrow" aria-hidden="true">→</div>
+
+            <div class="step-item">
+                <div class="step-badge">3</div>
+                <div class="step-content">
+                    <h3>Auftrag bestätigen</h3>
+                    <p>Wählen Sie einen Wunschtermin — der Fachmann kommt pünktlich zu Ihnen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="references">
+    <div class="container">
+        <div class="references-head">
+            <div>
+                <div class="section-kicker">REFERENZEN</div>
+                <h2>Unsere abgeschlossenen Projekte</h2>
+            </div>
+
+            <a href="#" class="references-link">Alle ansehen →</a>
+        </div>
+
+        <div class="references-grid">
+                    <a href="#" class="reference-card reference-card-small">
+                    <img src="img/garten_huette.JPG" alt="Gartenhütte Essen">
+                    <div class="reference-overlay">
+                        <span class="reference-tag">GARTENSERVICE</span>
+                        <div class="reference-title">Gartenhütte – Essen</div>
+                    </div>
+                </a>
+
+            <div class="references-side">
+                
+            <a href="#" class="reference-card reference-card-large">
+                <img src="img/kuchenservice.JPG" alt="Komplettrenovierung Düsseldorf">
+                <div class="reference-overlay">
+                    <span class="reference-tag">KÜCHENSERVICE</span>
+                    <div class="reference-title">Komplettrenovierung – Düsseldorf</div>
+                </div>
+            </a>
+
+                <a href="#" class="reference-card reference-card-small">
+                    <img src="img/garten.JPG" alt="Gartengestaltung Köln">
+                    <div class="reference-overlay">
+                        <span class="reference-tag">GARTENSERVICE</span>
+                        <div class="reference-title">Gartengestaltung – Köln</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
         <section class="services">
-            <div class="container">
-                <h2>UNSERE DIENSTLEISTUNGEN:</h2>
-
-                <div class="services-nav" aria-label="Dienstleistungen Kategorien">
-                    <button class="services-nav-item is-active" type="button">Küchenservice</button>
-                    <button class="services-nav-item" type="button">Möbelservice</button>
-                    <button class="services-nav-item" type="button">Handwerker</button>
-                    <button class="services-nav-item" type="button">Gartenservice</button>
-                </div>
-
-                <div class="services-grid">
-                    <a class="service-card" href="calculate.html" aria-label="Küche abbauen">
-                        <img src="img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png" alt="Küche abbauen">
-                        <div class="service-card-label">Küche abbauen</div>
-                    </a>
-
-                    <a class="service-card" href="calculate.html" aria-label="Küche aufbauen">
-                        <img src="img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png" alt="Küche aufbauen">
-                        <div class="service-card-label">Küche aufbauen</div>
-                    </a>
-
-                    <a class="service-card" href="calculate.html" aria-label="Küche anpassen">
-                        <img src="img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png" alt="Küche anpassen">
-                        <div class="service-card-label">Küche anpassen</div>
-                    </a>
-                </div>
+    <div class="container">
+        <div class="services-head">
+            <div class="services-copy">
+                <h2>Unsere Dienstleistungen</h2>
+                <p class="services-subtitle">
+                    Unser breites Angebot deckt Küchenservice, Möbelmontage,
+                    Handwerkerarbeiten und Gartendienstleistungen ab.
+                </p>
             </div>
-        </section>
+
+            <div class="services-nav" aria-label="Dienstleistungen Kategorien">
+                <button class="services-nav-item" type="button" data-category="kitchen">Küchenservice</button>
+                <button class="services-nav-item" type="button" data-category="furniture">Möbelservice</button>
+                <button class="services-nav-item" type="button" data-category="trades">Handwerker</button>
+                <button class="services-nav-item is-active" type="button" data-category="garden">Gartenservice</button>
+            </div>
+        </div>
+
+        <div class="services-showcase" id="servicesShowcase"></div>
+    </div>
+</section>
     </main>
 
     <footer class="site-footer">

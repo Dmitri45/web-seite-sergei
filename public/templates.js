@@ -283,50 +283,151 @@ function getErrorTemplate(message) {
 }
 
 
-function getServiceCardTemplate(label, href, imgSrc) {
-	return `
-		<a class="service-card" href="${href}" aria-label="${label}">
-			<img src="${imgSrc}" alt="${label}">
-			<div class="service-card-label">${label}</div>
-		</a>
-	`;
+function getServiceCardTemplate(service) {
+    return `
+        <a class="service-card" href="${service.href}" aria-label="${service.label}">
+            <div class="service-card-bg" style="background-image: url('${service.img}');"></div>
+
+            <div class="service-card-copy">
+                <div class="service-card-title">${service.label}</div>
+                <p class="service-card-desc">${service.desc || ''}</p>
+            </div>
+
+            <div class="service-card-arrow">
+                <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 14L14 6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M7.5 6H14V12.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </a>
+    `;
 }
 
-const SERVICES_BY_CATEGORY = {
-	kitchen: [
-		{ label: 'Küchentransport',  href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Küche abbauen',    href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Küche aufbauen',   href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Küche anpassen',   href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-	],
-	furniture: [
-		{ label: 'Möbel aufbauen',               href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Möbel entsorgen',              href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Umzugshelfer',                 href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Transport von kleinen Sachen', href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-	],
-	trades: [
-		{ label: 'Zäune aufbauen', href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Fugenreinigung', href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-	],
-	garden: [
-		{ label: 'Gartenhütten schleifen/streichen',        href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Gartenhütten aufbauen',                   href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Hecken schneiden',                        href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Hecken entfernen',                        href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Wurzeln entfernen',                       href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Kleine Bäume fällen',                     href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Rollrasen inkl. Bodenvorbereitung',        href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Rasen mähen',                             href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Sträucher schneiden',                     href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Entsorgung von Grünschnitt',              href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Pflastern',                               href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Überdachung',                             href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Arbeiten mit Minibagger',                 href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Holzhäcksler',                            href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-		{ label: 'Jegliche Gartenarbeiten',                 href: 'calculate.html', img: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png' },
-	],
+const SERVICE_CATEGORY_META = {
+    kitchen: {
+        title: 'Küchenservice',
+        description: 'Abbau, Aufbau, Anpassung und Transport Ihrer Küche — sauber, termingerecht und aus einer Hand.',
+        image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
+        allHref: 'calculate.html'
+    },
+    furniture: {
+        title: 'Möbelservice',
+        description: 'Montage, Demontage, Transport und Entsorgung von Möbeln für Wohnung, Haus und Büro.',
+        image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
+        allHref: 'calculate.html'
+    },
+    trades: {
+        title: 'Handwerker',
+        description: 'Zuverlässige Hilfe bei Montage-, Reparatur- und Ausbauarbeiten für innen und außen.',
+        image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
+        allHref: 'calculate.html'
+    },
+    garden: {
+        title: 'Gartenservice',
+        description: 'Pflege, Rückschnitt, Pflasterarbeiten und saisonale Gartenprojekte aus einer Hand.',
+        image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
+        allHref: 'calculate.html'
+    }
 };
+
+const SERVICES_BY_CATEGORY = {
+    kitchen: [
+        { label: 'Küchentransport', href: 'calculate.html', img: 'img/services/kuechenservice/kuechetransport.png', desc: 'Sicherer Transport & Trageservice' },
+        { label: 'Küche abbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
+        { label: 'Küche aufbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenaufbau.png', desc: 'Montage inkl. Ausrichtung' },
+        { label: 'Küche anpassen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanpassung.png', desc: 'Ausschnitte, Anschlüsse & Feinschliff' }
+    ],
+    furniture: [
+        { label: 'Möbel aufbauen', href: 'calculate.html', img: 'img/services/moebelservice/moebelaufbauen.png', desc: 'Schränke, Betten und Regale' },
+        { label: 'Möbel entsorgen', href: 'calculate.html', img: 'img/services/moebelservice/moebelentsorgen.png', desc: 'Abholung inkl. fachgerechter Entsorgung' },
+        { label: 'Umzugshelfer', href: 'calculate.html', img: 'img/services/moebelservice/umzugshelfer.png', desc: 'Tragen, Laden und Positionieren' },
+        { label: 'Kleintransporte', href: 'calculate.html', img: 'img/services/moebelservice/kleintransporte.png', desc: 'Flexible Transporte nach Bedarf' }
+    ],
+    trades: [
+        { label: 'Zäune aufbauen', href: 'calculate.html', img: 'img/services/tradeservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
+        { label: 'Fugenreinigung', href: 'calculate.html', img: 'img/services/tradeservice/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
+    ],
+    garden: [
+        { label: 'Hecken schneiden', href: 'calculate.html', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
+        { label: 'Rasen mähen', href: 'calculate.html', img: 'img/services/gartenservice/rasenmaehen.png', desc: 'Regelmäßiger Schnitt & Pflege' },
+        { label: 'Rollrasen verlegen', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen inkl. Bodenvorbereitung' },
+        { label: 'Wurzeln entfernen', href: 'calculate.html', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
+        { label: 'Pflastern', href: 'calculate.html', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
+        { label: 'Minibagger-Arbeiten', href: 'calculate.html', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
+        { label: 'Gartenhütten aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Montage im Gartenbereich' },
+        { label: 'Hecken entfernen', href: 'calculate.html', img: 'img/services/gartenservice/heckenentfernen.png', desc: 'Rückbau inkl. Schnittgut' },
+        { label: 'Kleine Bäume fällen', href: 'calculate.html', img: 'img/services/gartenservice/kleinebaeumefaellen.png', desc: 'Sicher und sauber durchgeführt' },
+        { label: 'Sträucher schneiden', href: 'calculate.html', img: 'img/services/gartenservice/straeucherschneiden.png', desc: 'Pflegeschnitt nach Saison' },
+        { label: 'Entsorgung von Grünschnitt', href: 'calculate.html', img: 'img/services/gartenservice/entsorgungvongruenschnitt.png', desc: 'Abtransport und Entsorgung' },
+        { label: 'Überdachung', href: 'calculate.html', img: 'img/services/gartenservice/ueberdachung.png', desc: 'Montage für Terrasse und Garten' },
+        { label: 'Holzhäcksler', href: 'calculate.html', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' },
+        { label: 'Jegliche Gartenarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/jeglichegartenarbeiten.png', desc: 'Individuelle Einsätze nach Bedarf' }
+    ]
+};
+
+function getServicesFeatureTemplate(categoryKey) {
+    const meta = SERVICE_CATEGORY_META[categoryKey];
+
+    return `
+        <div class="services-feature">
+            <div class="services-feature-image" style="background-image: url('${meta.image}');">
+                <div class="services-feature-overlay"></div>
+
+                <div class="services-feature-content">
+                    <div>
+                        <h3 class="services-feature-title">${meta.title}</h3>
+                        <p class="services-feature-text">${meta.description}</p>
+                    </div>
+
+                    <div class="services-feature-actions">
+                        <a class="btn-main" href="calculate.html">Preis berechnen</a>
+                        <button class="btn-secondary" type="button" onclick="document.getElementById('contact-modal').style.display='block'">
+                            Beratung anfragen
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="services-feature-footer">
+                <a class="services-feature-link" href="${meta.allHref}">
+                    Alle Leistungen ansehen
+                    <span>›</span>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+function renderServices(categoryKey = 'garden') {
+    const showcase = document.getElementById('servicesShowcase');
+    if (!showcase) return;
+
+    const services = SERVICES_BY_CATEGORY[categoryKey] || [];
+    const cards = services.slice(0, 4).map(getServiceCardTemplate).join('');
+
+    showcase.innerHTML = `
+        ${getServicesFeatureTemplate(categoryKey)}
+        <div class="services-list">
+            ${cards}
+        </div>
+    `;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.services-nav-item');
+    const activeButton = document.querySelector('.services-nav-item.is-active');
+    const initialCategory = activeButton?.dataset.category || 'garden';
+
+    renderServices(initialCategory);
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            buttons.forEach((btn) => btn.classList.remove('is-active'));
+            button.classList.add('is-active');
+            renderServices(button.dataset.category);
+        });
+    });
+});
 
 function renderForm(kitchenType) {
     const formContainer = document.querySelector('.calc-layout');
