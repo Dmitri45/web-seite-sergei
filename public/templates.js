@@ -365,52 +365,51 @@ const SERVICES_BY_CATEGORY = {
     ]
 };
 
-function getServicesFeatureTemplate(categoryKey) {
-    const meta = SERVICE_CATEGORY_META[categoryKey];
-
-    return `
-        <div class="services-feature">
-            <div class="services-feature-image" style="background-image: url('${meta.image}');">
-                <div class="services-feature-overlay"></div>
-
-                <div class="services-feature-content">
-                    <div>
-                        <h3 class="services-feature-title">${meta.title}</h3>
-                        <p class="services-feature-text">${meta.description}</p>
-                    </div>
-
-                    <div class="services-feature-actions">
-                        <a class="btn-main" href="calculate.html">Preis berechnen</a>
-                        <button class="btn-secondary" type="button" onclick="document.getElementById('contact-modal').style.display='block'">
-                            Beratung anfragen
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="services-feature-footer">
-                <a class="services-feature-link" href="${meta.allHref}">
-                    Alle Leistungen ansehen
-                    <span>›</span>
-                </a>
-            </div>
-        </div>
-    `;
-}
+let servicesBottomCtaHandler = false;
 
 function renderServices(categoryKey = 'garden') {
-    const showcase = document.getElementById('servicesShowcase');
+	const servicesBottomCta = document.getElementById('services-bottom-cta');
+	servicesBottomCta.innerHTML = '';
+    const showcase = document.getElementById('services-list');
     if (!showcase) return;
 
     const services = SERVICES_BY_CATEGORY[categoryKey] || [];
-    const cards = services.slice(0, 4).map(getServiceCardTemplate).join('');
+    const cards = services.slice(0, 6).map(getServiceCardTemplate).join('');
 
-    showcase.innerHTML = `
-        ${getServicesFeatureTemplate(categoryKey)}
-        <div class="services-list">
-            ${cards}
-        </div>
-    `;
+    showcase.innerHTML = cards;
+
+	if (services.length > 6) {
+		document.getElementById('services-bottom-cta').innerHTML = getServicesBottomCtaTemplate();
+		const servicesBottomCtaButton = document.getElementById('services-bottom-cta');
+		if(servicesBottomCtaHandler == false){
+			servicesBottomCtaButton.addEventListener('click', () => loadMoreServices(categoryKey)); 
+			servicesBottomCtaHandler = true;}
+	}
+}
+
+
+function loadMoreServices(categoryKey) {
+	const showcase = document.getElementById('services-list');
+	if (!showcase) return;
+    const services = SERVICES_BY_CATEGORY[categoryKey] || [];
+    const cards = services.slice(6).map(getServiceCardTemplate).join('');
+    showcase.innerHTML += cards;
+	document.getElementById('services-bottom-cta').innerHTML = '';
+	const servicesBottomCtaButton = document.getElementById('services-bottom-cta');
+	servicesBottomCtaButton.removeEventListener('click', loadMoreServices);
+}
+
+function getServicesBottomCtaTemplate() {
+	return `<div class="services-bottom-cta">
+    <div class="services-bottom-cta__text">
+        Alle Leistungen dieser Kategorie entdecken
+    </div>
+
+    <button class="services-bottom-cta__button" id="servicesBottomCtaButton">
+        <span>Alle Leistungen ansehen</span>
+        <span class="services-bottom-cta__arrow">›</span>
+    </button>
+</div>`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

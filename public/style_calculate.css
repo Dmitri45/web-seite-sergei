@@ -2,21 +2,6 @@
    FORM PAGE (KÜCHE AUFBAUEN)
    ========================= */
 
-.form-hero {
-    padding: 80px 0 80px;
-    background:
-        linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.48)),
-        url(img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png);
-    background-size: cover;
-    background-position: center;
-    color: #fff;
-
-}
-
-.form-hero-inner {
-    max-width: 860px;
-    margin: 0 auto;
-}
 
 .back-link {
     display: inline-block;

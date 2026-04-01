@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style_calculate.css">
 </head>
 
-<body>
+<body class="page-home">
 
     <header>
         <div class="header-inner">
@@ -42,21 +42,17 @@
                     </svg>
                 </div>
             </div>
-            <div class="logo"><img class="logo_img" src="img/logo_no_background.png" alt="S.K. SERVICE Logo"><span>S.K.
-                    SERVICE</span></div>
+            <a class="logo" href="index.html"><img class="logo_img" src="img/logo_no_background.png" alt="S.K. SERVICE Logo"><span>S.K.
+                    SERVICE</span></a>
         </div>
     </header>
     <nav class="navbar">
         <div class="container nav-wrap">
             <nav class="nav">
-                <a href="#">
-                    <span>Küchenservice</span></a>
-                <a href="#" class="">
-                    <span>Möbelservice</span></a>
-                <a href="#">
-                    <span>Handwerker</span></a>
-                <a href="#">
-                    <span>Gartenservice</span></a>
+                <a href="kuechenservice.html"><span>Küchenservice</span></a>
+                <a href="moebelservice.html"><span>Möbelservice</span></a>
+                <a href="handwerk.html"><span>Handwerk</span></a>
+                <a href="gartenservice.html"><span>Gartenservice</span></a>
             </nav>
         </div>
     </nav>
@@ -71,8 +67,7 @@
                         <h1 class="hero-title">Wir erledigen, was Sie beschäftigt.</h1>
                         <div class="hero-subtitle">Festpreis, pünktlich, professionell — von der Küche bis zum Garten. Berechnen Sie Ihre Kosten online in 2 Minuten und fordern Sie ein Angebot an.</div>
                         <div class="hero-actions">
-                            <button class="btn-main">Preis berechnen</button>
-                            <button class="btn-secondary" onclick="document.getElementById('contact-modal').style.display='block'">Angebot anfordern</button>
+                            <button class="btn-main">Angebot anfordern</button>
                         </div>
                         <div class="hero-trust">
                             <div class="hero-trust-stars">
@@ -183,8 +178,10 @@
             </div>
         </div>
 
-        <div class="services-showcase" id="servicesShowcase"></div>
+        <div class="services-list" id="services-list"></div>
+        <div  id="services-bottom-cta"></div>
     </div>
+        
 </section>
     </main>
 

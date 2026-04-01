@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete@1.5.0/styles/minimal.css">
 </head>
 
-<body>
+<body class="page-calculate">
 
 <header>
     <div class="header-inner">
@@ -44,32 +44,38 @@
             </div>
         </div>
 
-        <div class="logo">
+        <a class="logo" href="index.html">
             <img class="logo_img" src="img/logo_no_background.png" alt="S.K. SERVICE Logo">
             <span>S.K. SERVICE</span>
-        </div>
+        </a>
     </div>
 </header>
 
 <nav class="navbar">
     <div class="container nav-wrap">
         <nav class="nav">
-            <a href="#"><span>Küchenservice</span></a>
-            <a href="#"><span>Möbelservice</span></a>
-            <a href="#"><span>Handwerker</span></a>
-            <a href="#"><span>Gartenservice</span></a>
+            <a href="kuechenservice.html"><span>Küchenservice</span></a>
+            <a href="moebelservice.html"><span>Möbelservice</span></a>
+            <a href="handwerk.html"><span>Handwerk</span></a>
+            <a href="gartenservice.html"><span>Gartenservice</span></a>
         </nav>
     </div>
 </nav>
 
 <main>
-    <section class="form-hero">
-        <div class="container">
-            <div class="form-hero-inner">
-                <a class="back-link" href="index.html">← Zurück</a>
-                <span class="tag">Kostenberechnung</span>
-                <h1>Küche aufbauen</h1>
-                <p>Gib ein paar Details ein – wir nutzen das später für die Preisberechnung</p>
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="container">
+                <div class="hero-overlay"></div>
+                <div class="hero-inner">
+                    <div class="hero-eyebrow">S.K. SERVICE</div>
+                    <h1 class="hero-title">Küche aufbauen</h1>
+                    <div class="hero-subtitle">Gib ein paar Details ein – wir nutzen das später für die Preisberechnung</div>
+                    <div class="hero-actions">
+                        <a class="btn-main" href="index.html">← Zurück</a>
+                        <span class="tag" style="margin-left:18px;">Kostenberechnung</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -77,7 +83,7 @@
     <section class="calc">
         <div class="container">
             <div class="calc-layout">
-                <!-- Опрос о состоянии кухни -->
+
                 <div class="kitchen-survey" id="kitchenSurvey">
                     <div class="survey-card">
                         <h2>Welche Küche?</h2>

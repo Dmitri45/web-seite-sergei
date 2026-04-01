@@ -4,6 +4,30 @@ h2 {
     color: var(--text) !important;
 }
 
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Modal styles */
 .contact-modal {
   position: fixed;
@@ -15,7 +39,7 @@ h2 {
   justify-content: center;
 }
 .contact-modal-content {
-  background: #fff;
+  background: var(--bg);
   border-radius: 14px;
   padding: 32px 24px 24px 24px;
   min-width: 320px;
@@ -86,7 +110,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg-soft);
     color: var(--text);
 }
@@ -236,6 +260,8 @@ header {
     font-size: 18px;
     display: flex;
     align-items: center;
+    color: inherit;
+    text-decoration: none;
 }
 
 .logo_img {
@@ -270,7 +296,7 @@ header {
 .nav a:hover {
     opacity: 1;
     background-color: transparent;
-    box-shadow: inset 0 -2px 0 var(--accent);
+    box-shadow: inset 0 -2px 0 #1D9E75;
 }
 
 .btn-top {
@@ -286,6 +312,29 @@ header {
    HERO
    ========================= */
 
+body.page-home {
+    --hero-image: url('img/home_hero.png');
+}
+
+body.page-kitchen {
+    --hero-image: url('img/kuechenservice_hero.png');
+}
+
+body.page-furniture {
+    --hero-image: url('img/moebelservice_hero.png');
+}
+
+body.page-trades {
+    --hero-image: url('img/handwerk_hero.png');
+}
+
+body.page-garden {
+    --hero-image: url('img/garetnservice_hero.png');
+}
+
+body.page-calculate {
+    --hero-image: url('img/calculate_hero.png');
+}
 
 .hero {
     position: relative;
@@ -294,7 +343,6 @@ header {
     padding: 0;
     margin: 0;
     background: none;
-    border-top: 3px solid #1D9E75;
 }
 .hero-bg {
     position: relative;
@@ -302,7 +350,7 @@ header {
     left: 50%;
     right: 50%;
     min-height: 600px;
-    background: url('img/hero.png') center/cover no-repeat;
+    background: var(--hero-image, url('img/hero.png')) center/cover no-repeat;
     display: flex;
     align-items: stretch;
     transform: translateX(-50%);
@@ -466,8 +514,7 @@ header {
 
 .how-it-works {
     padding: 56px 48px 48px 44px;
-    background: #f3f5f4;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--bg-soft);
 }
 
 .how-it-works h2 {
@@ -536,7 +583,7 @@ header {
 
 .references {
     padding: 44px 0 56px;
-    background: #ecece8;
+    background: var(--bg-soft);
 }
 
 .references-head {
@@ -740,126 +787,6 @@ header {
     align-items: start;
 }
 
-/* =========================
-   BIG FEATURE CARD
-   ========================= */
-
-.services-feature {
-    background: #fff;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 14px 32px rgba(15, 61, 46, 0.08);
-    display: flex;
-    flex-direction: column;
-    height: 460px;
-}
-
-.services-feature-image {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    background-size: cover;
-    background-position: center;
-}
-
-.services-feature-overlay {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(
-            90deg,
-            rgba(15, 61, 46, 0.78) 0%,
-            rgba(15, 61, 46, 0.52) 40%,
-            rgba(15, 61, 46, 0.16) 74%,
-            rgba(15, 61, 46, 0.06) 100%
-        );
-}
-
-.services-feature-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 30px 28px;
-    max-width: 360px;
-}
-
-.services-feature-title {
-    margin: 0 0 16px;
-    font-size: 38px;
-    line-height: 1.05;
-    font-weight: 500;
-    color: #fff;
-}
-
-.services-feature-text {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.88);
-}
-
-.services-feature-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 22px;
-}
-
-.services-feature-actions .btn-main,
-.services-feature-actions .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
-
-.services-feature-actions .btn-main {
-    padding: 13px 24px;
-}
-
-.services-feature-actions .btn-secondary {
-    padding: 13px 24px;
-    background: rgba(255, 255, 255, 0.92);
-    color: var(--text);
-    border: 1px solid transparent;
-}
-
-.services-feature-actions .btn-secondary:hover {
-    background: #ffffff;
-}
-
-.services-feature-footer {
-    padding: 18px 22px 22px;
-    background: #fff;
-}
-
-.services-feature-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-width: 280px;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 15px 24px;
-    border-radius: 12px;
-    background: var(--primary);
-    color: #fff;
-    text-decoration: none;
-    font-size: 17px;
-    font-weight: 500;
-    box-shadow: 0 12px 24px rgba(15, 61, 46, 0.14);
-    transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.services-feature-link:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
-}
 
 /* =========================
    SMALL CARDS GRID
@@ -867,7 +794,7 @@ header {
 
 .services-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
     align-content: start;
 }
@@ -962,6 +889,60 @@ header {
     transform: translateX(2px);
     background: rgba(255, 255, 255, 0.22);
     border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* =========================
+   SERVICES BOTTOM CTA
+   ========================= */
+
+.services-bottom-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 24px;
+    padding: 16px 18px 16px 28px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 61, 46, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 10px 24px rgba(15, 61, 46, 0.06);
+}
+
+.services-bottom-cta__text {
+    font-size: 18px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.services-bottom-cta__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 320px;
+    padding: 16px 28px;
+    border-radius: 12px;
+    border: none;
+    background: var(--primary);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 500;
+    box-shadow: 0 12px 24px rgba(15, 61, 46, 0.16);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.services-bottom-cta__button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    cursor: pointer;
+}
+
+.services-bottom-cta__arrow {
+    font-size: 24px;
+    line-height: 1;
+    transform: translateY(-1px);
 }
 
 /* =========================
