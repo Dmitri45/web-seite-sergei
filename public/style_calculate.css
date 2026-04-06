@@ -2,6 +2,64 @@
    FORM PAGE (KÜCHE AUFBAUEN)
    ========================= */
 
+body.page-calculate .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #0f7f65;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 18px rgba(10, 77, 60, 0.35);
+}
+
+body.page-calculate .hero-title {
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 500;
+    line-height: 1.08;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+body.page-calculate .hero-subtitle {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+/*
+  Dedicated hero styling for calculate page.
+  Keeps calculate visually consistent with secondary service pages,
+  but isolated from global hero tweaks.
+*/
+body.page-calculate .hero,
+body.page-calculate .hero-bg,
+body.page-calculate .hero-inner {
+    min-height: 420px;
+}
+
+body.page-calculate .hero-inner {
+    max-width: 520px;
+}
+
+body.page-calculate .hero-subtitle {
+    max-width: 480px;
+}
+
+@media (max-width: 768px) {
+    body.page-calculate .hero,
+    body.page-calculate .hero-bg,
+    body.page-calculate .hero-inner {
+        min-height: 420px;
+    }
+
+    body.page-calculate .hero-inner {
+        max-width: 100%;
+    }
+}
+
 
 .back-link {
     display: inline-block;
@@ -18,20 +76,108 @@
 }
 
 .calc {
-    padding: 34px 0 70px;
+    padding: 30px 0 70px;
 }
 
 .calc-layout {
     display: grid;
-    grid-template-columns: minmax(0, 860px);
-    gap: 18px;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 22px;
     align-items: start;
+}
+
+.calc-main {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.calc-placeholder__box {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.06);
+}
+
+.calc-placeholder__image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.calc-placeholder__content {
+    padding: 18px 20px 20px;
+}
+
+.calc-placeholder__box h3 {
+    margin: 0 0 14px;
+    font-size: 24px;
+    line-height: 1.1;
+    color: var(--text);
+}
+
+.calc-placeholder__list,
+.calc-placeholder__sublist {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+}
+
+.calc-placeholder__list li,
+.calc-placeholder__sublist li {
+    position: relative;
+    padding-left: 26px;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.calc-placeholder__list li::before,
+.calc-placeholder__sublist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #1f9b73;
+    font-weight: 700;
+}
+
+.calc-placeholder__box hr {
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    margin: 16px 0 14px;
+}
+
+.calc-placeholder__box h4 {
+    margin: 0 0 12px;
+    font-size: 38px;
+    line-height: 1.15;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.calc-placeholder__cta-wrap {
+    margin-top: 18px;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.calc-placeholder__cta {
+    display: flex;
     justify-content: center;
+    text-decoration: none;
 }
 
 .calc-card,
 .summary-card {
-    margin-top: -80px;
+    margin-top: 0;
     background: var(--bg);
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: 14px;
@@ -58,6 +204,73 @@
     margin-bottom: 6px;
 }
 
+.help-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0;
+    line-height: 1;
+}
+
+.help-tooltip__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+    box-shadow: none;
+    outline: none;
+}
+
+.help-tooltip__content {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
+    width: min(320px, 80vw);
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(11, 31, 24, 0.96);
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 1.35;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.help-tooltip:hover .help-tooltip__content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.label-with-tooltip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.moving-helpers-form #helpersCount,
+.moving-helpers-form #workHours {
+    height: 46px;
+}
+
+.moving-helpers-form .field > label {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+}
+
 .field input,
 .field select,
 .field textarea {
@@ -69,6 +282,12 @@
     background: #fff;
     font-size: 14px;
     outline: none;
+}
+
+.field input,
+.field select {
+    height: 46px;
+    line-height: 1.2;
 }
 
 .field textarea {
@@ -85,6 +304,32 @@
 
 .field-full {
     grid-column: 1 / -1;
+}
+
+.furniture-items-list {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.furniture-item-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 14px;
+    background: #ffffff;
+}
+
+.furniture-item-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.furniture-item-card__head .furniture-item-remove {
+    padding: 8px 12px;
+    font-size: 13px;
 }
 
 .calc-actions {
@@ -157,6 +402,26 @@
 @media (max-width: 900px) {
     .calc-layout {
         grid-template-columns: 1fr;
+    }
+
+    .calc-main {
+        padding: 0;
+    }
+
+    .calc-placeholder__box {
+        min-height: 180px;
+    }
+
+    .calc-placeholder__content {
+        padding: 16px;
+    }
+
+    .calc-placeholder__box h3 {
+        font-size: 34px;
+    }
+
+    .calc-placeholder__box h4 {
+        font-size: 32px;
     }
 
     .calc-grid {
@@ -244,12 +509,12 @@
 
 /* Kitchen Survey */
 .survey-card {
-    margin-top: -80px;
-    background: var(--bg);
-    border: 1px solid rgba(0,0,0,0.05);
-    border-radius: 14px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-    padding: 22px;
+    margin-top: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 10px;
 }
 
 .survey-card h2 {

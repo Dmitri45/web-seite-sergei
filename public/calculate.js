@@ -1,5 +1,6 @@
 const kitchenSurvey = document.getElementById('kitchenSurvey');
 const continueBtn = document.getElementById('continueBtn');
+const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
 
 let selectedKitchenCondition = '';
 let selectedTransportation = '';
@@ -9,6 +10,132 @@ let currentForm = null;
 let selectedTransportFrom = null;
 let selectedTransportVia = [];
 let selectedTransportTo = null;
+
+const SERVICE_FORM_TEMPLATES_BY_LABEL = {
+	'Küchentransport': () => getSmallItemsTransportForm(),
+	'Küche abbauen': () => getUsedKitchenForm(),
+	'Küche aufbauen': () => getNewKitchenForm(),
+	'Küche anpassen': () => getKitchenAdjustmentEstimateForm(),
+	'Küchenanfertigung': () => getCustomKitchenRequestForm(),
+	'Möbel aufbauen': () => getFurnitureAssemblyForm(),
+	'Möbel entsorgen': () => getFurnitureDisposalForm(),
+	'Möbelanfertigung': () => getCustomFurnitureRequestForm(),
+	'Umzugshelfer': () => getMovingHelpersEstimateForm(),
+	'Kleintransporte': () => getSmallItemsTransportForm(),
+	'Fugenreinigung': () => getJointCleaningForm(),
+	'Hecken schneiden': () => getHedgeTrimmingForm(),
+	'Rasen mähen': () => getLawnMowingForm(),
+	'Rollrasen verlegen': () => getLawnInstallationForm(),
+	'Wurzeln entfernen': () => getRootRemovalForm(),
+	'Pflastern': () => getPavingForm(),
+	'Minibagger-Arbeiten': () => getMiniExcavatorWorkForm(),
+	'Gartenhütten aufbauen': () => getGardenHutSandingPaintingForm(),
+	'Hecken entfernen': () => getHedgeRemovalForm(),
+	'Kleine Bäume fällen': () => getSmallTreeFellingForm(),
+	'Sträucher schneiden': () => getShrubTrimmingForm(),
+	'Entsorgung von Grünschnitt': () => getGreenWasteDisposalForm(),
+	'Überdachung': () => getCanopyForm(),
+	'Holzhäcksler': () => getWoodChipperForm()
+};
+
+function getCalcMainContainer() {
+	return document.querySelector('.calc-layout .calc-main') || document.querySelector('.calc-layout');
+}
+
+function getSelectedServiceData() {
+	try {
+		const raw = sessionStorage.getItem(SERVICE_SELECTION_STORAGE_KEY);
+		return raw ? JSON.parse(raw) : null;
+	} catch (_) {
+		return null;
+	}
+}
+
+function renderStandaloneForm(templateHTML) {
+	const container = getCalcMainContainer();
+	if (!container) return null;
+
+	const oldForm = container.querySelector('#calcForm');
+	if (oldForm) oldForm.remove();
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = templateHTML;
+	const newForm = tempDiv.querySelector('#calcForm');
+	if (!newForm) return null;
+
+	container.appendChild(newForm);
+	initDynamicFurnitureItems(newForm);
+	return newForm;
+}
+
+function createFurnitureItemCard(index) {
+	const wrapper = document.createElement('div');
+	wrapper.innerHTML = getFurnitureItemCardTemplate(index).trim();
+	const card = wrapper.firstElementChild;
+	if (!card) return null;
+
+	return card;
+}
+
+function refreshFurnitureItemHeaders(list) {
+	const cards = list.querySelectorAll('.furniture-item-card');
+	cards.forEach((card, idx) => {
+		const head = card.querySelector('strong');
+		if (head) head.textContent = `Möbelstück ${idx + 1}`;
+
+		const removeBtn = card.querySelector('[data-remove-item]');
+		if (removeBtn) {
+			removeBtn.style.display = cards.length > 1 ? 'inline-flex' : 'none';
+		}
+	});
+}
+
+function initDynamicFurnitureItems(formElement) {
+	const itemsList = formElement.querySelector('#furnitureItemsList');
+	const addBtn = formElement.querySelector('#addFurnitureItemBtn');
+	if (!itemsList || !addBtn) return;
+
+	addBtn.addEventListener('click', () => {
+		const nextIndex = itemsList.querySelectorAll('.furniture-item-card').length;
+		itemsList.appendChild(createFurnitureItemCard(nextIndex));
+		refreshFurnitureItemHeaders(itemsList);
+	});
+
+	itemsList.addEventListener('click', (event) => {
+		const removeBtn = event.target.closest('[data-remove-item]');
+		if (!removeBtn) return;
+
+		const card = removeBtn.closest('.furniture-item-card');
+		if (!card) return;
+
+		card.remove();
+		refreshFurnitureItemHeaders(itemsList);
+	});
+
+	refreshFurnitureItemHeaders(itemsList);
+}
+
+function renderServiceSpecificFormFromStorage() {
+	const selectedService = getSelectedServiceData();
+	const label = selectedService?.label?.trim();
+	if (!label) return false;
+
+	const templateFactory = SERVICE_FORM_TEMPLATES_BY_LABEL[label];
+	if (!templateFactory) return false;
+
+	const templateHTML = templateFactory();
+	if (!templateHTML) return false;
+
+	if (kitchenSurvey) {
+		kitchenSurvey.style.display = 'none';
+	}
+
+	const form = renderStandaloneForm(templateHTML);
+	if (!form) return false;
+
+	currentForm = form;
+	return true;
+}
 
 function mapLocationToTransportPoint(location) {
 		if (!location) return null;
@@ -40,6 +167,10 @@ function createAddressAutocomplete(elementId) {
 }
 
 function init() {
+	if (renderServiceSpecificFormFromStorage()) {
+		return;
+	}
+
 	if (kitchenSurvey) {
 		const surveyBtns = kitchenSurvey.querySelectorAll('.survey-btn');
 
@@ -81,8 +212,8 @@ function attachFormContinueListener(formElement) {
 }
 
 function renderAssemblySurvey() {
-	const calcLayout = document.querySelector('.calc-layout');
-	if (!calcLayout) return null;
+	const calcContainer = getCalcMainContainer();
+	if (!calcContainer) return null;
 
 	const surveyHTML = getAssemblySurvey();
 
@@ -91,7 +222,7 @@ function renderAssemblySurvey() {
 	const survey = tempDiv.querySelector('.assembly-survey');
 	if (!survey) return null;
 
-	calcLayout.appendChild(survey);
+	calcContainer.appendChild(survey);
 	return survey;
 }
 
@@ -145,8 +276,8 @@ function showAssemblySurvey() {
 }
 
 function renderTransportationSurvey() {
-	const calcLayout = document.querySelector('.calc-layout');
-	if (!calcLayout) return null;
+	const calcContainer = getCalcMainContainer();
+	if (!calcContainer) return null;
 
 	const surveyHTML = getTransportationSurvey();
 	const tempDiv = document.createElement('div');
@@ -155,7 +286,7 @@ function renderTransportationSurvey() {
 	const survey = tempDiv.querySelector('.transport-survey');
 	if (!survey) return null;
 
-	calcLayout.appendChild(survey);
+	calcContainer.appendChild(survey);
 	return survey;
 }
 
@@ -377,7 +508,7 @@ function buildKitchenFormPayload(formElement) {
 }
 
 function appendTemplateToCalcLayout(templateHTML) {
-	const calcSection = document.querySelector('.calc .container .calc-layout');
+	const calcSection = getCalcMainContainer();
 	if (!calcSection) return;
 
 	const tempDiv = document.createElement('div');

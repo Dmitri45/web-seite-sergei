@@ -829,6 +829,10 @@ body.page-calculate {
     pointer-events: none;
 }
 
+.service-card--appointment::before {
+    content: "Besichtigungstermin vereinbaren";
+}
+
 .service-card-bg {
     position: absolute;
     inset: 0;

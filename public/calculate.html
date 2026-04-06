@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Küche aufbauen – S.K. SERVICE</title>
     <link rel="icon" type="image/png" href="img/logo_no_background.png">
+    <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete@1.5.0/styles/minimal.css">
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="style_calculate.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete@1.5.0/styles/minimal.css">
 </head>
 
 <body class="page-calculate">
@@ -68,13 +68,10 @@
             <div class="container">
                 <div class="hero-overlay"></div>
                 <div class="hero-inner">
-                    <div class="hero-eyebrow">S.K. SERVICE</div>
+                    <div class="hero-eyebrow">KÜCHENSERVICE</div>
                     <h1 class="hero-title">Küche aufbauen</h1>
                     <div class="hero-subtitle">Gib ein paar Details ein – wir nutzen das später für die Preisberechnung</div>
-                    <div class="hero-actions">
-                        <a class="btn-main" href="index.html">← Zurück</a>
-                        <span class="tag" style="margin-left:18px;">Kostenberechnung</span>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -83,29 +80,52 @@
     <section class="calc">
         <div class="container">
             <div class="calc-layout">
-
-                <div class="kitchen-survey" id="kitchenSurvey">
-                    <div class="survey-card">
-                        <h2>Welche Küche?</h2>
-                        <p>Bitte wählen Sie den Zustand Ihrer Küche</p>
-                        
-                        <div class="survey-options">
-                            <button type="button" class="survey-btn" data-value="new">
-                                <span class="survey-label">Neue Küche</span>
-                                <span class="survey-desc">Küche komplett zerlegt - alle Teile einzeln verpackt</span>
-                            </button>
-                            <button type="button" class="survey-btn" data-value="used">
-                                <span class="survey-label">Gebrauchte Küche</span>
-                                <span class="survey-desc">Schränke bereits zusammengebaut - nur Montage nötig</span>
-                            </button>
+                <div class="calc-main">
+                    <div class="kitchen-survey" id="kitchenSurvey">
+                        <div class="survey-card">
+                            <h2>Preisrechner</h2>
+                            <p>Geben Sie ein paar Details an - wir berechnen eine erste Kostenschätzung.</p>
+                            
+                            <div class="survey-options">
+                                <button type="button" class="survey-btn" data-value="new">
+                                    <span class="survey-label">Neue Küche</span>
+                                    <span class="survey-desc">Küche komplett zerlegt - alle Teile einzeln verpackt</span>
+                                </button>
+                                <button type="button" class="survey-btn" data-value="used">
+                                    <span class="survey-label">Gebrauchte Küche</span>
+                                    <span class="survey-desc">Schränke bereits zusammengebaut - nur Montage nötig</span>
+                                </button>
+                            </div>
+                            
+                            <button id="continueBtn" class="btn-main" style="display: none; margin-top: 20px;">Weiter</button>
                         </div>
-                        
-                        <button id="continueBtn" class="btn-main" style="display: none; margin-top: 20px;">Weiter</button>
                     </div>
                 </div>
 
-            </div>
-
+                <aside class="calc-placeholder">
+                    <div class="calc-placeholder__box">
+                        <img id="selectedServicePreviewImage" class="calc-placeholder__image" src="img/services/kuechenservice/kuechenaufbau.png" alt="Leistungsvorschau">
+                        <div class="calc-placeholder__content">
+                            <h3 id="selectedServiceAsideTitle">Küche aufbauen</h3>
+                            <ul class="calc-placeholder__list">
+                                <li>Fachgerechte Ausführung</li>
+                                <li>Saubere Entsorgung optional</li>
+                                <li>Termin nach Wunsch</li>
+                                <li>Transparente Preisübersicht</li>
+                            </ul>
+                            <hr>
+                            <h3>Was Sie erhalten</h4>
+                            <ul class="calc-placeholder__sublist">
+                                <li>Erste Kostenschätzung online</li>
+                                <li>Persönliches Angebot auf Anfrage</li>
+                                <li>Terminabstimmung nach Kontakt</li>
+                            </ul>
+                            <div class="calc-placeholder__cta-wrap">
+                                <a class="btn-main calc-placeholder__cta" href="tel:+4912345678">Beratung anfragen</a>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </div>
     </section>
@@ -129,5 +149,6 @@
 </body>
 <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.5.0/dist/index.min.js"></script>
 <script src="templates.js"></script>
+<script src="service-selection.js"></script>
 <script src="calculate.js"></script>
 </html>
