@@ -155,35 +155,98 @@ function getUsedKitchenForm() {
 	`;
 }
 
-function getSmallItemsTransportForm() {
+function getKitchenDismantlingForm() {
 	return `
-		<form class="calc-card moving-helpers-form" id="calcForm">
-			<h2>Transport von kleinen Sachen</h2>
-			<p>Bitte geben Sie die wichtigsten Details für eine erste Kostenschätzung an.</p>
+		<form class="calc-card" id="calcForm">
+			<h2>Küche abbauen</h2>
+			<p>Bitte geben Sie die wichtigsten Angaben für den Küchenabbau an.</p>
 
 			<div class="calc-grid">
-				<div class="field field-full">
-					<label for="itemType">Was soll transportiert werden?</label>
-					<select id="itemType" name="itemType">
+				<div class="field">
+					<label for="date">Wunschtermin</label>
+					<input id="date" name="date" type="date">
+				</div>
+
+				<div class="field">
+					<label for="kitchenType">Küchentyp</label>
+					<select id="kitchenType" name="kitchenType">
 						<option value="">Bitte wählen…</option>
-						<option value="furniture">Möbel / Möbelstück</option>
-						<option value="appliance">Elektrogerät / Gegenstand</option>
+						<option value="zeile">I-Form</option>
+						<option value="l-form">L-Form</option>
+						<option value="u-form">U-Form</option>
 					</select>
 				</div>
 
 				<div class="field">
-					<label for="itemLength">Länge (m)</label>
-					<input id="itemLength" name="itemLength" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+					<label for="upperCabinets">Anzahl der Oberschränke</label>
+					<input id="upperCabinets" name="upperCabinets" type="number" min="0" placeholder="z.B. 4">
 				</div>
 
 				<div class="field">
-					<label for="itemWidth">Breite (m)</label>
-					<input id="itemWidth" name="itemWidth" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
+					<label for="lowerCabinets">Anzahl der Unterschränke</label>
+					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
 				</div>
 
-				<div class="field">
-					<label for="itemHeight">Höhe (m)</label>
-					<input id="itemHeight" name="itemHeight" type="number" min="0" step="0.01" placeholder="z.B. 0.80">
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="z.B. Etage, Aufzug, Zustand der Küche, Besonderheiten"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
+function getSmallItemsTransportForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Transport von kleinen Sachen</h2>
+			<p>Fügen Sie die Positionen einzeln hinzu und geben Sie Maße sowie Ab-/Aufbauwunsch an.</p>
+
+			<div class="calc-grid">
+				<div class="field field-full">
+					<label>Positionen</label>
+					<div id="furnitureItemsList" class="furniture-items-list" data-item-template="transport" data-item-label="Position">
+						<div class="furniture-item-card" data-item-index="0">
+							<div class="furniture-item-card__head">
+								<strong>Position 1</strong>
+								<button type="button" class="btn-secondary furniture-item-remove" data-remove-item style="display:none;">Entfernen</button>
+							</div>
+							<div class="calc-grid">
+								<div class="field field-full">
+									<label for="transportItemName_0">Was soll transportiert werden?</label>
+									<input id="transportItemName_0" name="transportItemName_0" type="text" placeholder="z.B. Schrank, Waschmaschine, Kartons">
+								</div>
+								<div class="field">
+									<label for="transportItemLength_0">Länge (m)</label>
+									<input id="transportItemLength_0" name="transportItemLength_0" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+								</div>
+								<div class="field">
+									<label for="transportItemWidth_0">Breite (m)</label>
+									<input id="transportItemWidth_0" name="transportItemWidth_0" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
+								</div>
+								<div class="field">
+									<label for="transportItemHeight_0">Höhe (m)</label>
+									<input id="transportItemHeight_0" name="transportItemHeight_0" type="number" min="0" step="0.01" placeholder="z.B. 0.80">
+								</div>
+								<div class="field field-full">
+									<label for="transportAssemblyNeed_0">Abbauen / Aufbauen benötigt?</label>
+									<select id="transportAssemblyNeed_0" name="transportAssemblyNeed_0">
+										<option value="">Bitte wählen…</option>
+										<option value="none">Nicht nötig</option>
+										<option value="dismantle">Nur abbauen</option>
+										<option value="assemble">Nur aufbauen</option>
+										<option value="both">Abbauen und aufbauen</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<button id="addFurnitureItemBtn" class="btn-secondary" type="button">Position hinzufügen</button>
 				</div>
 
 				<div class="field">
@@ -365,22 +428,12 @@ function getGardenHutSandingPaintingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Gartenhütten schleifen / streichen</h2>
-			<p>Bitte geben Sie die Flächen- oder Maßangaben sowie gewünschte Leistungen an.</p>
+			<p>Bitte geben Sie die Flächenangaben sowie gewünschte Leistungen an.</p>
 
 			<div class="calc-grid">
 				<div class="field">
 					<label for="areaTotal">Quadratmeter gesamt (ca.)</label>
 					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 24">
-				</div>
-
-				<div class="field">
-					<label for="length">Länge (m)</label>
-					<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 4.00">
-				</div>
-
-				<div class="field">
-					<label for="width">Breite (m)</label>
-					<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 3.00">
 				</div>
 
 				<div class="field">
@@ -415,6 +468,62 @@ function getGardenHutSandingPaintingForm() {
 	`;
 }
 
+function getGardenHutAssemblyForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Gartenhütten aufbauen</h2>
+			<p>Bitte geben Sie die wichtigsten Angaben für Aufbau, Boden und Zugang an.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="areaTotal">Quadratmeter (ca.)</label>
+					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 12">
+				</div>
+
+				<div class="field">
+					<label for="roofCoating">Dachbeschichtung</label>
+					<input id="roofCoating" name="roofCoating" type="text" placeholder="z.B. Bitumen, EPDM, Blech">
+				</div>
+
+				<div class="field">
+					<label for="withGroundPreparation">Mit oder ohne Bodenvorbereitung?</label>
+					<select id="withGroundPreparation" name="withGroundPreparation">
+						<option value="">Bitte wählen…</option>
+						<option value="without">Ohne Bodenvorbereitung</option>
+						<option value="with">Mit Bodenvorbereitung</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="groundType">Falls mit: Welche Bodenart?</label>
+					<select id="groundType" name="groundType">
+						<option value="">Bitte wählen…</option>
+						<option value="fundament">Fundament</option>
+						<option value="paving-stones">Pflastersteine</option>
+						<option value="plates">Platten</option>
+						<option value="supports">Fundamentstützen</option>
+					</select>
+				</div>
+
+				<div class="field field-full">
+					<label for="distanceToGarden">Wie nah kann man zum Garten/Ort anfahren (m)</label>
+					<input id="distanceToGarden" name="distanceToGarden" type="number" min="0" step="1" placeholder="z.B. 8">
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="Eigener Text: Größe, Zugänglichkeit, gewünschter Termin, Besonderheiten"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
 function getHedgeTrimmingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -428,23 +537,24 @@ function getHedgeTrimmingForm() {
 				</div>
 
 				<div class="field">
+				<label for="targetHeight">Gewünschte Höhe (m)</label>
+				<input id="targetHeight" name="targetHeight" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
+				</div>
+				
+				<div class="field">
+				<label for="currentWidth">Aktuelle Breite (m)</label>
+				<input id="currentWidth" name="currentWidth" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+				</div>
+				
+
+				<div class="field">
+				<label for="targetWidth">Gewünschte Breite (m)</label>
+				<input id="targetWidth" name="targetWidth" type="number" min="0" step="0.01" placeholder="z.B. 0.90">
+				</div>
+				
+				<div class="field">
 					<label for="currentLength">Aktuelle Länge (m)</label>
 					<input id="currentLength" name="currentLength" type="number" min="0" step="0.01" placeholder="z.B. 12.00">
-				</div>
-
-				<div class="field">
-					<label for="currentWidth">Aktuelle Breite (m)</label>
-					<input id="currentWidth" name="currentWidth" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
-				</div>
-
-				<div class="field">
-					<label for="targetHeight">Gewünschte Höhe (m)</label>
-					<input id="targetHeight" name="targetHeight" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
-				</div>
-
-				<div class="field">
-					<label for="targetWidth">Gewünschte Breite (m)</label>
-					<input id="targetWidth" name="targetWidth" type="number" min="0" step="0.01" placeholder="z.B. 0.90">
 				</div>
 
 				<div class="field">
@@ -457,7 +567,7 @@ function getHedgeTrimmingForm() {
 				</div>
 
 				<div class="field field-full">
-					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man an Garten/Ort anfahren? (m)</label>
+					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man zum Garten/Ort anfahren (m)</label>
 					<input id="distanceToGarden" name="distanceToGarden" type="number" min="0" step="1" placeholder="z.B. 10">
 				</div>
 
@@ -507,7 +617,7 @@ function getHedgeRemovalForm() {
 				</div>
 
 				<div class="field field-full">
-					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man an Garten/Ort anfahren? (m)</label>
+					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man zum Garten/Ort anfahren (m)</label>
 					<input id="distanceToGarden" name="distanceToGarden" type="number" min="0" step="1" placeholder="z.B. 12">
 				</div>
 
@@ -547,7 +657,7 @@ function getRootRemovalForm() {
 				</div>
 
 				<div class="field field-full">
-					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man an Garten/Ort anfahren? (m)</label>
+					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man zum Garten/Ort anfahren (m)</label>
 					<input id="distanceToGarden" name="distanceToGarden" type="number" min="0" step="1" placeholder="z.B. 10">
 				</div>
 
@@ -596,7 +706,7 @@ function getSmallTreeFellingForm() {
 				</div>
 
 				<div class="field">
-					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man an Garten/Ort anfahren? (m)</label>
+					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man zum Garten/Ort anfahren (m)</label>
 					<input id="distanceToGarden" name="distanceToGarden" type="number" min="0" step="1" placeholder="z.B. 8">
 				</div>
 
@@ -618,27 +728,29 @@ function getLawnInstallationForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Rollrasen inkl. Bodenvorbereitung</h2>
-			<p>Bitte geben Sie Flächen- oder Maßangaben sowie Zugangsdetails an.</p>
+			<p>Bitte geben Sie die Fläche als Quadratmeter oder über Länge und Breite an.</p>
 
 			<div class="calc-grid">
-				<div class="field">
-					<label for="areaTotal">Quadratmeter gesamt (ca.)</label>
-					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 48">
-				</div>
-
-				<div class="field">
-					<label for="length">Länge (m)</label>
-					<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 8.00">
-				</div>
-
-				<div class="field">
-					<label for="width">Breite (m)</label>
-					<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 6.00">
-				</div>
-
-				<div class="field">
-					<label for="heightCm">Höhe (cm)</label>
-					<input id="heightCm" name="heightCm" type="number" min="0" step="1" placeholder="z.B. 10">
+				<div class="field field-full">
+					<div class="calc-option-block">
+						<div class="field">
+							<label for="areaTotal">Quadratmeter gesamt (ca.)</label>
+							<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 48">
+						</div>
+					</div>
+					<div class="calc-option-divider">ODER</div>
+					<div class="calc-option-block">
+						<div class="calc-option-grid">
+							<div class="field">
+								<label for="length">Länge (m)</label>
+								<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 8.00">
+							</div>
+							<div class="field">
+								<label for="width">Breite (m)</label>
+								<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 6.00">
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="field field-full">
@@ -664,27 +776,29 @@ function getLawnMowingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Rasen mähen</h2>
-			<p>Bitte geben Sie Flächen- oder Maßangaben sowie Zugangsdetails an.</p>
+			<p>Bitte geben Sie die Fläche als Quadratmeter oder über Länge und Breite an.</p>
 
 			<div class="calc-grid">
-				<div class="field">
-					<label for="areaTotal">Quadratmeter gesamt (ca.)</label>
-					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 80">
-				</div>
-
-				<div class="field">
-					<label for="length">Länge (m)</label>
-					<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 10.00">
-				</div>
-
-				<div class="field">
-					<label for="width">Breite (m)</label>
-					<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 8.00">
-				</div>
-
-				<div class="field">
-					<label for="heightCm">Höhe (cm)</label>
-					<input id="heightCm" name="heightCm" type="number" min="0" step="1" placeholder="z.B. 12">
+				<div class="field field-full">
+					<div class="calc-option-block">
+						<div class="field">
+							<label for="areaTotal">Quadratmeter gesamt (ca.)</label>
+							<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 80">
+						</div>
+					</div>
+					<div class="calc-option-divider">ODER</div>
+					<div class="calc-option-block">
+						<div class="calc-option-grid">
+							<div class="field">
+								<label for="length">Länge (m)</label>
+								<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 10.00">
+							</div>
+							<div class="field">
+								<label for="width">Breite (m)</label>
+								<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 8.00">
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="field field-full">
@@ -710,50 +824,83 @@ function getShrubTrimmingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Sträucher schneiden (jede Art und Größe)</h2>
-			<p>Bitte geben Sie aktuelle Form/Maße, Zielzustand und Entsorgungsdetails an.</p>
+			<p>Bitte wählen Sie jeweils den aktuellen und den gewünschten Zustand: in Form oder nach Maßen.</p>
 
 			<div class="calc-grid">
-				<div class="field">
-					<label for="currentHeight">Aktuelle Höhe (m)</label>
-					<input id="currentHeight" name="currentHeight" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
-				</div>
-
-				<div class="field">
-					<label for="currentLength">Aktuelle Länge (m)</label>
-					<input id="currentLength" name="currentLength" type="number" min="0" step="0.01" placeholder="z.B. 3.00">
-				</div>
-
-				<div class="field">
-					<label for="currentWidth">Aktuelle Breite (m)</label>
-					<input id="currentWidth" name="currentWidth" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+				<div class="field field-full">
+					<div class="calc-option-block">
+						<div class="calc-option-title">Zustand jetzt</div>
+						<div class="calc-option-grid">
+							<div class="field">
+								<label for="currentShapeMode">Ist der Strauch in Form?</label>
+								<select id="currentShapeMode" name="currentShapeMode">
+									<option value="">Bitte wählen…</option>
+									<option value="in-shape">Ja, in Form</option>
+									<option value="not-in-shape">Nein, nicht in Form</option>
+								</select>
+							</div>
+							<div class="field" id="currentShapeTypeWrap">
+								<label for="currentShapeType">Falls in Form: Welche Form?</label>
+								<select id="currentShapeType" name="currentShapeType">
+									<option value="">Bitte wählen…</option>
+									<option value="round">Rund</option>
+									<option value="box">Kasten / Rechteckig</option>
+									<option value="cone">Kegelform</option>
+									<option value="other">Sonstige Form</option>
+								</select>
+							</div>
+						</div>
+						<div class="calc-option-grid" id="currentSizeFieldsWrap">
+							<div class="field">
+								<label for="currentHeight">Falls nicht in Form: Höhe (m)</label>
+								<input id="currentHeight" name="currentHeight" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
+							</div>
+							<div class="field">
+								<label for="currentLength">Falls nicht in Form: Länge (m)</label>
+								<input id="currentLength" name="currentLength" type="number" min="0" step="0.01" placeholder="z.B. 3.00">
+							</div>
+							<div class="field">
+								<label for="currentWidth">Falls nicht in Form: Breite (m)</label>
+								<input id="currentWidth" name="currentWidth" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="field field-full">
-					<label for="currentShapeState">Aktueller Zustand (Maße oder in Form)</label>
-					<select id="currentShapeState" name="currentShapeState">
-						<option value="">Bitte wählen…</option>
-						<option value="size-based">Nach Maßen</option>
-						<option value="already-in-shape">Ist in Form</option>
-					</select>
-				</div>
-
-				<div class="field">
-					<label for="targetHeight">Gewünschte Höhe (m)</label>
-					<input id="targetHeight" name="targetHeight" type="number" min="0" step="0.01" placeholder="z.B. 1.50">
-				</div>
-
-				<div class="field">
-					<label for="targetWidth">Gewünschte Breite (m)</label>
-					<input id="targetWidth" name="targetWidth" type="number" min="0" step="0.01" placeholder="z.B. 0.90">
-				</div>
-
-				<div class="field">
-					<label for="targetShapeState">Gewünschter Zustand</label>
-					<select id="targetShapeState" name="targetShapeState">
-						<option value="">Bitte wählen…</option>
-						<option value="size-based">Nach Maßen</option>
-						<option value="in-shape">In Form schneiden</option>
-					</select>
+					<div class="calc-option-block">
+						<div class="calc-option-title">Gewünschter Zustand</div>
+						<div class="calc-option-grid">
+							<div class="field">
+								<label for="targetShapeMode">Soll der Strauch in Form sein?</label>
+								<select id="targetShapeMode" name="targetShapeMode">
+									<option value="">Bitte wählen…</option>
+									<option value="in-shape">Ja, in Form</option>
+									<option value="not-in-shape">Nein, nach Maßen</option>
+								</select>
+							</div>
+							<div class="field" id="targetShapeTypeWrap">
+								<label for="targetShapeType">Falls in Form: Welche Form gewünscht?</label>
+								<select id="targetShapeType" name="targetShapeType">
+									<option value="">Bitte wählen…</option>
+									<option value="round">Rund</option>
+									<option value="box">Kasten / Rechteckig</option>
+									<option value="cone">Kegelform</option>
+									<option value="other">Sonstige Form</option>
+								</select>
+							</div>
+						</div>
+						<div class="calc-option-grid" id="targetSizeFieldsWrap">
+							<div class="field">
+								<label for="targetHeight">Falls nach Maßen: Höhe (m)</label>
+								<input id="targetHeight" name="targetHeight" type="number" min="0" step="0.01" placeholder="z.B. 1.50">
+							</div>
+							<div class="field">
+								<label for="targetWidth">Falls nach Maßen: Breite (m)</label>
+								<input id="targetWidth" name="targetWidth" type="number" min="0" step="0.01" placeholder="z.B. 0.90">
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="field">
@@ -766,7 +913,7 @@ function getShrubTrimmingForm() {
 				</div>
 
 				<div class="field">
-					<label for="distanceToGarden">Falls mit Entsorgung: Distanz zum Garten/Ort (m)</label>
+					<label for="distanceToGarden">Falls mit Entsorgung: Wie nah kann man zum Garten/Ort anfahren (m)</label>
 					<input id="distanceToGarden" name="distanceToGarden" type="number" min="0" step="1" placeholder="z.B. 10">
 				</div>
 
@@ -788,27 +935,33 @@ function getGreenWasteDisposalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Entsorgung von Grünschnitt und Gartenabfällen</h2>
-			<p>Bitte geben Sie Menge/Abmessungen und Zugangsdaten für die Entsorgung an.</p>
+			<p>Bitte geben Sie die Menge entweder als Kubikmeter (geschätzt) oder über Maße an.</p>
 
 			<div class="calc-grid">
-				<div class="field">
-					<label for="estimatedVolume">Kubikmeter (geschätzt)</label>
-					<input id="estimatedVolume" name="estimatedVolume" type="number" min="0" step="0.1" placeholder="z.B. 3.5">
-				</div>
-
-				<div class="field">
-					<label for="length">Länge (m)</label>
-					<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 2.00">
-				</div>
-
-				<div class="field">
-					<label for="width">Breite (m)</label>
-					<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 1.50">
-				</div>
-
-				<div class="field">
-					<label for="height">Höhe (m)</label>
-					<input id="height" name="height" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+				<div class="field field-full">
+					<div class="calc-option-block">
+						<div class="field">
+							<label for="estimatedVolume">Kubikmeter (geschätzt)</label>
+							<input id="estimatedVolume" name="estimatedVolume" type="number" min="0" step="0.1" placeholder="z.B. 3.5">
+						</div>
+					</div>
+					<div class="calc-option-divider">ODER</div>
+					<div class="calc-option-block">
+						<div class="calc-option-grid">
+							<div class="field">
+								<label for="length">Länge (m)</label>
+								<input id="length" name="length" type="number" min="0" step="0.01" placeholder="z.B. 2.00">
+							</div>
+							<div class="field">
+								<label for="width">Breite (m)</label>
+								<input id="width" name="width" type="number" min="0" step="0.01" placeholder="z.B. 1.50">
+							</div>
+							<div class="field">
+								<label for="height">Höhe (m)</label>
+								<input id="height" name="height" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="field field-full">
@@ -861,6 +1014,52 @@ function getPavingForm() {
 				<div class="field field-full">
 					<label for="notes">Zusätzliche Hinweise</label>
 					<textarea id="notes" name="notes" rows="4" placeholder="Eigener Text: gewünschtes Muster, Material, Zugang, Besonderheiten"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
+function getFenceAssemblyForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Zäune aufbauen</h2>
+			<p>Bitte geben Sie die Anzahl der Zaunelemente und optionale Bordstein-Angaben an.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="fenceElementsCount" class="label-with-tooltip">
+						Wie viele Zaunelemente insgesamt?
+						<span class="help-tooltip">
+							<span class="help-tooltip__icon" aria-label="Hinweis">i</span>
+							<span class="help-tooltip__content">Ein Zaunelement ist ein Feld zwischen zwei Pfosten.</span>
+						</span>
+					</label>
+					<input id="fenceElementsCount" name="fenceElementsCount" type="number" min="1" step="1" placeholder="z.B. 5">
+				</div>
+
+				<div class="field">
+					<label for="withKerbstone">Mit Kantenstein / Bordstein?</label>
+					<select id="withKerbstone" name="withKerbstone">
+						<option value="">Bitte wählen…</option>
+						<option value="without">Ohne</option>
+						<option value="with">Mit</option>
+					</select>
+				</div>
+
+				<div class="field field-full">
+					<label for="kerbstoneLengthM">Falls mit: Länge Kantenstein / Bordstein (m)</label>
+					<input id="kerbstoneLengthM" name="kerbstoneLengthM" type="number" min="0" step="0.1" placeholder="z.B. 18">
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="Eigener Text: Zauntyp, Gelände, Zugang, gewünschter Termin"></textarea>
 				</div>
 			</div>
 
@@ -941,6 +1140,103 @@ function getJointCleaningForm() {
 	`;
 }
 
+function getFinePlasterForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Feinputz</h2>
+			<p>Bitte geben Sie Fläche und gewünschte Qualitätsstufe an.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="areaTotal">Quadratmeter (ca.)</label>
+					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 45">
+				</div>
+
+				<div class="field">
+					<label for="qualityLevel">Qualitätsstufe</label>
+					<select id="qualityLevel" name="qualityLevel">
+						<option value="">Bitte wählen…</option>
+						<option value="q1q2">Q1 / Q2</option>
+						<option value="q3">Q3</option>
+						<option value="q4">Q4</option>
+					</select>
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="Eigener Text: Untergrund, Raumzustand, gewünschter Termin"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
+function getWallPlasteringForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Wände Verputzen</h2>
+			<p>Bitte geben Sie Fläche und Ausführungsart an.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="areaTotal">Quadratmeter (ca.)</label>
+					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 60">
+				</div>
+
+				<div class="field">
+					<label for="plasteringType">Ausführungsart</label>
+					<select id="plasteringType" name="plasteringType">
+						<option value="">Bitte wählen…</option>
+						<option value="grobeschicht-frei-hand">Wände Verputzen / Grobeschicht (frei Hand, nicht lotgerecht)</option>
+						<option value="lotgerecht-wasserwaage">Wände Verputzen (mit Wasserwaage, lotgerecht)</option>
+					</select>
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="Eigener Text: Untergrund, Raumanzahl, Zustand, gewünschter Termin"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
+function getDrywallForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Trockenbau (Rigipsausbau)</h2>
+			<p>Bitte geben Sie Fläche und kurze Projektangaben an.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="areaTotal">Quadratmeter (ca.)</label>
+					<input id="areaTotal" name="areaTotal" type="number" min="0" step="0.1" placeholder="z.B. 30">
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="Eigener Text: Wand/Decke, Raum, Untergrund, gewünschter Termin"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
 function getMiniExcavatorWorkForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -976,27 +1272,33 @@ function getWoodChipperForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Holzhäcksler</h2>
-			<p>Bitte geben Sie Menge oder Astdaten sowie Zugangsinformationen an.</p>
+			<p>Bitte geben Sie die Menge entweder als Kubikmeter (geschätzt) oder über Astdaten an.</p>
 
 			<div class="calc-grid">
-				<div class="field">
-					<label for="estimatedVolume">Kubikmeter (geschätzt)</label>
-					<input id="estimatedVolume" name="estimatedVolume" type="number" min="0" step="0.1" placeholder="z.B. 2.5">
-				</div>
-
-				<div class="field">
-					<label for="branchThickness">Aststärke (ca. cm)</label>
-					<input id="branchThickness" name="branchThickness" type="number" min="0" step="1" placeholder="z.B. 4">
-				</div>
-
-				<div class="field">
-					<label for="branchLength">Astlänge (ca. m)</label>
-					<input id="branchLength" name="branchLength" type="number" min="0" step="0.1" placeholder="z.B. 1.2">
-				</div>
-
-				<div class="field">
-					<label for="branchCount">Anzahl Äste (ca. Stück)</label>
-					<input id="branchCount" name="branchCount" type="number" min="0" step="1" placeholder="z.B. 40">
+				<div class="field field-full">
+					<div class="calc-option-block">
+						<div class="field">
+							<label for="estimatedVolume">Kubikmeter (geschätzt)</label>
+							<input id="estimatedVolume" name="estimatedVolume" type="number" min="0" step="0.1" placeholder="z.B. 2.5">
+						</div>
+					</div>
+					<div class="calc-option-divider">ODER</div>
+					<div class="calc-option-block">
+						<div class="calc-option-grid">
+							<div class="field">
+								<label for="branchThickness">Aststärke (ca. cm)</label>
+								<input id="branchThickness" name="branchThickness" type="number" min="0" step="1" placeholder="z.B. 4">
+							</div>
+							<div class="field">
+								<label for="branchLength">Astlänge (ca. m)</label>
+								<input id="branchLength" name="branchLength" type="number" min="0" step="0.1" placeholder="z.B. 1.2">
+							</div>
+							<div class="field">
+								<label for="branchCount">Anzahl Äste (ca. Stück)</label>
+								<input id="branchCount" name="branchCount" type="number" min="0" step="1" placeholder="z.B. 40">
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="field field-full">
@@ -1041,8 +1343,9 @@ function getCustomFurnitureRequestForm() {
 				</div>
 
 				<div class="field field-full">
-					<label for="address">Ort der Besichtigung</label>
-					<input id="address" name="address" type="text" placeholder="Straße, Hausnummer, PLZ, Ort">
+					<label for="customFurnitureAddressValue">Ort der Besichtigung</label>
+					<div id="customFurnitureAddressAutocomplete" class="autocomplete-container" data-address-autocomplete data-address-target="address"></div>
+					<input id="customFurnitureAddressValue" name="address" type="hidden">
 				</div>
 
 				<div class="field field-full">
@@ -1082,8 +1385,9 @@ function getCustomKitchenRequestForm() {
 				</div>
 
 				<div class="field field-full">
-					<label for="address">Ort der Besichtigung</label>
-					<input id="address" name="address" type="text" placeholder="Straße, Hausnummer, PLZ, Ort">
+					<label for="customKitchenAddressValue">Ort der Besichtigung</label>
+					<div id="customKitchenAddressAutocomplete" class="autocomplete-container" data-address-autocomplete data-address-target="address"></div>
+					<input id="customKitchenAddressValue" name="address" type="hidden">
 				</div>
 
 				<div class="field field-full">
@@ -1223,6 +1527,45 @@ function getFurnitureItemCardTemplate(index) {
 	`;
 }
 
+function getTransportItemCardTemplate(index) {
+	return `
+		<div class="furniture-item-card" data-item-index="${index}">
+			<div class="furniture-item-card__head">
+				<strong>Position ${index + 1}</strong>
+				<button type="button" class="btn-secondary furniture-item-remove" data-remove-item>Entfernen</button>
+			</div>
+			<div class="calc-grid">
+				<div class="field field-full">
+					<label for="transportItemName_${index}">Was soll transportiert werden?</label>
+					<input id="transportItemName_${index}" name="transportItemName_${index}" type="text" placeholder="z.B. Schrank, Waschmaschine, Kartons">
+				</div>
+				<div class="field">
+					<label for="transportItemLength_${index}">Länge (m)</label>
+					<input id="transportItemLength_${index}" name="transportItemLength_${index}" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
+				</div>
+				<div class="field">
+					<label for="transportItemWidth_${index}">Breite (m)</label>
+					<input id="transportItemWidth_${index}" name="transportItemWidth_${index}" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
+				</div>
+				<div class="field">
+					<label for="transportItemHeight_${index}">Höhe (m)</label>
+					<input id="transportItemHeight_${index}" name="transportItemHeight_${index}" type="number" min="0" step="0.01" placeholder="z.B. 0.80">
+				</div>
+				<div class="field field-full">
+					<label for="transportAssemblyNeed_${index}">Abbauen / Aufbauen benötigt?</label>
+					<select id="transportAssemblyNeed_${index}" name="transportAssemblyNeed_${index}">
+						<option value="">Bitte wählen…</option>
+						<option value="none">Nicht nötig</option>
+						<option value="dismantle">Nur abbauen</option>
+						<option value="assemble">Nur aufbauen</option>
+						<option value="both">Abbauen und aufbauen</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	`;
+}
+
 function getLoadingTemplate() {
 	return `
 		<div id="loading-indicator" class="loading-indicator">
@@ -1324,8 +1667,10 @@ const SERVICES_BY_CATEGORY = {
         { label: 'Möbelanfertigung', href: 'calculate.html', img: 'img/services/moebelservice/moebelanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
     ],
     trades: [
-        { label: 'Zäune aufbauen', href: 'calculate.html', img: 'img/services/tradeservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
-        { label: 'Fugenreinigung', href: 'calculate.html', img: 'img/services/tradeservice/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
+        { label: 'Feinputz', href: 'calculate.html', img: 'img/services/handwerker/feinputz.png', desc: 'Saubere Endschicht in passender Qualitätsstufe' },
+        { label: 'Wände Verputzen', href: 'calculate.html', img: 'img/services/handwerker/waendeverputzen.png', desc: 'Grobeschicht oder lotgerechte Ausführung' },
+        { label: 'Trockenbau (Rigipsausbau)', href: 'calculate.html', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' },
+        { label: 'Fugenreinigung', href: 'calculate.html', img: 'img/services/handwerker/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
     ],
     garden: [
         { label: 'Hecken schneiden', href: 'calculate.html', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
@@ -1333,15 +1678,16 @@ const SERVICES_BY_CATEGORY = {
         { label: 'Rollrasen verlegen', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen inkl. Bodenvorbereitung' },
         { label: 'Wurzeln entfernen', href: 'calculate.html', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
         { label: 'Pflastern', href: 'calculate.html', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
+        { label: 'Zäune aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
         { label: 'Minibagger-Arbeiten', href: 'calculate.html', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
-        { label: 'Gartenhütten aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Montage im Gartenbereich' },
+        { label: 'Gartenhütten aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Aufbau inkl. Bodenvorbereitung optional' },
+        { label: 'Gartenhütten schleifen/streichen', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Vorbereitung und Schutzanstrich im Gartenbereich' },
         { label: 'Hecken entfernen', href: 'calculate.html', img: 'img/services/gartenservice/heckenentfernen.png', desc: 'Rückbau inkl. Schnittgut' },
         { label: 'Kleine Bäume fällen', href: 'calculate.html', img: 'img/services/gartenservice/kleinebaeumefaellen.png', desc: 'Sicher und sauber durchgeführt' },
         { label: 'Sträucher schneiden', href: 'calculate.html', img: 'img/services/gartenservice/straeucherschneiden.png', desc: 'Pflegeschnitt nach Saison' },
         { label: 'Entsorgung von Grünschnitt', href: 'calculate.html', img: 'img/services/gartenservice/entsorgungvongruenschnitt.png', desc: 'Abtransport und Entsorgung' },
         { label: 'Überdachung', href: 'calculate.html', img: 'img/services/gartenservice/ueberdachung.png', desc: 'Montage für Terrasse und Garten' },
-        { label: 'Holzhäcksler', href: 'calculate.html', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' },
-        { label: 'Jegliche Gartenarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/jeglichegartenarbeiten.png', desc: 'Individuelle Einsätze nach Bedarf' }
+        { label: 'Holzhäcksler', href: 'calculate.html', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' }
     ]
 };
 
