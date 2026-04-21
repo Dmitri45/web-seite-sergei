@@ -1,7 +1,6 @@
 const kitchenSurvey = document.getElementById('kitchenSurvey');
 const continueBtn = document.getElementById('continueBtn');
 const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
-const FORM_PAYLOAD_STORAGE_KEY = 'pendingServiceFormPayload';
 
 let selectedKitchenCondition = '';
 let selectedTransportation = '';
@@ -14,7 +13,7 @@ let selectedTransportTo = null;
 
 const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Küchentransport': () => getSmallItemsTransportForm(),
-	'Küche abbauen': () => getKitchenDismantlingForm(),
+	'Küche abbauen': () => getUsedKitchenForm(),
 	'Küche aufbauen': () => getNewKitchenForm(),
 	'Küche anpassen': () => getKitchenAdjustmentEstimateForm(),
 	'Küchenanfertigung': () => getCustomKitchenRequestForm(),
@@ -24,18 +23,13 @@ const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Umzugshelfer': () => getMovingHelpersEstimateForm(),
 	'Kleintransporte': () => getSmallItemsTransportForm(),
 	'Fugenreinigung': () => getJointCleaningForm(),
-	'Feinputz': () => getFinePlasterForm(),
-	'Wände Verputzen': () => getWallPlasteringForm(),
-	'Trockenbau (Rigipsausbau)': () => getDrywallForm(),
 	'Hecken schneiden': () => getHedgeTrimmingForm(),
 	'Rasen mähen': () => getLawnMowingForm(),
 	'Rollrasen verlegen': () => getLawnInstallationForm(),
 	'Wurzeln entfernen': () => getRootRemovalForm(),
-	'Zäune aufbauen': () => getFenceAssemblyForm(),
 	'Pflastern': () => getPavingForm(),
 	'Minibagger-Arbeiten': () => getMiniExcavatorWorkForm(),
-	'Gartenhütten aufbauen': () => getGardenHutAssemblyForm(),
-	'Gartenhütten schleifen/streichen': () => getGardenHutSandingPaintingForm(),
+	'Gartenhütten aufbauen': () => getGardenHutSandingPaintingForm(),
 	'Hecken entfernen': () => getHedgeRemovalForm(),
 	'Kleine Bäume fällen': () => getSmallTreeFellingForm(),
 	'Sträucher schneiden': () => getShrubTrimmingForm(),
@@ -57,100 +51,6 @@ function getSelectedServiceData() {
 	}
 }
 
-function collectFormValues(formElement) {
-	if (!formElement) return {};
-
-	const values = {};
-	const fields = formElement.querySelectorAll('input[name], select[name], textarea[name]');
-
-	fields.forEach((field) => {
-		const name = field.name;
-		if (!name) return;
-
-		const type = (field.type || '').toLowerCase();
-		let value = '';
-
-		if (type === 'checkbox') {
-			if (!field.checked) return;
-			value = field.value || true;
-		} else if (type === 'radio') {
-			if (!field.checked) return;
-			value = field.value || '';
-		} else {
-			value = field.value || '';
-		}
-
-		if (Object.prototype.hasOwnProperty.call(values, name)) {
-			if (Array.isArray(values[name])) {
-				values[name].push(value);
-			} else {
-				values[name] = [values[name], value];
-			}
-			return;
-		}
-
-		values[name] = value;
-	});
-
-	return values;
-}
-
-function getFlowContext() {
-	const context = {};
-
-	if (selectedKitchenCondition) context.kitchenCondition = selectedKitchenCondition;
-	if (selectedAssembly) context.assembly = selectedAssembly;
-	if (selectedTransportation) context.transportation = selectedTransportation;
-
-	return context;
-}
-
-function buildUniversalFormPayload(formElement, extra = {}) {
-	const selectedService = getSelectedServiceData() || {};
-
-	return {
-		department: selectedService.category || 'SERVICE',
-		service: selectedService.label || '',
-		serviceImage: selectedService.image || '',
-		formData: collectFormValues(formElement),
-		flowContext: getFlowContext(),
-		createdAt: new Date().toISOString(),
-		...extra
-	};
-}
-
-function persistUniversalFormPayload(payload) {
-	try {
-		sessionStorage.setItem(FORM_PAYLOAD_STORAGE_KEY, JSON.stringify(payload));
-	} catch (_) {
-		// Ignore storage errors.
-	}
-
-	window.latestServiceFormPayload = payload;
-	console.log('[calculate] Collected form payload:', payload);
-	console.log('[calculate] Collected form payload JSON:\n' + JSON.stringify(payload, null, 2));
-}
-
-function collectAndPersistFormPayload(formElement, extra = {}) {
-	const payload = buildUniversalFormPayload(formElement, extra);
-	persistUniversalFormPayload(payload);
-	return payload;
-}
-
-function bindUniversalFormCollector(formElement) {
-	if (!formElement) return;
-
-	const collectButtons = formElement.querySelectorAll('#btn-continue, #btn-calculate');
-	collectButtons.forEach((button) => {
-		if (button.dataset.payloadCollectorBound === '1') return;
-		button.dataset.payloadCollectorBound = '1';
-
-		button.addEventListener('click', () => {
-			collectAndPersistFormPayload(formElement);
-		});
-	});
-}
-
 function renderStandaloneForm(templateHTML) {
 	const container = getCalcMainContainer();
 	if (!container) return null;
@@ -164,19 +64,13 @@ function renderStandaloneForm(templateHTML) {
 	if (!newForm) return null;
 
 	container.appendChild(newForm);
-	initFormAddressAutocompletes(newForm);
 	initDynamicFurnitureItems(newForm);
-	initShrubTrimmingConditionalFields(newForm);
-	bindUniversalFormCollector(newForm);
 	return newForm;
 }
 
-function createFurnitureItemCard(index, templateType = 'furniture') {
+function createFurnitureItemCard(index) {
 	const wrapper = document.createElement('div');
-	const templateHTML = templateType === 'transport'
-		? getTransportItemCardTemplate(index)
-		: getFurnitureItemCardTemplate(index);
-	wrapper.innerHTML = templateHTML.trim();
+	wrapper.innerHTML = getFurnitureItemCardTemplate(index).trim();
 	const card = wrapper.firstElementChild;
 	if (!card) return null;
 
@@ -185,10 +79,9 @@ function createFurnitureItemCard(index, templateType = 'furniture') {
 
 function refreshFurnitureItemHeaders(list) {
 	const cards = list.querySelectorAll('.furniture-item-card');
-	const itemLabel = list.dataset.itemLabel || 'Möbelstück';
 	cards.forEach((card, idx) => {
 		const head = card.querySelector('strong');
-		if (head) head.textContent = `${itemLabel} ${idx + 1}`;
+		if (head) head.textContent = `Möbelstück ${idx + 1}`;
 
 		const removeBtn = card.querySelector('[data-remove-item]');
 		if (removeBtn) {
@@ -201,11 +94,10 @@ function initDynamicFurnitureItems(formElement) {
 	const itemsList = formElement.querySelector('#furnitureItemsList');
 	const addBtn = formElement.querySelector('#addFurnitureItemBtn');
 	if (!itemsList || !addBtn) return;
-	const templateType = itemsList.dataset.itemTemplate || 'furniture';
 
 	addBtn.addEventListener('click', () => {
 		const nextIndex = itemsList.querySelectorAll('.furniture-item-card').length;
-		itemsList.appendChild(createFurnitureItemCard(nextIndex, templateType));
+		itemsList.appendChild(createFurnitureItemCard(nextIndex));
 		refreshFurnitureItemHeaders(itemsList);
 	});
 
@@ -227,12 +119,6 @@ function renderServiceSpecificFormFromStorage() {
 	const selectedService = getSelectedServiceData();
 	const label = selectedService?.label?.trim();
 	if (!label) return false;
-
-	// Für "Küche aufbauen" soll der Standard-Flow starten:
-	// zuerst die bestehende Kitchen-Survey (Neue/Gebrauchte Küche).
-	if (label === 'Küche aufbauen') {
-		return false;
-	}
 
 	const templateFactory = SERVICE_FORM_TEMPLATES_BY_LABEL[label];
 	if (!templateFactory) return false;
@@ -280,64 +166,6 @@ function createAddressAutocomplete(elementId) {
 	);
 }
 
-function initFormAddressAutocompletes(formElement) {
-	if (!formElement) return;
-
-	const containers = formElement.querySelectorAll('[data-address-autocomplete]');
-	containers.forEach((container) => {
-		if (!container.id) return;
-
-		const targetName = container.dataset.addressTarget || 'address';
-		const targetInput = formElement.querySelector(`input[name="${targetName}"]`);
-		if (!targetInput) return;
-
-		const geocoder = createAddressAutocomplete(container.id);
-		geocoder.on('select', (location) => {
-			targetInput.value = location?.properties?.formatted || '';
-		});
-
-		const widgetInput = container.querySelector('input');
-		if (widgetInput) {
-			widgetInput.addEventListener('input', (event) => {
-				targetInput.value = event.target.value || '';
-			});
-		}
-	});
-}
-
-function initShrubTrimmingConditionalFields(formElement) {
-	if (!formElement) return;
-
-	const currentMode = formElement.querySelector('#currentShapeMode');
-	const targetMode = formElement.querySelector('#targetShapeMode');
-	if (!currentMode && !targetMode) return;
-
-	const currentShapeTypeWrap = formElement.querySelector('#currentShapeTypeWrap');
-	const currentSizeFieldsWrap = formElement.querySelector('#currentSizeFieldsWrap');
-	const targetShapeTypeWrap = formElement.querySelector('#targetShapeTypeWrap');
-	const targetSizeFieldsWrap = formElement.querySelector('#targetSizeFieldsWrap');
-
-	const updateCurrent = () => {
-		const isInShape = currentMode?.value === 'in-shape';
-		const isNotInShape = currentMode?.value === 'not-in-shape';
-		if (currentShapeTypeWrap) currentShapeTypeWrap.style.display = isInShape ? 'block' : 'none';
-		if (currentSizeFieldsWrap) currentSizeFieldsWrap.style.display = isNotInShape ? 'grid' : 'none';
-	};
-
-	const updateTarget = () => {
-		const isInShape = targetMode?.value === 'in-shape';
-		const isNotInShape = targetMode?.value === 'not-in-shape';
-		if (targetShapeTypeWrap) targetShapeTypeWrap.style.display = isInShape ? 'block' : 'none';
-		if (targetSizeFieldsWrap) targetSizeFieldsWrap.style.display = isNotInShape ? 'grid' : 'none';
-	};
-
-	if (currentMode) currentMode.addEventListener('change', updateCurrent);
-	if (targetMode) targetMode.addEventListener('change', updateTarget);
-
-	updateCurrent();
-	updateTarget();
-}
-
 function init() {
 	if (renderServiceSpecificFormFromStorage()) {
 		return;
@@ -377,7 +205,6 @@ function attachFormContinueListener(formElement) {
 
 	if (button) {
 		button.addEventListener('click', () => {
-			collectAndPersistFormPayload(formElement);
 			formElement.style.display = 'none';
 			showTransportationSurvey();
 		});
@@ -723,5 +550,11 @@ function removeFeedbackBlocks() {
 
 init();
 
-// TODO: Разобраться с отправляемыми координатами (Point, LineString, центр объекта)
-// TODO: После этого реализовать соответствующую обработку координат на сервере
+// TODO:
+// Ошибки в консоле
+// Разобрать файл calculate.js на части, выделить функции по отдельным файлам и импортировать их
+// Добавить валидацию форм (напр. обязательные поля, числовые поля и т.д.)
+// На Backend сделать routes, Controller, Validation для получения данных из Frontend и расчета стоимости
+// На Backend добавить расчет стоимости на основе полученных данных и вернуть результат в ответе
+// На Frontend отобразить полученный результат (напр. показать итоговую стоимость, список выбранных услуг и т.д.)
+// Мобильная версия (адаптивность)
