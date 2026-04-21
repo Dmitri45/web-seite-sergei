@@ -68,9 +68,12 @@ function renderStandaloneForm(templateHTML) {
 	return newForm;
 }
 
-function createFurnitureItemCard(index) {
+function createFurnitureItemCard(index, templateType = 'furniture') {
 	const wrapper = document.createElement('div');
-	wrapper.innerHTML = getFurnitureItemCardTemplate(index).trim();
+	const templateHTML = templateType === 'assembly'
+		? getFurnitureAssemblyItemCardTemplate(index)
+		: getFurnitureItemCardTemplate(index);
+	wrapper.innerHTML = templateHTML.trim();
 	const card = wrapper.firstElementChild;
 	if (!card) return null;
 
@@ -94,10 +97,11 @@ function initDynamicFurnitureItems(formElement) {
 	const itemsList = formElement.querySelector('#furnitureItemsList');
 	const addBtn = formElement.querySelector('#addFurnitureItemBtn');
 	if (!itemsList || !addBtn) return;
+	const templateType = itemsList.dataset.itemTemplate || 'furniture';
 
 	addBtn.addEventListener('click', () => {
 		const nextIndex = itemsList.querySelectorAll('.furniture-item-card').length;
-		itemsList.appendChild(createFurnitureItemCard(nextIndex));
+		itemsList.appendChild(createFurnitureItemCard(nextIndex, templateType));
 		refreshFurnitureItemHeaders(itemsList);
 	});
 
@@ -504,7 +508,44 @@ function buildKitchenFormPayload(formElement) {
 		}
 	});
 
+	groupFurnitureItemsInPayload(data);
+
 	return data;
+}
+
+function toCamelCaseFieldName(rawFieldName = '') {
+	const normalized = String(rawFieldName || '').trim();
+	if (!normalized) return '';
+	return normalized.charAt(0).toLowerCase() + normalized.slice(1);
+}
+
+function groupFurnitureItemsInPayload(payload) {
+	if (!payload || typeof payload !== 'object') return;
+
+	const furnitureItemsByIndex = new Map();
+
+	Object.keys(payload).forEach((key) => {
+		const match = key.match(/^furnitureItem([A-Za-z0-9]+)_(\d+)$/);
+		if (!match) return;
+
+		const fieldName = toCamelCaseFieldName(match[1]);
+		const index = Number.parseInt(match[2], 10);
+		if (!Number.isInteger(index) || !fieldName) return;
+
+		if (!furnitureItemsByIndex.has(index)) {
+			furnitureItemsByIndex.set(index, {});
+		}
+
+		const item = furnitureItemsByIndex.get(index);
+		item[fieldName] = payload[key];
+		delete payload[key];
+	});
+
+	if (!furnitureItemsByIndex.size) return;
+
+	payload.moebelstuecke = Array.from(furnitureItemsByIndex.entries())
+		.sort((a, b) => a[0] - b[0])
+		.map(([, item]) => item);
 }
 
 function appendTemplateToCalcLayout(templateHTML) {
