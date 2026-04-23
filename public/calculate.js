@@ -35,7 +35,8 @@ const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Sträucher schneiden': () => getShrubTrimmingForm(),
 	'Entsorgung von Grünschnitt': () => getGreenWasteDisposalForm(),
 	'Überdachung': () => getCanopyForm(),
-	'Holzhäcksler': () => getWoodChipperForm()
+	'Holzhäcksler': () => getWoodChipperForm(),
+	'Zäune aufbauen': () => getFenceAssemblyForm()
 };
 
 function getCalcMainContainer() {
@@ -65,7 +66,28 @@ function renderStandaloneForm(templateHTML) {
 
 	container.appendChild(newForm);
 	initDynamicFurnitureItems(newForm);
+	initFenceAssemblyForm(newForm);
 	return newForm;
+}
+
+function initFenceAssemblyForm(formElement) {
+	const withKerbstoneSelect = formElement.querySelector('#withKerbstone');
+	const kerbstoneLengthInput = formElement.querySelector('#kerbstoneLengthM');
+	const kerbstoneLengthField = kerbstoneLengthInput?.closest('.field');
+
+	if (!withKerbstoneSelect || !kerbstoneLengthInput || !kerbstoneLengthField) return;
+
+	const syncKerbstoneField = () => {
+		const isWithKerbstone = withKerbstoneSelect.value === 'with';
+		kerbstoneLengthField.style.display = isWithKerbstone ? '' : 'none';
+
+		if (!isWithKerbstone) {
+			kerbstoneLengthInput.value = '';
+		}
+	};
+
+	withKerbstoneSelect.addEventListener('change', syncKerbstoneField);
+	syncKerbstoneField();
 }
 
 function createFurnitureItemCard(index, templateType = 'furniture') {

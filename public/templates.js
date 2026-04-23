@@ -340,10 +340,6 @@ function getFurnitureDisposalForm() {
 									<input id="furnitureItemLength_0" name="furnitureItemLength_0" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
 								</div>
 								<div class="field">
-									<label for="furnitureItemWidth_0">Breite (m)</label>
-									<input id="furnitureItemWidth_0" name="furnitureItemWidth_0" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
-								</div>
-								<div class="field">
 									<label for="furnitureItemHeight_0">Höhe (m)</label>
 									<input id="furnitureItemHeight_0" name="furnitureItemHeight_0" type="number" min="0" step="0.01" placeholder="z.B. 2.10">
 								</div>
@@ -381,7 +377,7 @@ function getFurnitureAssemblyForm() {
 			<div class="calc-grid">
 				<div class="field field-full">
 					<label>Möbelstücke</label>
-					<div id="furnitureItemsList" class="furniture-items-list">
+					<div id="furnitureItemsList" class="furniture-items-list" data-item-template="assembly">
 						<div class="furniture-item-card" data-item-index="0">
 							<div class="furniture-item-card__head">
 								<strong>Möbelstück 1</strong>
@@ -395,10 +391,6 @@ function getFurnitureAssemblyForm() {
 								<div class="field">
 									<label for="furnitureItemLength_0">Länge (m)</label>
 									<input id="furnitureItemLength_0" name="furnitureItemLength_0" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
-								</div>
-								<div class="field">
-									<label for="furnitureItemWidth_0">Breite (m)</label>
-									<input id="furnitureItemWidth_0" name="furnitureItemWidth_0" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
 								</div>
 								<div class="field">
 									<label for="furnitureItemHeight_0">Höhe (m)</label>
@@ -727,7 +719,13 @@ function getSmallTreeFellingForm() {
 function getLawnInstallationForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Rollrasen inkl. Bodenvorbereitung</h2>
+			<h2 class="label-with-tooltip">
+				Rollrasen verlegen
+				<span class="help-tooltip">
+					<span class="help-tooltip__icon" aria-label="Hinweis">i</span>
+					<span class="help-tooltip__content">Ohne Bodenvorbereitung.</span>
+				</span>
+			</h2>
 			<p>Bitte geben Sie die Fläche als Quadratmeter oder über Länge und Breite an.</p>
 
 			<div class="calc-grid">
@@ -1515,8 +1513,29 @@ function getFurnitureItemCardTemplate(index) {
 					<input id="furnitureItemLength_${index}" name="furnitureItemLength_${index}" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
 				</div>
 				<div class="field">
-					<label for="furnitureItemWidth_${index}">Breite (m)</label>
-					<input id="furnitureItemWidth_${index}" name="furnitureItemWidth_${index}" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
+					<label for="furnitureItemHeight_${index}">Höhe (m)</label>
+					<input id="furnitureItemHeight_${index}" name="furnitureItemHeight_${index}" type="number" min="0" step="0.01" placeholder="z.B. 2.10">
+				</div>
+			</div>
+		</div>
+	`;
+}
+
+function getFurnitureAssemblyItemCardTemplate(index) {
+	return `
+		<div class="furniture-item-card" data-item-index="${index}">
+			<div class="furniture-item-card__head">
+				<strong>Möbelstück ${index + 1}</strong>
+				<button type="button" class="btn-secondary furniture-item-remove" data-remove-item>Entfernen</button>
+			</div>
+			<div class="calc-grid">
+				<div class="field field-full">
+					<label for="furnitureItemName_${index}">Was ist das für ein Möbelstück?</label>
+					<input id="furnitureItemName_${index}" name="furnitureItemName_${index}" type="text" placeholder="z.B. Kleiderschrank, Kommode, Regal">
+				</div>
+				<div class="field">
+					<label for="furnitureItemLength_${index}">Länge (m)</label>
+					<input id="furnitureItemLength_${index}" name="furnitureItemLength_${index}" type="number" min="0" step="0.01" placeholder="z.B. 1.80">
 				</div>
 				<div class="field">
 					<label for="furnitureItemHeight_${index}">Höhe (m)</label>
@@ -1675,7 +1694,7 @@ const SERVICES_BY_CATEGORY = {
     garden: [
         { label: 'Hecken schneiden', href: 'calculate.html', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
         { label: 'Rasen mähen', href: 'calculate.html', img: 'img/services/gartenservice/rasenmaehen.png', desc: 'Regelmäßiger Schnitt & Pflege' },
-        { label: 'Rollrasen verlegen', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen inkl. Bodenvorbereitung' },
+        { label: 'Rollrasen verlegen', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen ohne Bodenvorbereitung' },
         { label: 'Wurzeln entfernen', href: 'calculate.html', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
         { label: 'Pflastern', href: 'calculate.html', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
         { label: 'Zäune aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
