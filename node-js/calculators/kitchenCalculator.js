@@ -15,23 +15,7 @@
  * @property {number} price
  */
 
-/**
- * Calculates total kitchen service price based on kitchen condition.
- *
- * @param {KitchenCalculationInput} data - Input payload from request body.
- * @returns {PriceResult} Calculated total price.
- */
-function calculateTotal(data) {
-  let total = 0;
 
-  if (data.kitchenCondition === "new") {
-    total = calculateTotalForNewKitchen(data).price;
-  } else if (data.kitchenCondition === "used") {
-    total = calculateTotalForUsedKitchen(data).price;
-  }
-
-  return { price: total };
-}
 
 /**
  * Calculates total for used kitchen scenario.
@@ -109,4 +93,18 @@ function calculateCabinetAssembly(data) {
   return total;
 }
 
-module.exports = { calculateTotal };
+/**
+ * Calculates the price for kitchen disassembly (Abbau).
+ *
+ * @param {Object} data - Input payload (not used, for compatibility)
+ * @returns {PriceResult} Price result for disassembly (fixed 280 EUR)
+ */
+function calculateKitchenDisassembly(data) {
+  return { price: 280 };
+}
+
+module.exports = {
+  calculateTotalForNewKitchen,
+  calculateTotalForUsedKitchen,
+  calculateKitchenDisassembly
+};

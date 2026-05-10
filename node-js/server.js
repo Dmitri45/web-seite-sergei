@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const routes = require('./routes/routes');
 const app = express();
 
 // CORS для разработки
@@ -15,26 +16,6 @@ app.use(express.json());
 // Раздача статических файлов из корня проекта
 app.use(express.static(path.join(__dirname, '..')));
 
-const { calculateTotal } = require('./calculators/kitchenCalculator');
-const { getRouteMatrixAndCalculatePrice } = require('./calculators/transportCalculator');
+app.use('/api', routes);
 
-app.post("/api/calculate", async (req, res) => {
-  try {
-    const data = req.body;
-
-    // простая валидация
-    
-    let result = calculateTotal(data);
-
-    if (data.transportation == 'yes'){ 
-     result.price += await getRouteMatrixAndCalculatePrice(data); }
-     
-    res.json(result);
-
-  } catch (err) {
-    console.error("Ошибка:", err.message);
-    res.status(500).json({ error: "Ошибка сервера" });
-  }
-});
-
-app.listen(4000, () => console.log("http://localhost:4000")); 
+app.listen(3000, () => console.log("http://localhost:3000")); 

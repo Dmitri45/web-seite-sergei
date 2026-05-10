@@ -372,14 +372,17 @@ body.page-calculate .hero-subtitle {
     background: transparent;
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 15px 26px;
+    padding: 14px 32px;
     font-weight: 700;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 8px;
+    transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
 }
 
 .btn-secondary:hover {
-    filter: brightness(0.98);
+    border-color: #1d9e75;
+    background: rgba(29, 158, 117, 0.06);
+    color: #0f3d2e;
 }
 
 .transport-actions {
@@ -534,6 +537,89 @@ body.page-calculate .hero-subtitle {
 .result-card .btn-main,
 .error-card .btn-main {
     margin-top: 10px;
+}
+
+.result-card--kitchen {
+    max-width: 640px;
+    text-align: left;
+}
+
+.result-eyebrow {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.result-total {
+    margin: 24px 0;
+    padding: 24px;
+    background: rgba(15, 61, 46, 0.06);
+    border-radius: 12px;
+}
+
+.result-total__label {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.result-total strong {
+    display: block;
+    color: var(--accent);
+    font-size: 42px;
+    line-height: 1.1;
+}
+
+.result-breakdown,
+.result-details {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.result-breakdown__row,
+.result-details__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.result-breakdown__row:last-child,
+.result-details__row:last-child {
+    border-bottom: 0;
+}
+
+.result-breakdown__row span,
+.result-details__row span {
+    color: var(--muted);
+}
+
+.result-breakdown__row strong,
+.result-details__row strong {
+    color: var(--text);
+    text-align: right;
+}
+
+.result-details h3 {
+    margin: 0;
+    padding: 14px 16px;
+    font-size: 16px;
+    background: rgba(0,0,0,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.result-note {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 18px;
 }
 
 /* Kitchen Survey */

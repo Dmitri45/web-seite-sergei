@@ -10,11 +10,26 @@ let currentForm = null;
 let selectedTransportFrom = null;
 let selectedTransportVia = [];
 let selectedTransportTo = null;
+let selectedOfferAddress = '';
+let latestCalculationResult = null;
+let latestFrontendFormPayload = null;
+const CALCULATION_SERVICE_LABELS = new Set([
+	'Küche aufbauen',
+	'Küche abbauen',
+	'Küche anpassen'
+]);
 
 const SERVICE_FORM_TEMPLATES_BY_LABEL = {
-	'Küchentransport': () => getSmallItemsTransportForm(),
-	'Küche abbauen': () => getUsedKitchenForm(),
-	'Küche aufbauen': () => getNewKitchenForm(),
+	'Küchentransport': () => getKitchenTransportForm(),
+	'Küche abbauen': () => getKitchenDismantlingForm(),
+	'Küche aufbauen': () => {
+		// Показываем опросник, форму не возвращаем сразу
+		if (kitchenSurvey) {
+			kitchenSurvey.style.display = 'block';
+			continueBtn.style.display = 'none';
+		}
+		return '';
+	},
 	'Küche anpassen': () => getKitchenAdjustmentEstimateForm(),
 	'Küchenanfertigung': () => getCustomKitchenRequestForm(),
 	'Möbel aufbauen': () => getFurnitureAssemblyForm(),
@@ -67,7 +82,49 @@ function renderStandaloneForm(templateHTML) {
 	container.appendChild(newForm);
 	initDynamicFurnitureItems(newForm);
 	initFenceAssemblyForm(newForm);
+	initKitchenTransportForm(newForm);
+	initOfferRequestButtons(newForm);
 	return newForm;
+}
+
+function initKitchenTransportForm(formElement) {
+	const fromContainer = formElement.querySelector('#transportFromAddressAutocomplete');
+	const toContainer = formElement.querySelector('#transportToAddressAutocomplete');
+	const fromInput = formElement.querySelector('#transportFromAddress');
+	const toInput = formElement.querySelector('#transportToAddress');
+
+	if (!fromContainer || !toContainer || !fromInput || !toInput) return;
+
+	const fromAutocomplete = createAddressAutocomplete('transportFromAddressAutocomplete');
+	fromAutocomplete.on('select', (location) => {
+		fromInput.value = location?.properties?.formatted || '';
+	});
+
+	const toAutocomplete = createAddressAutocomplete('transportToAddressAutocomplete');
+	toAutocomplete.on('select', (location) => {
+		toInput.value = location?.properties?.formatted || '';
+	});
+}
+
+function initOfferRequestButtons(formElement) {
+	const continueButton = formElement.querySelector('#btn-continue');
+	if (!continueButton) return;
+
+	continueButton.addEventListener('click', () => {
+		const selectedService = getSelectedServiceData();
+		const serviceLabel = selectedService?.label?.trim() || '';
+		const isCalculationService = CALCULATION_SERVICE_LABELS.has(serviceLabel);
+
+		if (isCalculationService) {
+			formElement.style.display = 'none';
+			showTransportationSurvey();
+			return;
+		}
+
+		const payload = buildCalculationData();
+		latestFrontendFormPayload = payload;
+		openOfferRequestForm(payload);
+	});
 }
 
 function initFenceAssemblyForm(formElement) {
@@ -459,6 +516,17 @@ function buildCalculationData() {
 
 	addAssemblyDataIfNeeded(data);
 	addTransportationDataIfNeeded(data);
+	adaptKitchenPayloadForBackend(data);
+
+	return data;
+}
+
+function adaptKitchenPayloadForBackend(data) {
+	if (!data || typeof data !== 'object') return data;
+
+	data.condition = data.kitchenCondition || selectedKitchenCondition || data.condition || 'new';
+	data.abbau = data.dismantling === 'yes' || data.abbau === true || data.abbau === 'true';
+	data.worktopAdjust = data.worktopAdjust || data.worktopMaterial || '';
 
 	return data;
 }
@@ -493,7 +561,7 @@ function showTransportationSurvey() {
 
 async function requestCalculation(data) {
 	try {
-		const response = await fetch('http://localhost:4000/api/calculate', {
+		const response = await fetch('http://localhost:3000/api/kitchen/calculate', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -506,9 +574,10 @@ async function requestCalculation(data) {
 		}
 
 		const result = await response.json();
+		latestCalculationResult = result;
 
 		hideLoadingIndicator();
-		showResult(result.price || result);
+		showResult(result);
 	} catch (error) {
 		console.error('Ошибка при отправке запроса:', error);
 		hideLoadingIndicator();
@@ -517,8 +586,10 @@ async function requestCalculation(data) {
 }
 
 function buildKitchenFormPayload(formElement) {
+	const selectedService = getSelectedServiceData();
 	const data = {
-		kitchenCondition: selectedKitchenCondition
+		kitchenCondition: selectedKitchenCondition,
+		serviceLabel: selectedService?.label || ''
 	};
 
 	if (!formElement) return data;
@@ -583,6 +654,80 @@ function appendTemplateToCalcLayout(templateHTML) {
 	}
 }
 
+function upsertOfferRequestBlock() {
+	const calcSection = getCalcMainContainer();
+	if (!calcSection) return null;
+
+	document.getElementById('calcForm')?.remove();
+	document.getElementById('result-display')?.remove();
+	document.getElementById('error-display')?.remove();
+	document.getElementById('loading-indicator')?.remove();
+	document.getElementById('kitchenSurvey')?.remove();
+	document.getElementById('assemblySurvey')?.remove();
+	document.getElementById('transportSurvey')?.remove();
+	document.getElementById('offer-request-block')?.remove();
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = getOfferRequestTemplate();
+	const block = tempDiv.firstElementChild;
+	if (!block) return null;
+
+	calcSection.appendChild(block);
+	return block;
+}
+
+function collectOfferContactData(formElement) {
+	const fallbackAddressInput = formElement.querySelector('#offerAddressAutocomplete input');
+	const address = selectedOfferAddress || fallbackAddressInput?.value?.trim() || '';
+
+	return {
+		firstName: formElement.querySelector('#offerFirstName')?.value?.trim() || '',
+		lastName: formElement.querySelector('#offerLastName')?.value?.trim() || '',
+		phone: formElement.querySelector('#offerPhone')?.value?.trim() || '',
+		email: formElement.querySelector('#offerEmail')?.value?.trim() || '',
+		address
+	};
+}
+
+function openOfferRequestForm(baseData) {
+	const block = upsertOfferRequestBlock();
+	if (!block) return;
+
+	const form = block.querySelector('#offerRequestForm');
+	if (!form) return;
+	selectedOfferAddress = '';
+
+	const offerAddressAutocomplete = createAddressAutocomplete('offerAddressAutocomplete');
+	offerAddressAutocomplete.on('select', (location) => {
+		selectedOfferAddress = location?.properties?.formatted || '';
+	});
+
+	form.addEventListener('submit', (event) => {
+		event.preventDefault();
+
+		const contact = collectOfferContactData(form);
+		if (!contact.address) {
+			alert('Bitte wählen Sie eine Adresse aus der Vorschlagsliste aus.');
+			return;
+		}
+		const resultObject = (baseData && typeof baseData === 'object')
+			? baseData
+			: { value: baseData };
+
+		resultObject.customer = contact;
+
+		if (resultObject === latestCalculationResult) {
+			latestCalculationResult = resultObject;
+		}
+		if (resultObject === latestFrontendFormPayload || !latestFrontendFormPayload) {
+			latestFrontendFormPayload = resultObject;
+		}
+
+		console.log('Offer request payload:', resultObject);
+		console.log(JSON.stringify(resultObject, null, 2));
+	});
+}
+
 function showLoadingIndicator() {
 	hideLoadingIndicator();
 	appendTemplateToCalcLayout(getLoadingTemplate());
@@ -597,7 +742,21 @@ function hideLoadingIndicator() {
 
 function showResult(price) {
 	removeFeedbackBlocks();
-	appendTemplateToCalcLayout(getResultTemplate(price));
+	// Если есть prices (кухня), используем новый шаблон
+	if (price && price.prices) {
+		appendTemplateToCalcLayout(getKitchenResultTemplate(price));
+	} else {
+		appendTemplateToCalcLayout(getResultTemplate(price));
+	}
+
+	const resultDisplay = document.getElementById('result-display');
+	const offerBtn = resultDisplay?.querySelector('[data-offer-request-result]');
+	if (offerBtn) {
+		offerBtn.addEventListener('click', () => {
+			const base = latestCalculationResult ?? price;
+			openOfferRequestForm(base);
+		});
+	}
 }
 
 function showError(message) {

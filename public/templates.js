@@ -1,3 +1,77 @@
+function formatEuro(value) {
+	const amount = Number(value || 0);
+	return `${amount.toLocaleString('de-DE', {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2
+	})} €`;
+}
+
+function getKitchenConditionLabel(condition) {
+	const labels = {
+		new: 'Neue Küche',
+		used: 'Bestehende Küche'
+	};
+
+	return labels[condition] || 'Küchenservice';
+}
+
+function getKitchenResultTitle(data) {
+	if (data?.serviceLabel) return data.serviceLabel;
+	return getKitchenConditionLabel(data?.condition);
+}
+
+function getKitchenTypeLabel(kitchenType) {
+	const labels = {
+		'zeile': 'I-Form',
+		'l-form': 'L-Form',
+		'u-form': 'U-Form'
+	};
+
+	return labels[kitchenType] || 'Nicht angegeben';
+}
+
+function getYesNoLabel(value) {
+	if (value === true || value === 'true' || value === 'yes') return 'Ja';
+	if (value === false || value === 'false' || value === 'no') return 'Nein';
+	return 'Nicht angegeben';
+}
+
+function getKitchenResultTemplate(data) {
+	const prices = data?.prices || {};
+	const totalPrice = prices.totalPrice || 0;
+	const priceRows = [
+		['Montage / Aufbau', prices.assemblyPrice],
+		['Abbau', prices.disassemblyPrice],
+		['Transport', prices.transportPrice]
+	].filter(([, value]) => Number(value || 0) > 0);
+
+	return `
+		<div id="result-display" class="result-display">
+			<div class="result-card result-card--kitchen">
+				<p class="result-eyebrow">Unverbindliche Preiseinschätzung</p>
+				<h2>${getKitchenResultTitle(data)}</h2>
+
+				<div class="result-total">
+					<span class="result-total__label">Geschätzter Gesamtpreis</span>
+					<strong>${formatEuro(totalPrice)}</strong>
+				</div>
+
+				<div class="result-breakdown">
+					${priceRows.map(([label, value]) => `
+						<div class="result-breakdown__row">
+							<span>${label}</span>
+							<strong>${formatEuro(value)}</strong>
+						</div>
+					`).join('')}
+				</div>
+
+				<p class="result-note">Der Preis ist eine erste Einschätzung. Das finale Angebot kann je nach Aufwand vor Ort abweichen.</p>
+				<button class="btn-main" type="button" data-offer-request-result="true">Angebot anfordern</button>
+				<button class="btn-secondary" onclick="location.reload()">Neue Berechnung</button>
+			</div>
+		</div>
+	`;
+}
 // Шаблоны форм для новой и старой кухни
 
 function getNewKitchenForm() {
@@ -190,6 +264,64 @@ function getKitchenDismantlingForm() {
 				<div class="field field-full">
 					<label for="notes">Zusätzliche Hinweise</label>
 					<textarea id="notes" name="notes" rows="4" placeholder="z.B. Etage, Aufzug, Zustand der Küche, Besonderheiten"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
+function getKitchenTransportForm() {
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Küchentransport</h2>
+			<p>Bitte geben Sie die wichtigsten Angaben für den Küchentransport an.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="date">Wunschtermin</label>
+					<input id="date" name="date" type="date">
+				</div>
+
+				<div class="field">
+					<label for="kitchenType">Küchentyp</label>
+					<select id="kitchenType" name="kitchenType">
+						<option value="">Bitte wählen…</option>
+						<option value="zeile">I-Form</option>
+						<option value="l-form">L-Form</option>
+						<option value="u-form">U-Form</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="upperCabinets">Anzahl der Oberschränke</label>
+					<input id="upperCabinets" name="upperCabinets" type="number" min="0" placeholder="z.B. 4">
+				</div>
+
+				<div class="field">
+					<label for="lowerCabinets">Anzahl der Unterschränke</label>
+					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
+				</div>
+
+				<div class="field field-full">
+					<label for="transportFromAddressAutocomplete">Transport von (Adresse)</label>
+					<div id="transportFromAddressAutocomplete" class="autocomplete-container"></div>
+					<input id="transportFromAddress" name="transportFromAddress" type="hidden" required>
+				</div>
+
+				<div class="field field-full">
+					<label for="transportToAddressAutocomplete">Transport nach (Adresse)</label>
+					<div id="transportToAddressAutocomplete" class="autocomplete-container"></div>
+					<input id="transportToAddress" name="transportToAddress" type="hidden" required>
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="z.B. Etage, Aufzug, Tragewege, Besonderheiten"></textarea>
 				</div>
 			</div>
 
@@ -1600,7 +1732,8 @@ function getResultTemplate(price) {
 			<div class="result-card">
 				<h2>Berechneter Preis</h2>
 				<div class="price-display">${price} €</div>
-				<button class="btn-main" onclick="location.reload()">Neue Berechnung</button>
+				<button class="btn-main" type="button" data-offer-request-result="true">Angebot anfordern</button>
+				<button class="btn-secondary" onclick="location.reload()">Neue Berechnung</button>
 			</div>
 		</div>
 	`;
@@ -1614,6 +1747,48 @@ function getErrorTemplate(message) {
 				<p>${message}</p>
 				<button class="btn-main" onclick="location.reload()">Erneut versuchen</button>
 			</div>
+		</div>
+	`;
+}
+
+function getOfferRequestTemplate() {
+	return `
+		<div id="offer-request-block" class="result-display">
+			<form id="offerRequestForm" class="calc-card">
+				<h2>Angebot anfordern</h2>
+				<p>Bitte hinterlassen Sie Ihre Kontaktdaten für ein persönliches Angebot.</p>
+
+				<div class="calc-grid">
+					<div class="field">
+						<label for="offerFirstName">Vorname</label>
+						<input id="offerFirstName" name="offerFirstName" type="text" required>
+					</div>
+
+					<div class="field">
+						<label for="offerLastName">Nachname</label>
+						<input id="offerLastName" name="offerLastName" type="text" required>
+					</div>
+
+					<div class="field">
+						<label for="offerPhone">Telefon (optional)</label>
+						<input id="offerPhone" name="offerPhone" type="tel">
+					</div>
+
+					<div class="field">
+						<label for="offerEmail">E-Mail-Adresse</label>
+						<input id="offerEmail" name="offerEmail" type="email" required>
+					</div>
+
+					<div class="field field-full">
+						<label for="offerAddressAutocomplete">Adresse</label>
+						<div id="offerAddressAutocomplete" class="autocomplete-container"></div>
+					</div>
+				</div>
+
+				<div class="calc-actions">
+					<button class="btn-main" type="submit">Angebot anfordern</button>
+				</div>
+			</form>
 		</div>
 	`;
 }

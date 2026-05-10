@@ -456,8 +456,8 @@ body.page-calculate {
 }
 
 .btn-secondary:hover {
-    border-color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.08);
+    border-color: #1d9e75;
+    background: rgba(29, 158, 117, 0.16);
 }
 
 .hero-trust {
