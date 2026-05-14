@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/kitchen/calculate', kitchenController.calculateKitchen);
 
-// router.post('/furniture/calculate', furnitureController.calculateFurniture);
+router.post('/furniture/calculate', furnitureController.calculateFurniture);
 // router.post('/furniture/request', furnitureController.createFurnitureRequest);
 
 // router.post('/garden/calculate', gardenController.calculateGarden);

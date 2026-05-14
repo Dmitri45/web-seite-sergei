@@ -72,6 +72,39 @@ function getKitchenResultTemplate(data) {
 		</div>
 	`;
 }
+
+function getFurnitureResultTemplate(data) {
+	const prices = data?.prices || {};
+	const totalPrice = prices.totalPrice || 0;
+	const items = Array.isArray(prices.items) ? prices.items : [];
+
+	return `
+		<div id="result-display" class="result-display">
+			<div class="result-card result-card--kitchen">
+				<p class="result-eyebrow">Unverbindliche Preiseinschätzung</p>
+				<h2>${data?.serviceLabel || 'Möbelservice'}</h2>
+
+				<div class="result-total">
+					<span class="result-total__label">Geschätzter Gesamtpreis</span>
+					<strong>${formatEuro(totalPrice)}</strong>
+				</div>
+
+				<div class="result-breakdown">
+					${items.map((item, index) => `
+						<div class="result-breakdown__row">
+							<span>${item.name || `Möbelstück ${index + 1}`}</span>
+							<strong>${formatEuro(item.price)}</strong>
+						</div>
+					`).join('')}
+				</div>
+
+				<p class="result-note">Der Preis ist eine erste Einschätzung. Das finale Angebot kann je nach Aufwand vor Ort abweichen.</p>
+				<button class="btn-main" type="button" data-offer-request-result="true">Angebot anfordern</button>
+				<button class="btn-secondary" onclick="location.reload()">Neue Berechnung</button>
+			</div>
+		</div>
+	`;
+}
 // Шаблоны форм для новой и старой кухни
 
 function getNewKitchenForm() {
@@ -456,7 +489,7 @@ function getFurnitureDisposalForm() {
 			<div class="calc-grid">
 				<div class="field field-full">
 					<label>Möbelstücke</label>
-					<div id="furnitureItemsList" class="furniture-items-list">
+					<div id="furnitureItemsList" class="furniture-items-list" data-item-template="disposal">
 						<div class="furniture-item-card" data-item-index="0">
 							<div class="furniture-item-card__head">
 								<strong>Möbelstück 1</strong>
@@ -528,6 +561,7 @@ function getFurnitureAssemblyForm() {
 									<label for="furnitureItemHeight_0">Höhe (m)</label>
 									<input id="furnitureItemHeight_0" name="furnitureItemHeight_0" type="number" min="0" step="0.01" placeholder="z.B. 2.10">
 								</div>
+								${getFurnitureAddonControls(0)}
 							</div>
 						</div>
 					</div>
@@ -1628,6 +1662,48 @@ function getIntermediateAddressTemplate(index) {
 	`;
 }
 
+function getFurnitureAddonControls(index) {
+	return `
+		<div class="field field-full furniture-addon-group">
+			<label>Optionale Ausstattung</label>
+			<div class="furniture-addon-list">
+				<div class="furniture-addon-row">
+					<label class="furniture-addon-toggle">
+						<span class="furniture-addon-title">Schubladen</span>
+						<input type="checkbox" data-addon-toggle data-target="furnitureItemDrawers_${index}">
+						<span class="furniture-addon-switch"></span>
+					</label>
+					<div class="furniture-addon-qty" data-addon-qty="furnitureItemDrawers_${index}" hidden>
+						<input id="furnitureItemDrawers_${index}" name="furnitureItemDrawers_${index}" type="number" min="0" step="1" placeholder="Anzahl Schubladen">
+					</div>
+				</div>
+
+				<div class="furniture-addon-row">
+					<label class="furniture-addon-toggle">
+						<span class="furniture-addon-title">Ausziehboden</span>
+						<input type="checkbox" data-addon-toggle data-target="furnitureItemPullouts_${index}">
+						<span class="furniture-addon-switch"></span>
+					</label>
+					<div class="furniture-addon-qty" data-addon-qty="furnitureItemPullouts_${index}" hidden>
+						<input id="furnitureItemPullouts_${index}" name="furnitureItemPullouts_${index}" type="number" min="0" step="1" placeholder="Anzahl Ausziehboden">
+					</div>
+				</div>
+
+				<div class="furniture-addon-row">
+					<label class="furniture-addon-toggle">
+						<span class="furniture-addon-title">Beleuchtung</span>
+						<input type="checkbox" data-addon-toggle data-target="furnitureItemLighting_${index}">
+						<span class="furniture-addon-switch"></span>
+					</label>
+					<div class="furniture-addon-qty" data-addon-qty="furnitureItemLighting_${index}" hidden>
+						<input id="furnitureItemLighting_${index}" name="furnitureItemLighting_${index}" type="number" min="0" step="1" placeholder="Anzahl Beleuchtung">
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
+}
+
 function getFurnitureItemCardTemplate(index) {
 	return `
 		<div class="furniture-item-card" data-item-index="${index}">
@@ -1673,6 +1749,7 @@ function getFurnitureAssemblyItemCardTemplate(index) {
 					<label for="furnitureItemHeight_${index}">Höhe (m)</label>
 					<input id="furnitureItemHeight_${index}" name="furnitureItemHeight_${index}" type="number" min="0" step="0.01" placeholder="z.B. 2.10">
 				</div>
+				${getFurnitureAddonControls(index)}
 			</div>
 		</div>
 	`;

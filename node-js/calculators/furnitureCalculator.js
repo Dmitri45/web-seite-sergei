@@ -1,157 +1,224 @@
 /**
- * Parses numeric input safely.
- *
+ * Parses number safely (supports comma decimals).
  * @param {string|number|undefined|null} value
  * @returns {number}
  */
 function toNumber(value) {
   if (value === null || value === undefined) return 0;
-  const normalized = String(value).replace(',', '.').trim();
-  const parsed = Number.parseFloat(normalized);
+  const parsed = Number.parseFloat(String(value).replace(',', '.').trim());
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
 /**
  * Converts meters to centimeters.
- *
  * @param {string|number|undefined|null} meters
  * @returns {number}
  */
-function metersToCentimeters(meters) {
+function toCm(meters) {
   return toNumber(meters) * 100;
 }
 
 /**
- * Picks rate by range table (inclusive bounds).
- *
+ * Returns price by inclusive range table.
  * @param {number} value
- * @param {Array<{min:number,max:number,rate:number}>} ranges
+ * @param {Array<{min:number,max:number,price:number}>} ranges
  * @returns {number}
  */
-function getRateByRange(value, ranges) {
-  for (const range of ranges) {
-    if (value >= range.min && value <= range.max) return range.rate;
+function byRange(value, ranges) {
+  for (const row of ranges) {
+    if (value >= row.min && value <= row.max) return row.price;
   }
   return 0;
 }
 
 /**
- * Calculates per-item price using the specified furniture condition.
- *
- * @param {Object} item
- * @param {number} item.lengthCm
- * @param {number} item.heightCm
- * @param {number} item.drawers
- * @param {number} item.pullouts
- * @param {number} item.lights
- * @param {"new"|"used"} condition
- * @returns {number}
- */
-function calculateItemPrice(item, condition) {
-  const lengthRatesNew = [
-    { min: 50, max: 150, rate: 15 },
-    { min: 150, max: 210, rate: 25 },
-    { min: 210, max: 300, rate: 30 },
-    { min: 300, max: 400, rate: 40 }
-  ];
-
-  const lengthRatesUsed = [
-    { min: 150, max: 210, rate: 15 },
-    { min: 210, max: 300, rate: 15 },
-    { min: 300, max: 400, rate: 15 }
-  ];
-
-  const heightRatesNew = [
-    { min: 30, max: 100, rate: 2 },
-    { min: 100, max: 150, rate: 5 },
-    { min: 150, max: 200, rate: 5 },
-    { min: 200, max: 240, rate: 5 }
-  ];
-
-  const heightRatesUsed = [
-    { min: 100, max: 150, rate: 5 },
-    { min: 150, max: 200, rate: 5 },
-    { min: 200, max: 240, rate: 5 }
-  ];
-
-  const lengthRate = condition === 'new'
-    ? getRateByRange(item.lengthCm, lengthRatesNew)
-    : getRateByRange(item.lengthCm, lengthRatesUsed);
-
-  const heightRate = condition === 'new'
-    ? getRateByRange(item.heightCm, heightRatesNew)
-    : getRateByRange(item.heightCm, heightRatesUsed);
-
-  const drawerRate = condition === 'new' ? 5 : 1;
-  const pulloutRate = condition === 'new' ? 2 : 0.5;
-  const lightingRate = 2;
-
-  return (
-    lengthRate +
-    heightRate +
-    item.drawers * drawerRate +
-    item.pullouts * pulloutRate +
-    item.lights * lightingRate
-  );
-}
-
-/**
- * Normalizes furniture item payload to internal numeric model.
- *
- * @param {Object} rawItem
+ * Normalizes one furniture item from payload.
+ * Expected raw fields: length, height, drawers, pullout/pullouts, lighting/lights
+ * @param {Object} raw
  * @returns {{lengthCm:number,heightCm:number,drawers:number,pullouts:number,lights:number}}
  */
-function normalizeFurnitureItem(rawItem = {}) {
+function normalizeItem(raw = {}) {
   return {
-    lengthCm: metersToCentimeters(rawItem?.length),
-    heightCm: metersToCentimeters(rawItem?.height),
-    drawers: toNumber(rawItem?.drawers),
-    pullouts: toNumber(rawItem?.pullout) + toNumber(rawItem?.pullouts),
-    lights: toNumber(rawItem?.lighting) + toNumber(rawItem?.lights)
+    lengthCm: toCm(raw.length),
+    heightCm: toCm(raw.height),
+    drawers: toNumber(raw.drawers),
+    pullouts: toNumber(raw.pullout) + toNumber(raw.pullouts),
+    lights: toNumber(raw.lighting) + toNumber(raw.lights)
   };
 }
 
 /**
- * Calculates total by condition for all furniture items.
- *
- * @param {Object[]} moebelstuecke
- * @param {"new"|"used"} condition
+ * Calculates one item for "Neue Möbel aufbauen".
+ * @param {{lengthCm:number,heightCm:number,drawers:number,pullouts:number,lights:number}} item
  * @returns {number}
  */
-function calculateFurnitureAssemblyTotalByCondition(moebelstuecke = [], condition) {
-  let total = 0;
+function calcNewAssemblyItem(item) {
+  const lengthPrice = byRange(item.lengthCm, [
+    { min: 50, max: 150, price: 15 },
+    { min: 150, max: 210, price: 25 },
+    { min: 210, max: 300, price: 30 },
+    { min: 300, max: 400, price: 40 }
+  ]);
 
-  moebelstuecke.forEach((rawItem) => {
-    const item = normalizeFurnitureItem(rawItem);
-    total += calculateItemPrice(item, condition);
-  });
+  const heightPrice = byRange(item.heightCm, [
+    { min: 30, max: 100, price: 2 },
+    { min: 100, max: 150, price: 5 },
+    { min: 150, max: 200, price: 5 },
+    { min: 200, max: 240, price: 5 }
+  ]);
 
-  return total;
+  return lengthPrice + heightPrice + item.drawers * 5 + item.pullouts * 2 + item.lights * 2;
 }
 
 /**
- * Calculates total assembly price for new furniture.
- *
- * @param {Object} formData
+ * Calculates one item for old furniture (abbau/aufbau).
+ * Rule: items below 150 cm are not disassembled/assembled -> 0.
+ * @param {{lengthCm:number,heightCm:number,drawers:number,pullouts:number,lights:number}} item
+ * @param {'abbau'|'aufbau'} mode
+ * @returns {number}
+ */
+function calcOldItem(item, mode) {
+  if (item.lengthCm < 150) return 0;
+
+  const lengthPrice = byRange(item.lengthCm, [
+    { min: 150, max: 210, price: 15 },
+    { min: 210, max: 300, price: 15 },
+    { min: 300, max: 400, price: 15 }
+  ]);
+
+  const heightPrice = byRange(item.heightCm, [
+    { min: 100, max: 150, price: 5 },
+    { min: 150, max: 200, price: 5 },
+    { min: 200, max: 240, price: 5 }
+  ]);
+
+  const drawerRate = mode === 'abbau' ? 0.5 : 1;
+  const pulloutRate = mode === 'abbau' ? 0.1 : 0.5;
+
+  return lengthPrice + heightPrice + item.drawers * drawerRate + item.pullouts * pulloutRate + item.lights * 2;
+}
+
+/**
+ * Neue Möbel aufbauen.
+ * @param {{moebelstuecke?:Object[]}} formData
  * @returns {number}
  */
 function calculateNewFurnitureAssemblyPrice(formData = {}) {
-  const moebelstuecke = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
-  return calculateFurnitureAssemblyTotalByCondition(moebelstuecke, 'new');
+  const items = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
+  return items.reduce((sum, raw) => sum + calcNewAssemblyItem(normalizeItem(raw)), 0);
 }
 
 /**
- * Calculates total assembly price for used furniture.
- *
- * @param {Object} formData
+ * Neue Möbel aufbauen, with one result row per item.
+ * @param {{moebelstuecke?:Object[]}} formData
+ * @returns {Array<{index:number,name:string,price:number}>}
+ */
+function calculateNewFurnitureAssemblyItems(formData = {}) {
+  const items = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
+  return items.map((raw, index) => ({
+    index,
+    name: String(raw.name || '').trim() || `Möbelstück ${index + 1}`,
+    price: calcNewAssemblyItem(normalizeItem(raw))
+  }));
+}
+
+/**
+ * Alte Möbel abbauen.
+ * @param {{moebelstuecke?:Object[]}} formData
  * @returns {number}
  */
-function calculateUsedFurnitureAssemblyPrice(formData = {}) {
-  const moebelstuecke = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
-  return calculateFurnitureAssemblyTotalByCondition(moebelstuecke, 'used');
+function calculateOldFurnitureDisassemblyPrice(formData = {}) {
+  const items = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
+  return items.reduce((sum, raw) => sum + calcOldItem(normalizeItem(raw), 'abbau'), 0);
+}
+
+/**
+ * Alte Möbel abbauen, with one result row per item.
+ * @param {{moebelstuecke?:Object[]}} formData
+ * @returns {Array<{index:number,name:string,price:number}>}
+ */
+function calculateOldFurnitureDisassemblyItems(formData = {}) {
+  const items = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
+  return items.map((raw, index) => ({
+    index,
+    name: String(raw.name || '').trim() || `Möbelstück ${index + 1}`,
+    price: calcOldItem(normalizeItem(raw), 'abbau')
+  }));
+}
+
+/**
+ * Alte Möbel aufbauen.
+ * @param {{moebelstuecke?:Object[]}} formData
+ * @returns {number}
+ */
+function calculateOldFurnitureAssemblyPrice(formData = {}) {
+  const items = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
+  return items.reduce((sum, raw) => sum + calcOldItem(normalizeItem(raw), 'aufbau'), 0);
+}
+
+/**
+ * Alte Möbel aufbauen, with one result row per item.
+ * @param {{moebelstuecke?:Object[]}} formData
+ * @returns {Array<{index:number,name:string,price:number}>}
+ */
+function calculateOldFurnitureAssemblyItems(formData = {}) {
+  const items = Array.isArray(formData.moebelstuecke) ? formData.moebelstuecke : [];
+  return items.map((raw, index) => ({
+    index,
+    name: String(raw.name || '').trim() || `Möbelstück ${index + 1}`,
+    price: calcOldItem(normalizeItem(raw), 'aufbau')
+  }));
+}
+
+/**
+ * Umzugshelfer hourly rate by helper count, incl. MwSt.
+ * @param {string|number|undefined|null} helpersCount
+ * @returns {number}
+ */
+function getMovingHelpersHourlyRate(helpersCount) {
+  const rates = {
+    1: 45,
+    2: 70,
+    3: 100
+  };
+
+  return rates[toNumber(helpersCount)] || 0;
+}
+
+/**
+ * Umzugshelfer.
+ * @param {{helpersCount?:string|number,workHours?:string|number}} formData
+ * @returns {number}
+ */
+function calculateMovingHelpersPrice(formData = {}) {
+  return getMovingHelpersHourlyRate(formData.helpersCount) * toNumber(formData.workHours);
+}
+
+/**
+ * Umzugshelfer, with one result row for the selected hourly calculation.
+ * @param {{helpersCount?:string|number,workHours?:string|number}} formData
+ * @returns {Array<{index:number,name:string,price:number,rate:number,hours:number}>}
+ */
+function calculateMovingHelpersItems(formData = {}) {
+  const helpersCount = toNumber(formData.helpersCount);
+  const hours = toNumber(formData.workHours);
+  const rate = getMovingHelpersHourlyRate(helpersCount);
+
+  return [{
+    index: 0,
+    name: `${helpersCount || 0} Helfer x ${hours || 0} Std.`,
+    price: rate * hours,
+    hours
+  }];
 }
 
 module.exports = {
   calculateNewFurnitureAssemblyPrice,
-  calculateUsedFurnitureAssemblyPrice
+  calculateNewFurnitureAssemblyItems,
+  calculateOldFurnitureDisassemblyPrice,
+  calculateOldFurnitureDisassemblyItems,
+  calculateOldFurnitureAssemblyPrice,
+  calculateOldFurnitureAssemblyItems,
+  calculateMovingHelpersPrice,
+  calculateMovingHelpersItems
 };

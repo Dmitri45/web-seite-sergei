@@ -13,10 +13,15 @@ let selectedTransportTo = null;
 let selectedOfferAddress = '';
 let latestCalculationResult = null;
 let latestFrontendFormPayload = null;
-const CALCULATION_SERVICE_LABELS = new Set([
+const KITCHEN_CALCULATION_SERVICE_LABELS = new Set([
 	'Küche aufbauen',
 	'Küche abbauen',
 	'Küche anpassen'
+]);
+
+const FURNITURE_CALCULATION_SERVICE_LABELS = new Set([
+	'Möbel aufbauen',
+	'Umzugshelfer'
 ]);
 
 const SERVICE_FORM_TEMPLATES_BY_LABEL = {
@@ -83,8 +88,33 @@ function renderStandaloneForm(templateHTML) {
 	initDynamicFurnitureItems(newForm);
 	initFenceAssemblyForm(newForm);
 	initKitchenTransportForm(newForm);
+	initFurnitureAddonToggles(newForm);
 	initOfferRequestButtons(newForm);
 	return newForm;
+}
+
+function initFurnitureAddonToggles(containerElement) {
+	if (!containerElement) return;
+
+	const toggleInputs = containerElement.querySelectorAll('[data-addon-toggle]');
+	toggleInputs.forEach((toggleInput) => {
+		if (toggleInput.dataset.toggleBound === '1') return;
+		toggleInput.dataset.toggleBound = '1';
+
+		const targetInputId = toggleInput.dataset.target;
+		const quantityWrap = containerElement.querySelector(`[data-addon-qty="${targetInputId}"]`);
+		const quantityInput = quantityWrap?.querySelector('input');
+		if (!quantityWrap || !quantityInput) return;
+
+		const syncVisibility = () => {
+			const isEnabled = toggleInput.checked;
+			quantityWrap.hidden = !isEnabled;
+			if (!isEnabled) quantityInput.value = '';
+		};
+
+		toggleInput.addEventListener('change', syncVisibility);
+		syncVisibility();
+	});
 }
 
 function initKitchenTransportForm(formElement) {
@@ -107,17 +137,27 @@ function initKitchenTransportForm(formElement) {
 }
 
 function initOfferRequestButtons(formElement) {
-	const continueButton = formElement.querySelector('#btn-continue');
+	const continueButton = formElement.querySelector('#btn-continue, #btn-calculate');
 	if (!continueButton) return;
 
-	continueButton.addEventListener('click', () => {
+	continueButton.addEventListener('click', async () => {
 		const selectedService = getSelectedServiceData();
 		const serviceLabel = selectedService?.label?.trim() || '';
-		const isCalculationService = CALCULATION_SERVICE_LABELS.has(serviceLabel);
+		const isKitchenCalculationService = KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel);
+		const isFurnitureCalculationService = FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel);
 
-		if (isCalculationService) {
+		if (isKitchenCalculationService) {
 			formElement.style.display = 'none';
 			showTransportationSurvey();
+			return;
+		}
+
+		if (isFurnitureCalculationService) {
+			const payload = buildCalculationData();
+			latestFrontendFormPayload = payload;
+			formElement.style.display = 'none';
+			showLoadingIndicator();
+			await requestCalculation(payload);
 			return;
 		}
 
@@ -181,6 +221,7 @@ function initDynamicFurnitureItems(formElement) {
 	addBtn.addEventListener('click', () => {
 		const nextIndex = itemsList.querySelectorAll('.furniture-item-card').length;
 		itemsList.appendChild(createFurnitureItemCard(nextIndex, templateType));
+		initFurnitureAddonToggles(itemsList);
 		refreshFurnitureItemHeaders(itemsList);
 	});
 
@@ -196,6 +237,7 @@ function initDynamicFurnitureItems(formElement) {
 	});
 
 	refreshFurnitureItemHeaders(itemsList);
+	initFurnitureAddonToggles(itemsList);
 }
 
 function renderServiceSpecificFormFromStorage() {
@@ -523,6 +565,9 @@ function buildCalculationData() {
 
 function adaptKitchenPayloadForBackend(data) {
 	if (!data || typeof data !== 'object') return data;
+	const serviceLabel = String(data.serviceLabel || '').trim();
+
+	if (!KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) return data;
 
 	data.condition = data.kitchenCondition || selectedKitchenCondition || data.condition || 'new';
 	data.abbau = data.dismantling === 'yes' || data.abbau === true || data.abbau === 'true';
@@ -561,7 +606,7 @@ function showTransportationSurvey() {
 
 async function requestCalculation(data) {
 	try {
-		const response = await fetch('http://localhost:3000/api/kitchen/calculate', {
+		const response = await fetch(getCalculationEndpoint(data), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -585,11 +630,22 @@ async function requestCalculation(data) {
 	}
 }
 
+function getCalculationEndpoint(data = {}) {
+	const serviceLabel = String(data.serviceLabel || '').trim();
+
+	if (FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
+		return 'http://localhost:3000/api/furniture/calculate';
+	}
+
+	return 'http://localhost:3000/api/kitchen/calculate';
+}
+
 function buildKitchenFormPayload(formElement) {
 	const selectedService = getSelectedServiceData();
+	const serviceLabel = selectedService?.label || '';
 	const data = {
 		kitchenCondition: selectedKitchenCondition,
-		serviceLabel: selectedService?.label || ''
+		serviceLabel
 	};
 
 	if (!formElement) return data;
@@ -602,8 +658,27 @@ function buildKitchenFormPayload(formElement) {
 	});
 
 	groupFurnitureItemsInPayload(data);
+	adaptPayloadForService(data, serviceLabel);
 
 	return data;
+}
+
+function adaptPayloadForService(payload, serviceLabel = '') {
+	if (!payload || typeof payload !== 'object') return;
+
+	const normalizedLabel = String(serviceLabel || '').trim().toLowerCase();
+
+	if (normalizedLabel === 'möbel aufbauen') {
+		payload.mode = 'new-assembly';
+	}
+
+	if (normalizedLabel === 'möbel entsorgen') {
+		payload.mode = 'old-disassembly';
+	}
+
+	if (normalizedLabel === 'umzugshelfer') {
+		payload.mode = 'moving-helpers';
+	}
 }
 
 function toCamelCaseFieldName(rawFieldName = '') {
@@ -742,8 +817,11 @@ function hideLoadingIndicator() {
 
 function showResult(price) {
 	removeFeedbackBlocks();
-	// Если есть prices (кухня), используем новый шаблон
-	if (price && price.prices) {
+
+	const serviceLabel = String(price?.serviceLabel || '').trim();
+	if (FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel) && price?.prices) {
+		appendTemplateToCalcLayout(getFurnitureResultTemplate(price));
+	} else if (price && price.prices) {
 		appendTemplateToCalcLayout(getKitchenResultTemplate(price));
 	} else {
 		appendTemplateToCalcLayout(getResultTemplate(price));
