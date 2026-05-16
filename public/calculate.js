@@ -24,6 +24,11 @@ const FURNITURE_CALCULATION_SERVICE_LABELS = new Set([
 	'Umzugshelfer'
 ]);
 
+const CUSTOM_REQUEST_SERVICE_LABELS = new Set([
+	'Küchenanfertigung',
+	'Möbelanfertigung'
+]);
+
 const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Küchentransport': () => getKitchenTransportForm(),
 	'Küche abbauen': () => getKitchenDismantlingForm(),
@@ -72,6 +77,29 @@ function getSelectedServiceData() {
 	}
 }
 
+function setSelectedServiceData(serviceData) {
+	try {
+		sessionStorage.setItem(SERVICE_SELECTION_STORAGE_KEY, JSON.stringify(serviceData));
+	} catch (_) {
+		// Ignore sessionStorage errors (private mode / disabled storage).
+	}
+}
+
+function applySelectedServiceData(serviceData) {
+	if (!serviceData) return;
+
+	const heroEyebrow = document.querySelector('.hero-eyebrow');
+	const heroTitle = document.querySelector('.hero-title');
+	const asideTitle = document.querySelector('#selectedServiceAsideTitle');
+	const previewImage = document.querySelector('#selectedServicePreviewImage');
+
+	if (heroEyebrow && serviceData.category) heroEyebrow.textContent = serviceData.category;
+	if (heroTitle && serviceData.label) heroTitle.textContent = serviceData.label;
+	if (asideTitle && serviceData.label) asideTitle.textContent = serviceData.label;
+	if (previewImage && serviceData.image) previewImage.src = serviceData.image;
+	if (serviceData.label) document.title = `${serviceData.label} – S.K. SERVICE`;
+}
+
 function renderStandaloneForm(templateHTML) {
 	const container = getCalcMainContainer();
 	if (!container) return null;
@@ -88,9 +116,32 @@ function renderStandaloneForm(templateHTML) {
 	initDynamicFurnitureItems(newForm);
 	initFenceAssemblyForm(newForm);
 	initKitchenTransportForm(newForm);
+	initInlineAddressAutocompletes(newForm);
 	initFurnitureAddonToggles(newForm);
+	initTransportAssemblyAddonVisibility(newForm);
+	initServiceSwitchButtons(newForm);
 	initOfferRequestButtons(newForm);
 	return newForm;
+}
+
+function initInlineAddressAutocompletes(formElement) {
+	if (!formElement) return;
+
+	const autocompleteElements = formElement.querySelectorAll('[data-address-autocomplete]');
+	autocompleteElements.forEach((element) => {
+		if (!element.id || element.dataset.addressAutocompleteBound === '1') return;
+		element.dataset.addressAutocompleteBound = '1';
+
+		const targetName = element.dataset.addressTarget || 'address';
+		const targetInput = formElement.querySelector(`[name="${targetName}"]`);
+		const addressAutocomplete = createAddressAutocomplete(element.id);
+
+		addressAutocomplete.on('select', (location) => {
+			if (targetInput) {
+				targetInput.value = location?.properties?.formatted || '';
+			}
+		});
+	});
 }
 
 function initFurnitureAddonToggles(containerElement) {
@@ -113,6 +164,35 @@ function initFurnitureAddonToggles(containerElement) {
 		};
 
 		toggleInput.addEventListener('change', syncVisibility);
+		syncVisibility();
+	});
+}
+
+function initTransportAssemblyAddonVisibility(containerElement) {
+	if (!containerElement) return;
+
+	const assemblySelects = containerElement.querySelectorAll('select[name^="transportAssemblyNeed_"]');
+	assemblySelects.forEach((assemblySelect) => {
+		if (assemblySelect.dataset.assemblyAddonBound === '1') return;
+		assemblySelect.dataset.assemblyAddonBound = '1';
+
+		const card = assemblySelect.closest('.furniture-item-card');
+		const addonBlock = card?.querySelector('[data-transport-assembly-addons]');
+		if (!addonBlock) return;
+
+		const syncVisibility = () => {
+			const shouldShow = ['dismantle', 'assemble', 'both'].includes(assemblySelect.value);
+			addonBlock.hidden = !shouldShow;
+
+			if (!shouldShow) {
+				addonBlock.querySelectorAll('[data-addon-toggle]').forEach((toggleInput) => {
+					toggleInput.checked = false;
+					toggleInput.dispatchEvent(new Event('change'));
+				});
+			}
+		};
+
+		assemblySelect.addEventListener('change', syncVisibility);
 		syncVisibility();
 	});
 }
@@ -149,6 +229,23 @@ function initOfferRequestButtons(formElement) {
 		if (isKitchenCalculationService) {
 			formElement.style.display = 'none';
 			showTransportationSurvey();
+			return;
+		}
+
+		if (serviceLabel === 'Kleintransporte') {
+			formElement.style.display = 'none';
+			showDirectTransportAddressForm();
+			return;
+		}
+
+		if (CUSTOM_REQUEST_SERVICE_LABELS.has(serviceLabel)) {
+			const payload = buildCalculationData();
+			if (!validateCustomRequestPayload(payload)) return;
+
+			adaptCustomRequestPayload(payload);
+			latestFrontendFormPayload = payload;
+			formElement.style.display = 'none';
+			showRequestSent(payload);
 			return;
 		}
 
@@ -189,9 +286,14 @@ function initFenceAssemblyForm(formElement) {
 
 function createFurnitureItemCard(index, templateType = 'furniture') {
 	const wrapper = document.createElement('div');
-	const templateHTML = templateType === 'assembly'
-		? getFurnitureAssemblyItemCardTemplate(index)
-		: getFurnitureItemCardTemplate(index);
+	let templateHTML = getFurnitureItemCardTemplate(index);
+
+	if (templateType === 'assembly') {
+		templateHTML = getFurnitureAssemblyItemCardTemplate(index);
+	} else if (templateType === 'transport') {
+		templateHTML = getTransportItemCardTemplate(index);
+	}
+
 	wrapper.innerHTML = templateHTML.trim();
 	const card = wrapper.firstElementChild;
 	if (!card) return null;
@@ -201,14 +303,56 @@ function createFurnitureItemCard(index, templateType = 'furniture') {
 
 function refreshFurnitureItemHeaders(list) {
 	const cards = list.querySelectorAll('.furniture-item-card');
+	const itemLabel = list.dataset.itemLabel || 'Möbelstück';
 	cards.forEach((card, idx) => {
 		const head = card.querySelector('strong');
-		if (head) head.textContent = `Möbelstück ${idx + 1}`;
+		if (head) head.textContent = `${itemLabel} ${idx + 1}`;
 
 		const removeBtn = card.querySelector('[data-remove-item]');
 		if (removeBtn) {
 			removeBtn.style.display = cards.length > 1 ? 'inline-flex' : 'none';
 		}
+	});
+}
+
+function syncFurnitureItemLimit(itemsList, addBtn) {
+	const maxItems = Number.parseInt(itemsList.dataset.maxItems || '', 10);
+	if (!Number.isInteger(maxItems) || maxItems <= 0) return;
+
+	const itemCount = itemsList.querySelectorAll('.furniture-item-card').length;
+	const isLimitReached = itemCount >= maxItems;
+	const limitNotice = itemsList.parentElement?.querySelector('#smallTransportLimitNotice');
+
+	addBtn.disabled = isLimitReached;
+	addBtn.setAttribute('aria-disabled', String(isLimitReached));
+
+	if (limitNotice) {
+		limitNotice.hidden = !isLimitReached;
+	}
+}
+
+function initServiceSwitchButtons(containerElement) {
+	if (!containerElement) return;
+
+	const switchButtons = containerElement.querySelectorAll('[data-switch-service]');
+	switchButtons.forEach((button) => {
+		if (button.dataset.switchBound === '1') return;
+		button.dataset.switchBound = '1';
+
+		button.addEventListener('click', () => {
+			const serviceLabel = button.dataset.switchService || '';
+			if (!serviceLabel) return;
+
+			const serviceData = {
+				label: serviceLabel,
+				image: 'img/services/moebelservice/umzugshelfer.png',
+				category: 'MÖBELSERVICE'
+			};
+
+			setSelectedServiceData(serviceData);
+			applySelectedServiceData(serviceData);
+			renderServiceSpecificFormFromStorage();
+		});
 	});
 }
 
@@ -220,9 +364,17 @@ function initDynamicFurnitureItems(formElement) {
 
 	addBtn.addEventListener('click', () => {
 		const nextIndex = itemsList.querySelectorAll('.furniture-item-card').length;
+		const maxItems = Number.parseInt(itemsList.dataset.maxItems || '', 10);
+		if (Number.isInteger(maxItems) && maxItems > 0 && nextIndex >= maxItems) {
+			syncFurnitureItemLimit(itemsList, addBtn);
+			return;
+		}
+
 		itemsList.appendChild(createFurnitureItemCard(nextIndex, templateType));
 		initFurnitureAddonToggles(itemsList);
+		initTransportAssemblyAddonVisibility(itemsList);
 		refreshFurnitureItemHeaders(itemsList);
+		syncFurnitureItemLimit(itemsList, addBtn);
 	});
 
 	itemsList.addEventListener('click', (event) => {
@@ -234,10 +386,13 @@ function initDynamicFurnitureItems(formElement) {
 
 		card.remove();
 		refreshFurnitureItemHeaders(itemsList);
+		syncFurnitureItemLimit(itemsList, addBtn);
 	});
 
 	refreshFurnitureItemHeaders(itemsList);
 	initFurnitureAddonToggles(itemsList);
+	initTransportAssemblyAddonVisibility(itemsList);
+	syncFurnitureItemLimit(itemsList, addBtn);
 }
 
 function renderServiceSpecificFormFromStorage() {
@@ -415,6 +570,20 @@ function renderTransportationSurvey() {
 	return survey;
 }
 
+function renderDirectTransportAddressForm() {
+	const calcContainer = getCalcMainContainer();
+	if (!calcContainer) return null;
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = getDirectTransportAddressForm();
+
+	const survey = tempDiv.querySelector('#directTransportSurvey');
+	if (!survey) return null;
+
+	calcContainer.appendChild(survey);
+	return survey;
+}
+
 function resetTransportSelection() {
 	selectedTransportFrom = null;
 	selectedTransportVia = [];
@@ -424,14 +593,19 @@ function resetTransportSelection() {
 	if (intermediateContainer) {
 		intermediateContainer.innerHTML = '';
 	}
+
+	const directIntermediateContainer = document.getElementById('directTransportIntermediateAddresses');
+	if (directIntermediateContainer) {
+		directIntermediateContainer.innerHTML = '';
+	}
 }
 
-function appendIntermediateAddressField(survey, index) {
-	const container = survey.querySelector('#transportIntermediateAddresses');
+function appendIntermediateAddressField(survey, index, containerSelector = '#transportIntermediateAddresses', idPrefix = 'transportViaAutocomplete') {
+	const container = survey.querySelector(containerSelector);
 	if (!container) return null;
 
 	const tempDiv = document.createElement('div');
-	tempDiv.innerHTML = getIntermediateAddressTemplate(index);
+	tempDiv.innerHTML = getIntermediateAddressTemplate(index, idPrefix);
 	const field = tempDiv.firstElementChild;
 
 	if (field) {
@@ -475,36 +649,84 @@ function createIntermediateLocationHandler(index) {
 	};
 }
 
-function addIntermediateAddressAutocomplete(survey, state) {
+function addIntermediateAddressAutocomplete(survey, state, options = {}) {
 	const index = state.intermediateAutocompletes.length;
-	const field = appendIntermediateAddressField(survey, index);
+	const idPrefix = options.idPrefix || 'transportViaAutocomplete';
+	const field = appendIntermediateAddressField(
+		survey,
+		index,
+		options.containerSelector || '#transportIntermediateAddresses',
+		idPrefix
+	);
 	if (!field) return;
 
-	const elementId = `transportViaAutocomplete-${index}`;
+	const elementId = `${idPrefix}-${index}`;
 	const intermediateAutocomplete = createAddressAutocomplete(elementId);
 	intermediateAutocomplete.on('select', createIntermediateLocationHandler(index));
 
 	state.intermediateAutocompletes.push(intermediateAutocomplete);
 }
 
-function initTransportAutocompletesIfNeeded(state) {
+function initTransportAutocompletesIfNeeded(state, options = {}) {
+	const fromElementId = options.fromElementId || 'transportFromAutocomplete';
+	const toElementId = options.toElementId || 'transportToAutocomplete';
+
 	if (!state.fromAutocomplete) {
-		state.fromAutocomplete = createAddressAutocomplete('transportFromAutocomplete');
+		state.fromAutocomplete = createAddressAutocomplete(fromElementId);
 		state.fromAutocomplete.on('select', handleFromLocationSelect);
 	}
 
 	if (!state.toAutocomplete) {
-		state.toAutocomplete = createAddressAutocomplete('transportToAutocomplete');
+		state.toAutocomplete = createAddressAutocomplete(toElementId);
 		state.toAutocomplete.on('select', handleToLocationSelect);
 	}
 }
 
-function bindAddIntermediateAddressHandler(survey, state) {
+function bindAddIntermediateAddressHandler(survey, state, options = {}) {
 	const addIntermediateAddressBtn = survey.querySelector('#addIntermediateAddressBtn');
 	if (!addIntermediateAddressBtn) return;
 
 	addIntermediateAddressBtn.addEventListener('click', () => {
-		addIntermediateAddressAutocomplete(survey, state);
+		addIntermediateAddressAutocomplete(survey, state, options);
+	});
+}
+
+function refreshIntermediateAddressLabels(survey) {
+	const fields = survey.querySelectorAll('[data-intermediate-address-index]');
+	fields.forEach((field, index) => {
+		field.dataset.intermediateAddressIndex = String(index);
+
+		const label = field.querySelector('.intermediate-address-field__head label');
+		if (label) label.textContent = `Zwischeziel ${index + 1}`;
+
+		const removeBtn = field.querySelector('[data-remove-intermediate-address]');
+		if (removeBtn) {
+			removeBtn.dataset.removeIntermediateAddress = String(index);
+		}
+	});
+}
+
+function bindRemoveIntermediateAddressHandler(survey, state) {
+	if (!survey || survey.dataset.removeIntermediateBound === '1') return;
+	survey.dataset.removeIntermediateBound = '1';
+
+	survey.addEventListener('click', (event) => {
+		const removeBtn = event.target.closest('[data-remove-intermediate-address]');
+		if (!removeBtn) return;
+
+		const index = Number.parseInt(removeBtn.dataset.removeIntermediateAddress || '', 10);
+		if (Number.isInteger(index)) {
+			delete selectedTransportVia[index];
+		}
+
+		removeBtn.closest('[data-intermediate-address-index]')?.remove();
+		selectedTransportVia = selectedTransportVia.filter(point => point?.address);
+
+		if (state?.intermediateAutocompletes) {
+			state.intermediateAutocompletes.splice(index, 1);
+		}
+
+		refreshIntermediateAddressLabels(survey);
 	});
 }
 
@@ -563,6 +785,38 @@ function buildCalculationData() {
 	return data;
 }
 
+function validateCustomRequestPayload(payload) {
+	if (!payload.firstName?.trim() || !payload.lastName?.trim()) {
+		alert('Bitte geben Sie Vorname und Nachname ein.');
+		return false;
+	}
+
+	if (!payload.phone?.trim()) {
+		alert('Bitte geben Sie Ihre Telefonnummer ein.');
+		return false;
+	}
+
+	if (!payload.address?.trim()) {
+		alert('Bitte wählen Sie eine Adresse aus der Vorschlagsliste aus.');
+		return false;
+	}
+
+	return true;
+}
+
+function adaptCustomRequestPayload(payload) {
+	payload.customer = {
+		firstName: payload.firstName || '',
+		lastName: payload.lastName || '',
+		phone: payload.phone || '',
+		address: payload.address || ''
+	};
+
+	delete payload.firstName;
+	delete payload.lastName;
+	delete payload.phone;
+}
+
 function adaptKitchenPayloadForBackend(data) {
 	if (!data || typeof data !== 'object') return data;
 	const serviceLabel = String(data.serviceLabel || '').trim();
@@ -589,6 +843,23 @@ function bindTransportationCalculateHandler(survey) {
 	});
 }
 
+function bindDirectTransportContinueHandler(survey) {
+	const continueBtn = survey.querySelector('#btn-main');
+	if (!continueBtn) return;
+
+	continueBtn.addEventListener('click', () => {
+		if (!selectedTransportFrom?.address || !selectedTransportTo?.address) {
+			alert('Bitte wählen Sie Start- und Zieladresse aus der Vorschlagsliste aus.');
+			return;
+		}
+
+		const payload = buildCalculationData();
+		latestFrontendFormPayload = payload;
+		survey.style.display = 'none';
+		openOfferRequestForm(payload);
+	});
+}
+
 function showTransportationSurvey() {
 	const survey = renderTransportationSurvey();
 	if (!survey) return;
@@ -601,7 +872,33 @@ function showTransportationSurvey() {
 
 	bindTransportationChoiceHandlers(survey, transportState);
 	bindAddIntermediateAddressHandler(survey, transportState);
+	bindRemoveIntermediateAddressHandler(survey, transportState);
 	bindTransportationCalculateHandler(survey);
+}
+
+function showDirectTransportAddressForm() {
+	resetTransportSelection();
+	selectedTransportation = 'yes';
+
+	const survey = renderDirectTransportAddressForm();
+	if (!survey) return;
+
+	const transportState = {
+		fromAutocomplete: null,
+		intermediateAutocompletes: [],
+		toAutocomplete: null
+	};
+
+	initTransportAutocompletesIfNeeded(transportState, {
+		fromElementId: 'directTransportFromAutocomplete',
+		toElementId: 'directTransportToAutocomplete'
+	});
+	bindAddIntermediateAddressHandler(survey, transportState, {
+		containerSelector: '#directTransportIntermediateAddresses',
+		idPrefix: 'directTransportViaAutocomplete'
+	});
+	bindRemoveIntermediateAddressHandler(survey, transportState);
+	bindDirectTransportContinueHandler(survey);
 }
 
 async function requestCalculation(data) {
@@ -740,6 +1037,7 @@ function upsertOfferRequestBlock() {
 	document.getElementById('kitchenSurvey')?.remove();
 	document.getElementById('assemblySurvey')?.remove();
 	document.getElementById('transportSurvey')?.remove();
+	document.getElementById('directTransportSurvey')?.remove();
 	document.getElementById('offer-request-block')?.remove();
 
 	const tempDiv = document.createElement('div');
@@ -840,6 +1138,13 @@ function showResult(price) {
 function showError(message) {
 	removeFeedbackBlocks();
 	appendTemplateToCalcLayout(getErrorTemplate(message));
+}
+
+function showRequestSent(data) {
+	removeFeedbackBlocks();
+	appendTemplateToCalcLayout(getRequestSentTemplate(data));
+	console.log('Custom request payload:', data);
+	console.log(JSON.stringify(data, null, 2));
 }
 
 function removeFeedbackBlocks() {

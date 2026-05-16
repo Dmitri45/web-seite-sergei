@@ -375,7 +375,7 @@ function getSmallItemsTransportForm() {
 			<div class="calc-grid">
 				<div class="field field-full">
 					<label>Positionen</label>
-					<div id="furnitureItemsList" class="furniture-items-list" data-item-template="transport" data-item-label="Position">
+					<div id="furnitureItemsList" class="furniture-items-list" data-item-template="transport" data-item-label="Position" data-max-items="3">
 						<div class="furniture-item-card" data-item-index="0">
 							<div class="furniture-item-card__head">
 								<strong>Position 1</strong>
@@ -408,10 +408,15 @@ function getSmallItemsTransportForm() {
 										<option value="both">Abbauen und aufbauen</option>
 									</select>
 								</div>
+								${getTransportAssemblyAddonControls(0)}
 							</div>
 						</div>
 					</div>
 					<button id="addFurnitureItemBtn" class="btn-secondary" type="button">Position hinzufügen</button>
+					<div id="smallTransportLimitNotice" class="calc-hint" hidden>
+						<p>Bei mehr als 3 Positionen wählen Sie bitte die Leistung Umzugshelfer.</p>
+						<button class="btn-secondary" type="button" data-switch-service="Umzugshelfer">Zu Umzugshelfer wechseln</button>
+					</div>
 				</div>
 
 				<div class="field">
@@ -469,7 +474,7 @@ function getMovingHelpersEstimateForm() {
 
 			<div class="calc-actions">
 				<button id="btn-calculate" class="btn-main" type="button">Preis einschätzen</button>
-				<button class="btn-secondary" type="button">Angebot anfragen</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
 			</div>
 		</form>
 	`;
@@ -1506,6 +1511,21 @@ function getCustomFurnitureRequestForm() {
 					</select>
 				</div>
 
+				<div class="field">
+					<label for="firstName">Vorname</label>
+					<input id="firstName" name="firstName" type="text" placeholder="Ihr Vorname">
+				</div>
+
+				<div class="field">
+					<label for="lastName">Nachname</label>
+					<input id="lastName" name="lastName" type="text" placeholder="Ihr Nachname">
+				</div>
+
+				<div class="field field-full">
+					<label for="phone">Telefonnummer</label>
+					<input id="phone" name="phone" type="tel" placeholder="Ihre Telefonnummer">
+				</div>
+
 				<div class="field field-full">
 					<label for="customFurnitureAddressValue">Ort der Besichtigung</label>
 					<div id="customFurnitureAddressAutocomplete" class="autocomplete-container" data-address-autocomplete data-address-target="address"></div>
@@ -1546,6 +1566,21 @@ function getCustomKitchenRequestForm() {
 						<option value="afternoon">Nachmittag</option>
 						<option value="evening">Abend</option>
 					</select>
+				</div>
+
+				<div class="field">
+					<label for="firstName">Vorname</label>
+					<input id="firstName" name="firstName" type="text" placeholder="Ihr Vorname">
+				</div>
+
+				<div class="field">
+					<label for="lastName">Nachname</label>
+					<input id="lastName" name="lastName" type="text" placeholder="Ihr Nachname">
+				</div>
+
+				<div class="field field-full">
+					<label for="phone">Telefonnummer</label>
+					<input id="phone" name="phone" type="tel" placeholder="Ihre Telefonnummer">
 				</div>
 
 				<div class="field field-full">
@@ -1653,11 +1688,44 @@ function getTransportationSurvey() {
 	`;
 }
 
-function getIntermediateAddressTemplate(index) {
+function getDirectTransportAddressForm() {
 	return `
-		<div class="field">
-			<label>Zwischeziel ${index + 1}</label>
-			<div id="transportViaAutocomplete-${index}" class="autocomplete-container"></div>
+		<div class="transport-survey" id="directTransportSurvey">
+			<div class="survey-card">
+				<h2>Transportadresse</h2>
+				<p>Bitte geben Sie Start- und Zieladresse für den Transport an.</p>
+
+				<div id="transportFields" style="margin-top: 20px;">
+					<div class="field">
+						<label>Von (Adresse)</label>
+						<div id="directTransportFromAutocomplete" class="autocomplete-container"></div>
+					</div>
+
+					<div id="directTransportIntermediateAddresses"></div>
+
+					<div class="field">
+						<label>Nach (Adresse)</label>
+						<div id="directTransportToAutocomplete" class="autocomplete-container"></div>
+					</div>
+				</div>
+
+				<div class="transport-actions" id="transportActions" style="display: flex; margin-top: 20px;">
+					<button id="btn-main" class="btn-main" type="button">Weiter</button>
+					<button id="addIntermediateAddressBtn" class="btn-secondary" type="button">Zwischeziel hinzufügen</button>
+				</div>
+			</div>
+		</div>
+	`;
+}
+
+function getIntermediateAddressTemplate(index, idPrefix = 'transportViaAutocomplete') {
+	return `
+		<div class="field intermediate-address-field" data-intermediate-address-index="${index}">
+			<div class="intermediate-address-field__head">
+				<label>Zwischeziel ${index + 1}</label>
+				<button class="intermediate-address-remove" type="button" data-remove-intermediate-address="${index}" aria-label="Zwischeziel löschen">×</button>
+			</div>
+			<div id="${idPrefix}-${index}" class="autocomplete-container"></div>
 		</div>
 	`;
 }
@@ -1700,6 +1768,14 @@ function getFurnitureAddonControls(index) {
 					</div>
 				</div>
 			</div>
+		</div>
+	`;
+}
+
+function getTransportAssemblyAddonControls(index) {
+	return `
+		<div class="transport-assembly-addons" data-transport-assembly-addons hidden>
+			${getFurnitureAddonControls(index)}
 		</div>
 	`;
 }
@@ -1789,6 +1865,7 @@ function getTransportItemCardTemplate(index) {
 						<option value="both">Abbauen und aufbauen</option>
 					</select>
 				</div>
+				${getTransportAssemblyAddonControls(index)}
 			</div>
 		</div>
 	`;
@@ -1823,6 +1900,19 @@ function getErrorTemplate(message) {
 				<h2>Fehler</h2>
 				<p>${message}</p>
 				<button class="btn-main" onclick="location.reload()">Erneut versuchen</button>
+			</div>
+		</div>
+	`;
+}
+
+function getRequestSentTemplate(data = {}) {
+	return `
+		<div id="result-display" class="result-display">
+			<div class="result-card">
+				<p class="result-eyebrow">Anfrage</p>
+				<h2>${data.serviceLabel || 'Anfrage'} wurde vorbereitet</h2>
+				<p class="result-note">Vielen Dank. Ihre Angaben wurden aufgenommen.</p>
+				<button class="btn-secondary" onclick="location.reload()">Neue Anfrage</button>
 			</div>
 		</div>
 	`;
