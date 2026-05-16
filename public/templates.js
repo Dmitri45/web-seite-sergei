@@ -105,6 +105,39 @@ function getFurnitureResultTemplate(data) {
 		</div>
 	`;
 }
+
+function getServiceResultTemplate(data) {
+	const prices = data?.prices || {};
+	const totalPrice = prices.totalPrice || 0;
+	const items = Array.isArray(prices.items) ? prices.items : [];
+
+	return `
+		<div id="result-display" class="result-display">
+			<div class="result-card result-card--kitchen">
+				<p class="result-eyebrow">Unverbindliche Preiseinschätzung</p>
+				<h2>${data?.serviceLabel || 'Service'}</h2>
+
+				<div class="result-total">
+					<span class="result-total__label">Geschätzter Gesamtpreis</span>
+					<strong>${formatEuro(totalPrice)}</strong>
+				</div>
+
+				<div class="result-breakdown">
+					${items.map((item) => `
+						<div class="result-breakdown__row">
+							<span>${item.name || 'Position'}</span>
+							<strong>${formatEuro(item.price)}</strong>
+						</div>
+					`).join('')}
+				</div>
+
+				<p class="result-note">Der Preis ist eine erste Einschätzung. Das finale Angebot kann je nach Aufwand vor Ort abweichen.</p>
+				<button class="btn-main" type="button" data-offer-request-result="true">Angebot anfordern</button>
+				<button class="btn-secondary" onclick="location.reload()">Neue Berechnung</button>
+			</div>
+		</div>
+	`;
+}
 // Шаблоны форм для новой и старой кухни
 
 function getNewKitchenForm() {
@@ -1312,7 +1345,7 @@ function getJointCleaningForm() {
 function getFinePlasterForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Feinputz</h2>
+			<h2>Feinputz / Fertigeschicht</h2>
 			<p>Bitte geben Sie Fläche und gewünschte Qualitätsstufe an.</p>
 
 			<div class="calc-grid">

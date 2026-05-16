@@ -24,6 +24,16 @@ const FURNITURE_CALCULATION_SERVICE_LABELS = new Set([
 	'Umzugshelfer'
 ]);
 
+const TRADES_CALCULATION_SERVICE_LABELS = new Set([
+	'Feinputz',
+	'Wände Verputzen',
+	'Trockenbau (Rigipsausbau)'
+]);
+
+const GARDEN_CALCULATION_SERVICE_LABELS = new Set([
+	'Zäune aufbauen'
+]);
+
 const CUSTOM_REQUEST_SERVICE_LABELS = new Set([
 	'Küchenanfertigung',
 	'Möbelanfertigung'
@@ -48,13 +58,17 @@ const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Umzugshelfer': () => getMovingHelpersEstimateForm(),
 	'Kleintransporte': () => getSmallItemsTransportForm(),
 	'Fugenreinigung': () => getJointCleaningForm(),
+	'Feinputz': () => getFinePlasterForm(),
+	'Wände Verputzen': () => getWallPlasteringForm(),
+	'Trockenbau (Rigipsausbau)': () => getDrywallForm(),
 	'Hecken schneiden': () => getHedgeTrimmingForm(),
 	'Rasen mähen': () => getLawnMowingForm(),
 	'Rollrasen verlegen': () => getLawnInstallationForm(),
 	'Wurzeln entfernen': () => getRootRemovalForm(),
 	'Pflastern': () => getPavingForm(),
 	'Minibagger-Arbeiten': () => getMiniExcavatorWorkForm(),
-	'Gartenhütten aufbauen': () => getGardenHutSandingPaintingForm(),
+	'Gartenhütten aufbauen': () => getGardenHutAssemblyForm(),
+	'Gartenhütten schleifen/streichen': () => getGardenHutSandingPaintingForm(),
 	'Hecken entfernen': () => getHedgeRemovalForm(),
 	'Kleine Bäume fällen': () => getSmallTreeFellingForm(),
 	'Sträucher schneiden': () => getShrubTrimmingForm(),
@@ -223,8 +237,10 @@ function initOfferRequestButtons(formElement) {
 	continueButton.addEventListener('click', async () => {
 		const selectedService = getSelectedServiceData();
 		const serviceLabel = selectedService?.label?.trim() || '';
-		const isKitchenCalculationService = KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel);
-		const isFurnitureCalculationService = FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel);
+			const isKitchenCalculationService = KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel);
+			const isFurnitureCalculationService = FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel);
+			const isTradesCalculationService = TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel);
+			const isGardenCalculationService = GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel);
 
 		if (isKitchenCalculationService) {
 			formElement.style.display = 'none';
@@ -257,6 +273,21 @@ function initOfferRequestButtons(formElement) {
 			await requestCalculation(payload);
 			return;
 		}
+
+			if (isTradesCalculationService) {
+				const payload = buildCalculationData();
+				latestFrontendFormPayload = payload;
+				formElement.style.display = 'none';
+				showLoadingIndicator();
+				await requestCalculation(payload);
+				return;
+			}
+
+			if (isGardenCalculationService) {
+				formElement.style.display = 'none';
+				showTransportationSurvey();
+				return;
+			}
 
 		const payload = buildCalculationData();
 		latestFrontendFormPayload = payload;
@@ -565,6 +596,19 @@ function renderTransportationSurvey() {
 
 	const survey = tempDiv.querySelector('.transport-survey');
 	if (!survey) return null;
+
+	const serviceLabel = getSelectedServiceData()?.label?.trim() || '';
+	if (GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
+		const title = survey.querySelector('h2');
+		const description = survey.querySelector('.survey-card > p');
+		const noDesc = survey.querySelector('.survey-btn[data-value="no"] .survey-desc');
+		const yesDesc = survey.querySelector('.survey-btn[data-value="yes"] .survey-desc');
+
+		if (title) title.textContent = 'Transport erforderlich?';
+		if (description) description.textContent = 'Müssen Material, Werkzeug oder Teile zum Einsatzort transportiert werden?';
+		if (noDesc) noDesc.textContent = 'Kein zusätzlicher Transport nötig';
+		if (yesDesc) yesDesc.textContent = 'Transport zum Einsatzort nötig';
+	}
 
 	calcContainer.appendChild(survey);
 	return survey;
@@ -923,8 +967,94 @@ async function requestCalculation(data) {
 	} catch (error) {
 		console.error('Ошибка при отправке запроса:', error);
 		hideLoadingIndicator();
+
+		const fallbackResult = buildLocalCalculationFallback(data);
+		if (fallbackResult) {
+			latestCalculationResult = fallbackResult;
+			showResult(fallbackResult);
+			return;
+		}
+
 		showError('Не удалось получить расчет. Проверьте подключение к серверу.');
 	}
+}
+
+function buildLocalCalculationFallback(data = {}) {
+	const serviceLabel = String(data.serviceLabel || '').trim();
+	if (!TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel) && !GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) return null;
+
+	const area = Number.parseFloat(String(data.areaTotal || '0').replace(',', '.')) || 0;
+	let totalPrice = 0;
+	let itemName = '';
+
+	if (serviceLabel === 'Feinputz') {
+		const qualityRates = { q1q2: 14, q3: 21, q4: 50 };
+		const qualityLabels = { q1q2: 'Q1 / Q2', q3: 'Q3', q4: 'Q4' };
+		const quality = String(data.qualityLevel || '').trim().toLowerCase();
+		totalPrice = area * (qualityRates[quality] || 0);
+		itemName = `${qualityLabels[quality] || 'Qualitätsstufe'} x ${area} m²`;
+	}
+
+	if (serviceLabel === 'Wände Verputzen') {
+		const plasteringRates = {
+			'grobeschicht-frei-hand': 12,
+			'lotgerecht-wasserwaage': 23
+		};
+		const plasteringLabels = {
+			'grobeschicht-frei-hand': 'Grobeschicht frei Hand, nicht lotgerecht',
+			'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht'
+		};
+		const plasteringType = String(data.plasteringType || '').trim().toLowerCase();
+		totalPrice = area * (plasteringRates[plasteringType] || 0);
+		itemName = `${plasteringLabels[plasteringType] || 'Ausführungsart'} x ${area} m²`;
+	}
+
+	if (serviceLabel === 'Trockenbau (Rigipsausbau)') {
+		totalPrice = area * 9;
+		itemName = `Trockenbau x ${area} m²`;
+	}
+
+	if (serviceLabel === 'Zäune aufbauen') {
+		const elementsCount = Math.max(0, Math.floor(Number.parseFloat(String(data.fenceElementsCount || '0').replace(',', '.')) || 0));
+		const kerbstoneLengthM = Math.max(0, Number.parseFloat(String(data.kerbstoneLengthM || '0').replace(',', '.')) || 0);
+		const fencePrice = elementsCount > 0
+			? 200 + Math.max(0, elementsCount - 2) * 80
+			: 0;
+		const kerbstonePrice = String(data.withKerbstone || '').trim().toLowerCase() === 'with'
+			? kerbstoneLengthM * 8
+			: 0;
+
+		return {
+			...data,
+			prices: {
+				totalPrice: fencePrice + kerbstonePrice,
+				items: [
+					{
+						index: 0,
+						name: `Zaunmontage x ${elementsCount} Elemente`,
+						price: fencePrice
+					},
+					...(kerbstonePrice > 0 ? [{
+						index: 1,
+						name: `Kantenstein / Bordstein x ${kerbstoneLengthM} m`,
+						price: kerbstonePrice
+					}] : [])
+				]
+			}
+		};
+	}
+
+	return {
+		...data,
+		prices: {
+			totalPrice,
+			items: [{
+				index: 0,
+				name: itemName,
+				price: totalPrice
+			}]
+		}
+	};
 }
 
 function getCalculationEndpoint(data = {}) {
@@ -932,6 +1062,14 @@ function getCalculationEndpoint(data = {}) {
 
 	if (FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
 		return 'http://localhost:3000/api/furniture/calculate';
+	}
+
+	if (TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
+		return 'http://localhost:3000/api/trades/calculate';
+	}
+
+	if (GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
+		return 'http://localhost:3000/api/garden/calculate';
 	}
 
 	return 'http://localhost:3000/api/kitchen/calculate';
@@ -975,6 +1113,22 @@ function adaptPayloadForService(payload, serviceLabel = '') {
 
 	if (normalizedLabel === 'umzugshelfer') {
 		payload.mode = 'moving-helpers';
+	}
+
+	if (normalizedLabel === 'feinputz') {
+		payload.mode = 'feinputz';
+	}
+
+	if (normalizedLabel === 'wände verputzen') {
+		payload.mode = 'wall-plastering';
+	}
+
+	if (normalizedLabel === 'trockenbau (rigipsausbau)') {
+		payload.mode = 'drywall';
+	}
+
+	if (normalizedLabel === 'zäune aufbauen') {
+		payload.mode = 'fence-assembly';
 	}
 }
 
@@ -1119,6 +1273,11 @@ function showResult(price) {
 	const serviceLabel = String(price?.serviceLabel || '').trim();
 	if (FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel) && price?.prices) {
 		appendTemplateToCalcLayout(getFurnitureResultTemplate(price));
+	} else if (
+		(TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel) || GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) &&
+		price?.prices
+	) {
+		appendTemplateToCalcLayout(getServiceResultTemplate(price));
 	} else if (price && price.prices) {
 		appendTemplateToCalcLayout(getKitchenResultTemplate(price));
 	} else {
@@ -1159,7 +1318,4 @@ init();
 // Ошибки в консоле
 // Разобрать файл calculate.js на части, выделить функции по отдельным файлам и импортировать их
 // Добавить валидацию форм (напр. обязательные поля, числовые поля и т.д.)
-// На Backend сделать routes, Controller, Validation для получения данных из Frontend и расчета стоимости
-// На Backend добавить расчет стоимости на основе полученных данных и вернуть результат в ответе
-// На Frontend отобразить полученный результат (напр. показать итоговую стоимость, список выбранных услуг и т.д.)
 // Мобильная версия (адаптивность)
