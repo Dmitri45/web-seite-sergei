@@ -29,7 +29,6 @@ function initServicesCategoryButtons() {
 		});
 	});
 
-	// Рендерим первую категорию при загрузке
 	const firstBtn = buttons[0];
 	const initialKey = CATEGORY_KEY_MAP[firstBtn.textContent.trim()];
 	if (initialKey) renderServicesGrid(initialKey);

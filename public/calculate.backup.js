@@ -44,6 +44,7 @@ const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Küchentransport': () => getKitchenTransportForm(),
 	'Küche abbauen': () => getKitchenDismantlingForm(),
 	'Küche aufbauen': () => {
+		// Показываем опросник, форму не возвращаем сразу
 		if (kitchenSurvey) {
 			kitchenSurvey.style.display = 'block';
 			continueBtn.style.display = 'none';
@@ -1357,3 +1358,8 @@ function removeFeedbackBlocks() {
 
 init();
 
+// TODO:
+// Ошибки в консоле
+// Разобрать файл calculate.js на части, выделить функции по отдельным файлам и импортировать их
+// Добавить валидацию форм (напр. обязательные поля, числовые поля и т.д.)
+// Мобильная версия (адаптивность)

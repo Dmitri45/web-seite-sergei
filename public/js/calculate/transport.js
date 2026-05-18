@@ -1,0 +1,213 @@
+import { GARDEN_CALCULATION_SERVICE_LABELS } from './constants.js';
+import { getCalcMainContainer } from './dom.js';
+import { createAddressAutocomplete, mapLocationToTransportPoint } from './autocomplete.js';
+import { getSelectedServiceData } from './state.js';
+
+export function renderTransportationSurvey() {
+	const calcContainer = getCalcMainContainer();
+	if (!calcContainer) return null;
+
+	const surveyHTML = getTransportationSurvey();
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = surveyHTML;
+
+	const survey = tempDiv.querySelector('.transport-survey');
+	if (!survey) return null;
+
+	const serviceLabel = getSelectedServiceData()?.label?.trim() || '';
+	if (GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
+		const title = survey.querySelector('h2');
+		const description = survey.querySelector('.survey-card > p');
+		const noDesc = survey.querySelector('.survey-btn[data-value="no"] .survey-desc');
+		const yesDesc = survey.querySelector('.survey-btn[data-value="yes"] .survey-desc');
+
+		if (title) title.textContent = 'Transport erforderlich?';
+		if (description) description.textContent = 'Müssen Material, Werkzeug oder Teile zum Einsatzort transportiert werden?';
+		if (noDesc) noDesc.textContent = 'Kein zusätzlicher Transport nötig';
+		if (yesDesc) yesDesc.textContent = 'Transport zum Einsatzort nötig';
+	}
+
+	calcContainer.appendChild(survey);
+	return survey;
+}
+
+export function renderDirectTransportAddressForm() {
+	const calcContainer = getCalcMainContainer();
+	if (!calcContainer) return null;
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = getDirectTransportAddressForm();
+
+	const survey = tempDiv.querySelector('#directTransportSurvey');
+	if (!survey) return null;
+
+	calcContainer.appendChild(survey);
+	return survey;
+}
+
+export function resetTransportSelection(state) {
+	state.selectedTransportFrom = null;
+	state.selectedTransportVia = [];
+	state.selectedTransportTo = null;
+
+	const intermediateContainer = document.getElementById('transportIntermediateAddresses');
+	if (intermediateContainer) {
+		intermediateContainer.innerHTML = '';
+	}
+
+	const directIntermediateContainer = document.getElementById('directTransportIntermediateAddresses');
+	if (directIntermediateContainer) {
+		directIntermediateContainer.innerHTML = '';
+	}
+}
+
+export function appendIntermediateAddressField(survey, index, containerSelector = '#transportIntermediateAddresses', idPrefix = 'transportViaAutocomplete') {
+	const container = survey.querySelector(containerSelector);
+	if (!container) return null;
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = getIntermediateAddressTemplate(index, idPrefix);
+	const field = tempDiv.firstElementChild;
+
+	if (field) {
+		container.appendChild(field);
+	}
+
+	return field;
+}
+
+export function setTransportationVisibility(survey, isTransportNeeded) {
+	const transportFields = survey.querySelector('#transportFields');
+	const transportActions = survey.querySelector('#transportActions');
+
+	if (transportFields) {
+		transportFields.style.display = isTransportNeeded ? 'block' : 'none';
+	}
+
+	if (transportActions) {
+		transportActions.style.display = 'flex';
+	}
+}
+
+export function handleFromLocationSelect(location, state) {
+	const transportPoint = mapLocationToTransportPoint(location);
+	if (!transportPoint) return;
+
+	state.selectedTransportFrom = transportPoint;
+}
+
+export function handleToLocationSelect(location, state) {
+	const transportPoint = mapLocationToTransportPoint(location);
+	if (!transportPoint) return;
+	state.selectedTransportTo = transportPoint;
+}
+
+export function createIntermediateLocationHandler(index, state) {
+	return (location) => {
+		const transportPoint = mapLocationToTransportPoint(location);
+		if (!transportPoint) return;
+		state.selectedTransportVia[index] = transportPoint;
+	};
+}
+
+export function addIntermediateAddressAutocomplete(survey, transportUiState, appState, options = {}) {
+	const index = transportUiState.intermediateAutocompletes.length;
+	const idPrefix = options.idPrefix || 'transportViaAutocomplete';
+	const field = appendIntermediateAddressField(
+		survey,
+		index,
+		options.containerSelector || '#transportIntermediateAddresses',
+		idPrefix
+	);
+	if (!field) return;
+
+	const elementId = `${idPrefix}-${index}`;
+	const intermediateAutocomplete = createAddressAutocomplete(elementId);
+	intermediateAutocomplete.on('select', createIntermediateLocationHandler(index, appState));
+
+	transportUiState.intermediateAutocompletes.push(intermediateAutocomplete);
+}
+
+export function initTransportAutocompletesIfNeeded(transportUiState, appState, options = {}) {
+	const fromElementId = options.fromElementId || 'transportFromAutocomplete';
+	const toElementId = options.toElementId || 'transportToAutocomplete';
+
+	if (!transportUiState.fromAutocomplete) {
+		transportUiState.fromAutocomplete = createAddressAutocomplete(fromElementId);
+		transportUiState.fromAutocomplete.on('select', (location) => handleFromLocationSelect(location, appState));
+	}
+
+	if (!transportUiState.toAutocomplete) {
+		transportUiState.toAutocomplete = createAddressAutocomplete(toElementId);
+		transportUiState.toAutocomplete.on('select', (location) => handleToLocationSelect(location, appState));
+	}
+}
+
+export function bindAddIntermediateAddressHandler(survey, transportUiState, appState, options = {}) {
+	const addIntermediateAddressBtn = survey.querySelector('#addIntermediateAddressBtn');
+	if (!addIntermediateAddressBtn) return;
+
+	addIntermediateAddressBtn.addEventListener('click', () => {
+		addIntermediateAddressAutocomplete(survey, transportUiState, appState, options);
+	});
+}
+
+export function refreshIntermediateAddressLabels(survey) {
+	const fields = survey.querySelectorAll('[data-intermediate-address-index]');
+	fields.forEach((field, index) => {
+		field.dataset.intermediateAddressIndex = String(index);
+
+		const label = field.querySelector('.intermediate-address-field__head label');
+		if (label) label.textContent = `Zwischeziel ${index + 1}`;
+
+		const removeBtn = field.querySelector('[data-remove-intermediate-address]');
+		if (removeBtn) {
+			removeBtn.dataset.removeIntermediateAddress = String(index);
+		}
+	});
+}
+
+export function bindRemoveIntermediateAddressHandler(survey, transportUiState, appState) {
+	if (!survey || survey.dataset.removeIntermediateBound === '1') return;
+	survey.dataset.removeIntermediateBound = '1';
+
+	survey.addEventListener('click', (event) => {
+		const removeBtn = event.target.closest('[data-remove-intermediate-address]');
+		if (!removeBtn) return;
+
+		const index = Number.parseInt(removeBtn.dataset.removeIntermediateAddress || '', 10);
+		if (Number.isInteger(index)) {
+			delete appState.selectedTransportVia[index];
+		}
+
+		removeBtn.closest('[data-intermediate-address-index]')?.remove();
+		appState.selectedTransportVia = appState.selectedTransportVia.filter(point => point?.address);
+
+		if (transportUiState?.intermediateAutocompletes) {
+			transportUiState.intermediateAutocompletes.splice(index, 1);
+		}
+
+		refreshIntermediateAddressLabels(survey);
+	});
+}
+
+export function bindTransportationChoiceHandlers(survey, transportUiState, appState) {
+	const surveyBtns = survey.querySelectorAll('.survey-btn');
+
+	surveyBtns.forEach(btn => {
+		btn.addEventListener('click', () => {
+			surveyBtns.forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			appState.selectedTransportation = btn.dataset.value;
+
+			const isTransportNeeded = appState.selectedTransportation === 'yes';
+			setTransportationVisibility(survey, isTransportNeeded);
+
+			if (isTransportNeeded) {
+				initTransportAutocompletesIfNeeded(transportUiState, appState);
+			} else {
+				resetTransportSelection(appState);
+			}
+		});
+	});
+}

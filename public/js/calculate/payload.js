@@ -1,0 +1,173 @@
+import { KITCHEN_CALCULATION_SERVICE_LABELS } from './constants.js';
+import { getSelectedServiceData } from './state.js';
+
+export function addAssemblyDataIfNeeded(data, state) {
+	if (state.selectedKitchenCondition !== 'new') return;
+
+	data.assembly = state.selectedAssembly;
+
+	if (state.selectedAssembly === 'yes') {
+		const assemblySurvey = document.getElementById('assemblySurvey');
+		if (assemblySurvey) {
+			data.smallCabinets = assemblySurvey.querySelector('#smallCabinets')?.value || '0';
+			data.largeCabinets = assemblySurvey.querySelector('#largeCabinets')?.value || '0';
+			data.drawers = assemblySurvey.querySelector('#drawers')?.value || '0';
+		}
+	}
+}
+
+export function addTransportationDataIfNeeded(data, state) {
+	if (state.selectedTransportation !== 'yes') return;
+
+	data.transportFrom = state.selectedTransportFrom;
+	data.transportVia = state.selectedTransportVia.filter(point => point?.address);
+	data.transportTo = state.selectedTransportTo;
+}
+
+export function buildCalculationData(currentForm, state) {
+	const data = buildKitchenFormPayload(currentForm, state);
+	data.transportation = state.selectedTransportation;
+
+	addAssemblyDataIfNeeded(data, state);
+	addTransportationDataIfNeeded(data, state);
+	adaptKitchenPayloadForBackend(data, state);
+
+	return data;
+}
+
+export function validateCustomRequestPayload(payload) {
+	if (!payload.firstName?.trim() || !payload.lastName?.trim()) {
+		alert('Bitte geben Sie Vorname und Nachname ein.');
+		return false;
+	}
+
+	if (!payload.phone?.trim()) {
+		alert('Bitte geben Sie Ihre Telefonnummer ein.');
+		return false;
+	}
+
+	if (!payload.address?.trim()) {
+		alert('Bitte wählen Sie eine Adresse aus der Vorschlagsliste aus.');
+		return false;
+	}
+
+	return true;
+}
+
+export function adaptCustomRequestPayload(payload) {
+	payload.customer = {
+		firstName: payload.firstName || '',
+		lastName: payload.lastName || '',
+		phone: payload.phone || '',
+		address: payload.address || ''
+	};
+
+	delete payload.firstName;
+	delete payload.lastName;
+	delete payload.phone;
+}
+
+export function adaptKitchenPayloadForBackend(data, state) {
+	if (!data || typeof data !== 'object') return data;
+	const serviceLabel = String(data.serviceLabel || '').trim();
+
+	if (!KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) return data;
+
+	data.condition = data.kitchenCondition || state.selectedKitchenCondition || data.condition || 'new';
+	data.abbau = data.dismantling === 'yes' || data.abbau === true || data.abbau === 'true';
+	data.worktopAdjust = data.worktopAdjust || data.worktopMaterial || '';
+
+	return data;
+}
+
+export function buildKitchenFormPayload(formElement, state) {
+	const selectedService = getSelectedServiceData();
+	const serviceLabel = selectedService?.label || '';
+	const data = {
+		kitchenCondition: state.selectedKitchenCondition,
+		serviceLabel
+	};
+
+	if (!formElement) return data;
+
+	const inputs = formElement.querySelectorAll('input, select, textarea');
+	inputs.forEach(input => {
+		if (input.name) {
+			data[input.name] = input.value || '';
+		}
+	});
+
+	groupFurnitureItemsInPayload(data);
+	adaptPayloadForService(data, serviceLabel);
+
+	return data;
+}
+
+export function adaptPayloadForService(payload, serviceLabel = '') {
+	if (!payload || typeof payload !== 'object') return;
+
+	const normalizedLabel = String(serviceLabel || '').trim().toLowerCase();
+
+	if (normalizedLabel === 'möbel aufbauen') {
+		payload.mode = 'new-assembly';
+	}
+
+	if (normalizedLabel === 'möbel entsorgen') {
+		payload.mode = 'old-disassembly';
+	}
+
+	if (normalizedLabel === 'umzugshelfer') {
+		payload.mode = 'moving-helpers';
+	}
+
+	if (normalizedLabel === 'feinputz') {
+		payload.mode = 'feinputz';
+	}
+
+	if (normalizedLabel === 'wände verputzen') {
+		payload.mode = 'wall-plastering';
+	}
+
+	if (normalizedLabel === 'trockenbau (rigipsausbau)') {
+		payload.mode = 'drywall';
+	}
+
+	if (normalizedLabel === 'zäune aufbauen') {
+		payload.mode = 'fence-assembly';
+	}
+}
+
+export function toCamelCaseFieldName(rawFieldName = '') {
+	const normalized = String(rawFieldName || '').trim();
+	if (!normalized) return '';
+	return normalized.charAt(0).toLowerCase() + normalized.slice(1);
+}
+
+export function groupFurnitureItemsInPayload(payload) {
+	if (!payload || typeof payload !== 'object') return;
+
+	const furnitureItemsByIndex = new Map();
+
+	Object.keys(payload).forEach((key) => {
+		const match = key.match(/^furnitureItem([A-Za-z0-9]+)_(\d+)$/);
+		if (!match) return;
+
+		const fieldName = toCamelCaseFieldName(match[1]);
+		const index = Number.parseInt(match[2], 10);
+		if (!Number.isInteger(index) || !fieldName) return;
+
+		if (!furnitureItemsByIndex.has(index)) {
+			furnitureItemsByIndex.set(index, {});
+		}
+
+		const item = furnitureItemsByIndex.get(index);
+		item[fieldName] = payload[key];
+		delete payload[key];
+	});
+
+	if (!furnitureItemsByIndex.size) return;
+
+	payload.moebelstuecke = Array.from(furnitureItemsByIndex.entries())
+		.sort((a, b) => a[0] - b[0])
+		.map(([, item]) => item);
+}
