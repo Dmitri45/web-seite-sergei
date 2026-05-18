@@ -44,7 +44,7 @@ const SERVICE_FORM_TEMPLATES_BY_LABEL = {
 	'Küchentransport': () => getKitchenTransportForm(),
 	'Küche abbauen': () => getKitchenDismantlingForm(),
 	'Küche aufbauen': () => {
-		// Показываем опросник, форму не возвращаем сразу
+		// Umfrage anzeigen und noch kein Formular direkt zurueckgeben
 		if (kitchenSurvey) {
 			kitchenSurvey.style.display = 'block';
 			continueBtn.style.display = 'none';
@@ -886,7 +886,7 @@ async function submitRequestPayload(payload, requestType = 'custom-request') {
 		});
 
 		if (!response.ok) {
-			throw new Error(`Ошибка сервера: ${response.status}`);
+			throw new Error(`Serverfehler: ${response.status}`);
 		}
 
 		const result = await response.json();
@@ -895,9 +895,9 @@ async function submitRequestPayload(payload, requestType = 'custom-request') {
 		console.log('Request send response:', result);
 		return result;
 	} catch (error) {
-		console.error('Ошибка при отправке заявки:', error);
+		console.error('Fehler beim Senden der Anfrage:', error);
 		hideLoadingIndicator();
-		showError('Не удалось отправить заявку. Проверьте настройки Brevo или подключение к серверу.');
+		showError('Die Anfrage konnte nicht gesendet werden. Bitte pruefen Sie die Brevo-Einstellungen oder die Serververbindung.');
 		return null;
 	}
 }
@@ -997,7 +997,7 @@ async function requestCalculation(data) {
 		});
 
 		if (!response.ok) {
-			throw new Error(`Ошибка сервера: ${response.status}`);
+			throw new Error(`Serverfehler: ${response.status}`);
 		}
 
 		const result = await response.json();
@@ -1006,7 +1006,7 @@ async function requestCalculation(data) {
 		hideLoadingIndicator();
 		showResult(result);
 	} catch (error) {
-		console.error('Ошибка при отправке запроса:', error);
+		console.error('Fehler beim Senden der Anfrage:', error);
 		hideLoadingIndicator();
 
 		const fallbackResult = buildLocalCalculationFallback(data);
@@ -1016,7 +1016,7 @@ async function requestCalculation(data) {
 			return;
 		}
 
-		showError('Не удалось получить расчет. Проверьте подключение к серверу.');
+		showError('Die Berechnung konnte nicht abgerufen werden. Bitte pruefen Sie die Serververbindung.');
 	}
 }
 
@@ -1359,7 +1359,7 @@ function removeFeedbackBlocks() {
 init();
 
 // TODO:
-// Ошибки в консоле
-// Разобрать файл calculate.js на части, выделить функции по отдельным файлам и импортировать их
-// Добавить валидацию форм (напр. обязательные поля, числовые поля и т.д.)
-// Мобильная версия (адаптивность)
+// Konsolenfehler pruefen
+// calculate.js in einzelne Module aufteilen und Funktionen importieren
+// Formularvalidierung ergaenzen (z. B. Pflichtfelder, Zahlenfelder usw.)
+// Mobile Version (Responsivitaet)

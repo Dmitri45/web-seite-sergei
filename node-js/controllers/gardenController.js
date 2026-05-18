@@ -100,7 +100,7 @@ async function calculateGarden(req, res) {
 
 async function createGardenRequest(req, res) {
 	res.status(501).json({
-		error: 'Создание заявки пока не реализовано'
+		error: 'Anfrageerstellung ist noch nicht implementiert'
 	});
 }
 

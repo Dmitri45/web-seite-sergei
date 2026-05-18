@@ -7,7 +7,7 @@ loadEnv();
 const routes = require('./routes/routes');
 const app = express();
 
-// CORS для разработки
+// CORS fuer die Entwicklung
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Раздача статических файлов из корня проекта
+// Statische Dateien aus dem Projektwurzelverzeichnis ausliefern
 app.use(express.static(path.join(__dirname, '..')));
 
 app.use('/api', routes);

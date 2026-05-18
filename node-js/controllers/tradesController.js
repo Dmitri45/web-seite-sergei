@@ -89,7 +89,7 @@ async function calculateTrades(req, res) {
 
 async function createTradesRequest(req, res) {
 	res.status(501).json({
-		error: 'Создание заявки пока не реализовано'
+		error: 'Anfrageerstellung ist noch nicht implementiert'
 	});
 }
 

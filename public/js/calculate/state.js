@@ -1,5 +1,9 @@
 import { SERVICE_SELECTION_STORAGE_KEY } from './constants.js';
 
+/**
+ * Mutable calculator state shared across modular calculator flows.
+ * @type {Object}
+ */
 export const calcState = {
 	selectedKitchenCondition: '',
 	selectedTransportation: '',
@@ -13,6 +17,10 @@ export const calcState = {
 	latestFrontendFormPayload: null
 };
 
+/**
+ * Reads the selected service data from sessionStorage.
+ * @returns {{label?: string, image?: string, category?: string}|null} Selected service data.
+ */
 export function getSelectedServiceData() {
 	try {
 		const raw = sessionStorage.getItem(SERVICE_SELECTION_STORAGE_KEY);
@@ -22,6 +30,11 @@ export function getSelectedServiceData() {
 	}
 }
 
+/**
+ * Persists selected service data to sessionStorage.
+ * @param {{label?: string, image?: string, category?: string}} serviceData - Selected service metadata.
+ * @returns {void}
+ */
 export function setSelectedServiceData(serviceData) {
 	try {
 		sessionStorage.setItem(SERVICE_SELECTION_STORAGE_KEY, JSON.stringify(serviceData));
@@ -30,6 +43,11 @@ export function setSelectedServiceData(serviceData) {
 	}
 }
 
+/**
+ * Applies selected service metadata to the calculator page UI.
+ * @param {{label?: string, image?: string, category?: string}|null} serviceData - Selected service metadata.
+ * @returns {void}
+ */
 export function applySelectedServiceData(serviceData) {
 	if (!serviceData) return;
 

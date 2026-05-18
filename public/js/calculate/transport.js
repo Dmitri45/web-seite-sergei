@@ -1,8 +1,17 @@
+/**
+ * Transport survey rendering and route-selection helpers.
+ * @module calculate/transport
+ */
+
 import { GARDEN_CALCULATION_SERVICE_LABELS } from './constants.js';
 import { getCalcMainContainer } from './dom.js';
 import { createAddressAutocomplete, mapLocationToTransportPoint } from './autocomplete.js';
 import { getSelectedServiceData } from './state.js';
 
+/**
+ * Renders the optional transportation survey into the calculator layout.
+ * @returns {HTMLElement|null} Rendered transportation survey.
+ */
 export function renderTransportationSurvey() {
 	const calcContainer = getCalcMainContainer();
 	if (!calcContainer) return null;
@@ -31,6 +40,10 @@ export function renderTransportationSurvey() {
 	return survey;
 }
 
+/**
+ * Renders the direct transport address form for small item transport.
+ * @returns {HTMLElement|null} Rendered direct transport survey.
+ */
 export function renderDirectTransportAddressForm() {
 	const calcContainer = getCalcMainContainer();
 	if (!calcContainer) return null;
@@ -45,6 +58,11 @@ export function renderDirectTransportAddressForm() {
 	return survey;
 }
 
+/**
+ * Clears transport route selections from state and DOM containers.
+ * @param {Object} state - Shared calculator state.
+ * @returns {void}
+ */
 export function resetTransportSelection(state) {
 	state.selectedTransportFrom = null;
 	state.selectedTransportVia = [];
@@ -61,6 +79,14 @@ export function resetTransportSelection(state) {
 	}
 }
 
+/**
+ * Appends an intermediate address field to a transport survey.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {number} index - Intermediate address index.
+ * @param {string} [containerSelector='#transportIntermediateAddresses'] - Target list selector.
+ * @param {string} [idPrefix='transportViaAutocomplete'] - Autocomplete id prefix.
+ * @returns {HTMLElement|null} Added field element.
+ */
 export function appendIntermediateAddressField(survey, index, containerSelector = '#transportIntermediateAddresses', idPrefix = 'transportViaAutocomplete') {
 	const container = survey.querySelector(containerSelector);
 	if (!container) return null;
@@ -76,6 +102,12 @@ export function appendIntermediateAddressField(survey, index, containerSelector 
 	return field;
 }
 
+/**
+ * Shows or hides transport address fields based on the selected answer.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {boolean} isTransportNeeded - Whether transport was selected.
+ * @returns {void}
+ */
 export function setTransportationVisibility(survey, isTransportNeeded) {
 	const transportFields = survey.querySelector('#transportFields');
 	const transportActions = survey.querySelector('#transportActions');
@@ -89,6 +121,12 @@ export function setTransportationVisibility(survey, isTransportNeeded) {
 	}
 }
 
+/**
+ * Stores the selected start location in shared state.
+ * @param {Object} location - Geoapify location object.
+ * @param {Object} state - Shared calculator state.
+ * @returns {void}
+ */
 export function handleFromLocationSelect(location, state) {
 	const transportPoint = mapLocationToTransportPoint(location);
 	if (!transportPoint) return;
@@ -96,12 +134,24 @@ export function handleFromLocationSelect(location, state) {
 	state.selectedTransportFrom = transportPoint;
 }
 
+/**
+ * Stores the selected destination location in shared state.
+ * @param {Object} location - Geoapify location object.
+ * @param {Object} state - Shared calculator state.
+ * @returns {void}
+ */
 export function handleToLocationSelect(location, state) {
 	const transportPoint = mapLocationToTransportPoint(location);
 	if (!transportPoint) return;
 	state.selectedTransportTo = transportPoint;
 }
 
+/**
+ * Creates a handler that stores an intermediate location at a fixed index.
+ * @param {number} index - Intermediate address index.
+ * @param {Object} state - Shared calculator state.
+ * @returns {Function} Geoapify select handler.
+ */
 export function createIntermediateLocationHandler(index, state) {
 	return (location) => {
 		const transportPoint = mapLocationToTransportPoint(location);
@@ -110,6 +160,14 @@ export function createIntermediateLocationHandler(index, state) {
 	};
 }
 
+/**
+ * Adds an intermediate address field and binds its autocomplete.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {Object} transportUiState - Transport UI state with autocomplete instances.
+ * @param {Object} appState - Shared calculator state.
+ * @param {Object} [options={}] - Field rendering options.
+ * @returns {void}
+ */
 export function addIntermediateAddressAutocomplete(survey, transportUiState, appState, options = {}) {
 	const index = transportUiState.intermediateAutocompletes.length;
 	const idPrefix = options.idPrefix || 'transportViaAutocomplete';
@@ -128,6 +186,13 @@ export function addIntermediateAddressAutocomplete(survey, transportUiState, app
 	transportUiState.intermediateAutocompletes.push(intermediateAutocomplete);
 }
 
+/**
+ * Initializes start and destination autocompletes once per transport flow.
+ * @param {Object} transportUiState - Transport UI state with autocomplete instances.
+ * @param {Object} appState - Shared calculator state.
+ * @param {Object} [options={}] - Autocomplete element id overrides.
+ * @returns {void}
+ */
 export function initTransportAutocompletesIfNeeded(transportUiState, appState, options = {}) {
 	const fromElementId = options.fromElementId || 'transportFromAutocomplete';
 	const toElementId = options.toElementId || 'transportToAutocomplete';
@@ -143,6 +208,14 @@ export function initTransportAutocompletesIfNeeded(transportUiState, appState, o
 	}
 }
 
+/**
+ * Binds the add-intermediate-address button.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {Object} transportUiState - Transport UI state with autocomplete instances.
+ * @param {Object} appState - Shared calculator state.
+ * @param {Object} [options={}] - Field rendering options.
+ * @returns {void}
+ */
 export function bindAddIntermediateAddressHandler(survey, transportUiState, appState, options = {}) {
 	const addIntermediateAddressBtn = survey.querySelector('#addIntermediateAddressBtn');
 	if (!addIntermediateAddressBtn) return;
@@ -152,6 +225,11 @@ export function bindAddIntermediateAddressHandler(survey, transportUiState, appS
 	});
 }
 
+/**
+ * Renumbers intermediate address labels and remove button indexes.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @returns {void}
+ */
 export function refreshIntermediateAddressLabels(survey) {
 	const fields = survey.querySelectorAll('[data-intermediate-address-index]');
 	fields.forEach((field, index) => {
@@ -167,6 +245,13 @@ export function refreshIntermediateAddressLabels(survey) {
 	});
 }
 
+/**
+ * Binds remove buttons for intermediate addresses.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {Object} transportUiState - Transport UI state with autocomplete instances.
+ * @param {Object} appState - Shared calculator state.
+ * @returns {void}
+ */
 export function bindRemoveIntermediateAddressHandler(survey, transportUiState, appState) {
 	if (!survey || survey.dataset.removeIntermediateBound === '1') return;
 	survey.dataset.removeIntermediateBound = '1';
@@ -191,6 +276,13 @@ export function bindRemoveIntermediateAddressHandler(survey, transportUiState, a
 	});
 }
 
+/**
+ * Binds yes/no transport survey buttons.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {Object} transportUiState - Transport UI state with autocomplete instances.
+ * @param {Object} appState - Shared calculator state.
+ * @returns {void}
+ */
 export function bindTransportationChoiceHandlers(survey, transportUiState, appState) {
 	const surveyBtns = survey.querySelectorAll('.survey-btn');
 

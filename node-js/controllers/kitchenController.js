@@ -56,7 +56,7 @@ async function calculateKitchen(req, res) {
 
 async function createKitchenRequest(req, res) {
 	res.status(501).json({
-		error: 'Создание заявки пока не реализовано'
+		error: 'Anfrageerstellung ist noch nicht implementiert'
 	});
 }
 

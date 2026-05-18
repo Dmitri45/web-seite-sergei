@@ -1,3 +1,8 @@
+/**
+ * Main entrypoint for the modular calculator frontend.
+ * @module calculate/main
+ */
+
 import {
 	CUSTOM_REQUEST_SERVICE_LABELS,
 	FURNITURE_CALCULATION_SERVICE_LABELS,
@@ -34,8 +39,16 @@ import {
 	getSelectedServiceData
 } from './state.js';
 
+/**
+ * Cached service form template factories keyed by service label.
+ * @type {Record<string, Function>|null}
+ */
 let serviceFormTemplatesByLabel = null;
 
+/**
+ * Lazily creates and returns service form template factories.
+ * @returns {Record<string, Function>} Service template factories.
+ */
 function getServiceFormTemplates() {
 	if (serviceFormTemplatesByLabel) return serviceFormTemplatesByLabel;
 
@@ -47,6 +60,10 @@ function getServiceFormTemplates() {
 	return serviceFormTemplatesByLabel;
 }
 
+/**
+ * Renders the service-specific form selected in sessionStorage.
+ * @returns {boolean} True when a form was rendered.
+ */
 function renderServiceSpecificFormFromStorage() {
 	const selectedService = getSelectedServiceData();
 	const label = selectedService?.label?.trim();
@@ -73,6 +90,11 @@ function renderServiceSpecificFormFromStorage() {
 	return true;
 }
 
+/**
+ * Binds the primary action button of a service form.
+ * @param {HTMLFormElement} formElement - Active service form.
+ * @returns {void}
+ */
 function initOfferRequestButtons(formElement) {
 	const continueButton = formElement.querySelector('#btn-continue, #btn-calculate');
 	if (!continueButton || continueButton.dataset.offerRequestBound === '1') return;
@@ -129,6 +151,11 @@ function initOfferRequestButtons(formElement) {
 	});
 }
 
+/**
+ * Binds a simple continue button that opens the transportation survey.
+ * @param {HTMLFormElement} formElement - Active kitchen form.
+ * @returns {void}
+ */
 function attachFormContinueListener(formElement) {
 	const button = formElement.querySelector('#btn-continue');
 	if (!button || button.dataset.transportContinueBound === '1') return;
@@ -140,6 +167,10 @@ function attachFormContinueListener(formElement) {
 	});
 }
 
+/**
+ * Renders the kitchen assembly survey.
+ * @returns {HTMLElement|null} Rendered assembly survey.
+ */
 function renderAssemblySurvey() {
 	const calcContainer = getCalcMainContainer();
 	if (!calcContainer) return null;
@@ -153,6 +184,12 @@ function renderAssemblySurvey() {
 	return survey;
 }
 
+/**
+ * Shows or hides assembly quantity fields.
+ * @param {HTMLElement} survey - Assembly survey element.
+ * @param {boolean} isAssemblyNeeded - Whether assembly is selected.
+ * @returns {void}
+ */
 function setAssemblyVisibility(survey, isAssemblyNeeded) {
 	const assemblyFields = survey.querySelector('#assemblyFields');
 	const assemblyContinueBtn = survey.querySelector('#btn-main');
@@ -166,6 +203,11 @@ function setAssemblyVisibility(survey, isAssemblyNeeded) {
 	}
 }
 
+/**
+ * Binds yes/no buttons in the assembly survey.
+ * @param {HTMLElement} survey - Assembly survey element.
+ * @returns {void}
+ */
 function bindAssemblyChoiceHandlers(survey) {
 	const surveyBtns = survey.querySelectorAll('.survey-btn');
 
@@ -180,6 +222,11 @@ function bindAssemblyChoiceHandlers(survey) {
 	});
 }
 
+/**
+ * Binds the assembly survey continue button.
+ * @param {HTMLElement} survey - Assembly survey element.
+ * @returns {void}
+ */
 function bindAssemblyContinueHandler(survey) {
 	const assemblyContinueBtn = survey.querySelector('#btn-main');
 	if (!assemblyContinueBtn) return;
@@ -194,6 +241,10 @@ function bindAssemblyContinueHandler(survey) {
 	});
 }
 
+/**
+ * Starts the assembly survey flow.
+ * @returns {void}
+ */
 function showAssemblySurvey() {
 	const survey = renderAssemblySurvey();
 	if (!survey) return;
@@ -202,6 +253,11 @@ function showAssemblySurvey() {
 	bindAssemblyContinueHandler(survey);
 }
 
+/**
+ * Binds the final calculation button in the transportation survey.
+ * @param {HTMLElement} survey - Transportation survey element.
+ * @returns {void}
+ */
 function bindTransportationCalculateHandler(survey) {
 	const calculateBtn = survey.querySelector('#btn-main');
 	if (!calculateBtn) return;
@@ -215,6 +271,11 @@ function bindTransportationCalculateHandler(survey) {
 	});
 }
 
+/**
+ * Binds the continue button for direct small-transport address entry.
+ * @param {HTMLElement} survey - Direct transport survey element.
+ * @returns {void}
+ */
 function bindDirectTransportContinueHandler(survey) {
 	const continueBtn = survey.querySelector('#btn-main');
 	if (!continueBtn) return;
@@ -232,6 +293,10 @@ function bindDirectTransportContinueHandler(survey) {
 	});
 }
 
+/**
+ * Starts the optional transportation survey flow.
+ * @returns {void}
+ */
 function showTransportationSurvey() {
 	const survey = renderTransportationSurvey();
 	if (!survey) return;
@@ -248,6 +313,10 @@ function showTransportationSurvey() {
 	bindTransportationCalculateHandler(survey);
 }
 
+/**
+ * Starts the direct address flow for small item transport.
+ * @returns {void}
+ */
 function showDirectTransportAddressForm() {
 	resetTransportSelection(calcState);
 	calcState.selectedTransportation = 'yes';
@@ -273,6 +342,11 @@ function showDirectTransportAddressForm() {
 	bindDirectTransportContinueHandler(survey);
 }
 
+/**
+ * Requests a price calculation and renders the result or fallback.
+ * @param {Object} data - Calculation payload.
+ * @returns {Promise<void>}
+ */
 async function requestCalculation(data) {
 	try {
 		const result = await postCalculation(data);
@@ -281,7 +355,7 @@ async function requestCalculation(data) {
 		hideLoadingIndicator();
 		showResult(result);
 	} catch (error) {
-		console.error('Ошибка при отправке запроса:', error);
+		console.error('Fehler beim Senden der Anfrage:', error);
 		hideLoadingIndicator();
 
 		const fallbackResult = buildLocalCalculationFallback(data);
@@ -291,10 +365,16 @@ async function requestCalculation(data) {
 			return;
 		}
 
-		showError('Не удалось получить расчет. Проверьте подключение к серверу.');
+		showError('Die Berechnung konnte nicht abgerufen werden. Bitte pruefen Sie die Serververbindung.');
 	}
 }
 
+/**
+ * Submits an offer/custom request and renders the confirmation state.
+ * @param {Object} payload - Request payload.
+ * @param {string} [requestType='custom-request'] - Request type.
+ * @returns {Promise<Object|null>} Backend response or null on failure.
+ */
 async function submitRequestPayload(payload, requestType = 'custom-request') {
 	try {
 		showLoadingIndicator();
@@ -306,13 +386,17 @@ async function submitRequestPayload(payload, requestType = 'custom-request') {
 		console.log('Request send response:', result);
 		return result;
 	} catch (error) {
-		console.error('Ошибка при отправке заявки:', error);
+		console.error('Fehler beim Senden der Anfrage:', error);
 		hideLoadingIndicator();
-		showError('Не удалось отправить заявку. Проверьте настройки Brevo или подключение к серверу.');
+		showError('Die Anfrage konnte nicht gesendet werden. Bitte pruefen Sie die Brevo-Einstellungen oder die Serververbindung.');
 		return null;
 	}
 }
 
+/**
+ * Replaces the current flow with the offer contact form.
+ * @returns {HTMLElement|null} Rendered offer request block.
+ */
 function upsertOfferRequestBlock() {
 	const calcSection = getCalcMainContainer();
 	if (!calcSection) return null;
@@ -328,6 +412,11 @@ function upsertOfferRequestBlock() {
 	return block;
 }
 
+/**
+ * Collects customer contact data from the offer request form.
+ * @param {HTMLFormElement} formElement - Offer request form.
+ * @returns {{firstName: string, lastName: string, phone: string, email: string, address: string}} Contact data.
+ */
 function collectOfferContactData(formElement) {
 	const fallbackAddressInput = formElement.querySelector('#offerAddressAutocomplete input');
 	const address = calcState.selectedOfferAddress || fallbackAddressInput?.value?.trim() || '';
@@ -341,6 +430,11 @@ function collectOfferContactData(formElement) {
 	};
 }
 
+/**
+ * Opens the offer request form for an existing calculation or payload.
+ * @param {Object|number|string} baseData - Calculation result or payload to attach customer data to.
+ * @returns {void}
+ */
 function openOfferRequestForm(baseData) {
 	const block = upsertOfferRequestBlock();
 	if (!block) return;
@@ -382,15 +476,28 @@ function openOfferRequestForm(baseData) {
 	});
 }
 
+/**
+ * Displays the loading indicator.
+ * @returns {void}
+ */
 function showLoadingIndicator() {
 	hideLoadingIndicator();
 	appendTemplateToCalcLayout(getLoadingTemplate());
 }
 
+/**
+ * Removes the loading indicator.
+ * @returns {void}
+ */
 function hideLoadingIndicator() {
 	document.getElementById('loading-indicator')?.remove();
 }
 
+/**
+ * Renders the matching result template for a calculation response.
+ * @param {Object} price - Calculation result.
+ * @returns {void}
+ */
 function showResult(price) {
 	removeFeedbackBlocks();
 
@@ -418,11 +525,21 @@ function showResult(price) {
 	}
 }
 
+/**
+ * Renders an error message in the calculator layout.
+ * @param {string} message - Error message to display.
+ * @returns {void}
+ */
 function showError(message) {
 	removeFeedbackBlocks();
 	appendTemplateToCalcLayout(getErrorTemplate(message));
 }
 
+/**
+ * Renders the request-sent confirmation and logs the submitted payload.
+ * @param {Object} data - Submitted request payload.
+ * @returns {void}
+ */
 function showRequestSent(data) {
 	removeFeedbackBlocks();
 	document.getElementById('offer-request-block')?.remove();
@@ -432,6 +549,10 @@ function showRequestSent(data) {
 	console.log(JSON.stringify(data, null, 2));
 }
 
+/**
+ * Initializes the calculator page and starts the selected service flow.
+ * @returns {void}
+ */
 export function initCalculator() {
 	const selectedService = getSelectedServiceData();
 	applySelectedServiceData(selectedService);

@@ -94,7 +94,7 @@ async function calculateFurniture(req, res) {
 
 async function createFurnitureRequest(req, res) {
 	res.status(501).json({
-		error: 'Создание заявки пока не реализовано'
+		error: 'Anfrageerstellung ist noch nicht implementiert'
 	});
 }
 

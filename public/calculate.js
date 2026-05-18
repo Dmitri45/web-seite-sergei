@@ -885,7 +885,7 @@ async function submitRequestPayload(payload, requestType = 'custom-request') {
 		});
 
 		if (!response.ok) {
-			throw new Error(`Ошибка сервера: ${response.status}`);
+			throw new Error(`Serverfehler: ${response.status}`);
 		}
 
 		const result = await response.json();
@@ -894,9 +894,9 @@ async function submitRequestPayload(payload, requestType = 'custom-request') {
 		console.log('Request send response:', result);
 		return result;
 	} catch (error) {
-		console.error('Ошибка при отправке заявки:', error);
+		console.error('Fehler beim Senden der Anfrage:', error);
 		hideLoadingIndicator();
-		showError('Не удалось отправить заявку. Проверьте настройки Brevo или подключение к серверу.');
+		showError('Die Anfrage konnte nicht gesendet werden. Bitte pruefen Sie die Brevo-Einstellungen oder die Serververbindung.');
 		return null;
 	}
 }
@@ -996,7 +996,7 @@ async function requestCalculation(data) {
 		});
 
 		if (!response.ok) {
-			throw new Error(`Ошибка сервера: ${response.status}`);
+			throw new Error(`Serverfehler: ${response.status}`);
 		}
 
 		const result = await response.json();
@@ -1005,7 +1005,7 @@ async function requestCalculation(data) {
 		hideLoadingIndicator();
 		showResult(result);
 	} catch (error) {
-		console.error('Ошибка при отправке запроса:', error);
+		console.error('Fehler beim Senden der Anfrage:', error);
 		hideLoadingIndicator();
 
 		const fallbackResult = buildLocalCalculationFallback(data);
@@ -1015,7 +1015,7 @@ async function requestCalculation(data) {
 			return;
 		}
 
-		showError('Не удалось получить расчет. Проверьте подключение к серверу.');
+		showError('Die Berechnung konnte nicht abgerufen werden. Bitte pruefen Sie die Serververbindung.');
 	}
 }
 
@@ -1356,4 +1356,3 @@ function removeFeedbackBlocks() {
 }
 
 init();
-

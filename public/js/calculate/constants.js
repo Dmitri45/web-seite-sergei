@@ -1,3 +1,8 @@
+/**
+ * Shared constants used by the modular calculator frontend.
+ * @module calculate/constants
+ */
+
 export const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
 export const REQUEST_SEND_ENDPOINT = 'http://localhost:3000/api/request/send';
 

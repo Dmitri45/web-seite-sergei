@@ -1,3 +1,12 @@
+/**
+ * Shared frontend HTML templates for calculators, service cards, surveys, and results.
+ */
+
+/**
+ * Formats a numeric value as a German euro amount.
+ * @param {number|string} value - Amount to format.
+ * @returns {string} Formatted euro amount.
+ */
 function formatEuro(value) {
 	const amount = Number(value || 0);
 	return `${amount.toLocaleString('de-DE', {
@@ -6,6 +15,11 @@ function formatEuro(value) {
 	})} €`;
 }
 
+/**
+ * Resolves a readable kitchen condition label.
+ * @param {string} condition - Kitchen condition key.
+ * @returns {string} Display label.
+ */
 function getKitchenConditionLabel(condition) {
 	const labels = {
 		new: 'Neue Küche',
@@ -15,11 +29,21 @@ function getKitchenConditionLabel(condition) {
 	return labels[condition] || 'Küchenservice';
 }
 
+/**
+ * Resolves the title shown for kitchen calculation results.
+ * @param {Object} data - Calculation result data.
+ * @returns {string} Result title.
+ */
 function getKitchenResultTitle(data) {
 	if (data?.serviceLabel) return data.serviceLabel;
 	return getKitchenConditionLabel(data?.condition);
 }
 
+/**
+ * Resolves a readable kitchen layout label.
+ * @param {string} kitchenType - Kitchen layout key.
+ * @returns {string} Display label.
+ */
 function getKitchenTypeLabel(kitchenType) {
 	const labels = {
 		'zeile': 'I-Form',
@@ -30,12 +54,22 @@ function getKitchenTypeLabel(kitchenType) {
 	return labels[kitchenType] || 'Nicht angegeben';
 }
 
+/**
+ * Converts yes/no values into German labels.
+ * @param {string|boolean} value - Yes/no style value.
+ * @returns {string} Display label.
+ */
 function getYesNoLabel(value) {
 	if (value === true || value === 'true' || value === 'yes') return 'Ja';
 	if (value === false || value === 'false' || value === 'no') return 'Nein';
 	return 'Nicht angegeben';
 }
 
+/**
+ * Builds the result template for kitchen calculations.
+ * @param {Object} data - Kitchen calculation result.
+ * @returns {string} HTML template.
+ */
 function getKitchenResultTemplate(data) {
 	const prices = data?.prices || {};
 	const totalPrice = prices.totalPrice || 0;
@@ -73,6 +107,11 @@ function getKitchenResultTemplate(data) {
 	`;
 }
 
+/**
+ * Builds the result template for furniture calculations.
+ * @param {Object} data - Furniture calculation result.
+ * @returns {string} HTML template.
+ */
 function getFurnitureResultTemplate(data) {
 	const prices = data?.prices || {};
 	const totalPrice = prices.totalPrice || 0;
@@ -106,6 +145,11 @@ function getFurnitureResultTemplate(data) {
 	`;
 }
 
+/**
+ * Builds the generic result template for service calculations.
+ * @param {Object} data - Service calculation result.
+ * @returns {string} HTML template.
+ */
 function getServiceResultTemplate(data) {
 	const prices = data?.prices || {};
 	const totalPrice = prices.totalPrice || 0;
@@ -138,8 +182,12 @@ function getServiceResultTemplate(data) {
 		</div>
 	`;
 }
-// Шаблоны форм для новой и старой кухни
+// Formularvorlagen fuer neue und bestehende Kuechen
 
+/**
+ * Builds the form template for a new kitchen installation.
+ * @returns {string} HTML template.
+ */
 function getNewKitchenForm() {
     return `
 		<form class="calc-card" id="calcForm">
@@ -214,6 +262,10 @@ function getNewKitchenForm() {
 	`;
 }
 
+/**
+ * Builds the form template for an existing kitchen transport/assembly request.
+ * @returns {string} HTML template.
+ */
 function getUsedKitchenForm() {
     return `
 		<form class="calc-card" id="calcForm">
@@ -295,6 +347,10 @@ function getUsedKitchenForm() {
 	`;
 }
 
+/**
+ * Builds the form template for kitchen dismantling.
+ * @returns {string} HTML template.
+ */
 function getKitchenDismantlingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -341,6 +397,10 @@ function getKitchenDismantlingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for kitchen transport.
+ * @returns {string} HTML template.
+ */
 function getKitchenTransportForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -399,6 +459,10 @@ function getKitchenTransportForm() {
 	`;
 }
 
+/**
+ * Builds the form template for small item transport.
+ * @returns {string} HTML template.
+ */
 function getSmallItemsTransportForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -471,6 +535,10 @@ function getSmallItemsTransportForm() {
 	`;
 }
 
+/**
+ * Builds the form template for moving helper hour calculation.
+ * @returns {string} HTML template.
+ */
 function getMovingHelpersEstimateForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -513,11 +581,19 @@ function getMovingHelpersEstimateForm() {
 	`;
 }
 
+/**
+ * Builds the form template for kitchen adjustment estimates.
+ * @returns {string} HTML template.
+ */
 function getKitchenAdjustmentEstimateForm() {
 	// Gleiche Eingaben/Logik wie beim Küchenaufbau (Preiseinschätzung).
 	return getNewKitchenForm();
 }
 
+/**
+ * Builds the form template for furniture disposal.
+ * @returns {string} HTML template.
+ */
 function getFurnitureDisposalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -571,6 +647,10 @@ function getFurnitureDisposalForm() {
 	`;
 }
 
+/**
+ * Builds the form template for furniture assembly.
+ * @returns {string} HTML template.
+ */
 function getFurnitureAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -620,6 +700,10 @@ function getFurnitureAssemblyForm() {
 	`;
 }
 
+/**
+ * Builds the form template for sanding or painting garden huts.
+ * @returns {string} HTML template.
+ */
 function getGardenHutSandingPaintingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -664,6 +748,10 @@ function getGardenHutSandingPaintingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for garden hut assembly.
+ * @returns {string} HTML template.
+ */
 function getGardenHutAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -720,6 +808,10 @@ function getGardenHutAssemblyForm() {
 	`;
 }
 
+/**
+ * Builds the form template for hedge trimming.
+ * @returns {string} HTML template.
+ */
 function getHedgeTrimmingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -781,6 +873,10 @@ function getHedgeTrimmingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for hedge removal.
+ * @returns {string} HTML template.
+ */
 function getHedgeRemovalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -831,6 +927,10 @@ function getHedgeRemovalForm() {
 	`;
 }
 
+/**
+ * Builds the form template for root removal.
+ * @returns {string} HTML template.
+ */
 function getRootRemovalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -871,6 +971,10 @@ function getRootRemovalForm() {
 	`;
 }
 
+/**
+ * Builds the form template for small tree felling.
+ * @returns {string} HTML template.
+ */
 function getSmallTreeFellingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -920,6 +1024,10 @@ function getSmallTreeFellingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for laying turf.
+ * @returns {string} HTML template.
+ */
 function getLawnInstallationForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -974,6 +1082,10 @@ function getLawnInstallationForm() {
 	`;
 }
 
+/**
+ * Builds the form template for lawn mowing.
+ * @returns {string} HTML template.
+ */
 function getLawnMowingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1022,6 +1134,10 @@ function getLawnMowingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for shrub trimming.
+ * @returns {string} HTML template.
+ */
 function getShrubTrimmingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1133,6 +1249,10 @@ function getShrubTrimmingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for green waste disposal.
+ * @returns {string} HTML template.
+ */
 function getGreenWasteDisposalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1185,6 +1305,10 @@ function getGreenWasteDisposalForm() {
 	`;
 }
 
+/**
+ * Builds the form template for paving work.
+ * @returns {string} HTML template.
+ */
 function getPavingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1227,6 +1351,10 @@ function getPavingForm() {
 	`;
 }
 
+/**
+ * Builds the form template for fence assembly.
+ * @returns {string} HTML template.
+ */
 function getFenceAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1273,6 +1401,10 @@ function getFenceAssemblyForm() {
 	`;
 }
 
+/**
+ * Builds the form template for canopy work.
+ * @returns {string} HTML template.
+ */
 function getCanopyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1316,6 +1448,10 @@ function getCanopyForm() {
 	`;
 }
 
+/**
+ * Builds the form template for joint cleaning.
+ * @returns {string} HTML template.
+ */
 function getJointCleaningForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1342,6 +1478,10 @@ function getJointCleaningForm() {
 	`;
 }
 
+/**
+ * Builds the form template for fine plaster quality selection.
+ * @returns {string} HTML template.
+ */
 function getFinePlasterForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1378,6 +1518,10 @@ function getFinePlasterForm() {
 	`;
 }
 
+/**
+ * Builds the form template for wall plastering.
+ * @returns {string} HTML template.
+ */
 function getWallPlasteringForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1413,6 +1557,10 @@ function getWallPlasteringForm() {
 	`;
 }
 
+/**
+ * Builds the form template for drywall work.
+ * @returns {string} HTML template.
+ */
 function getDrywallForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1439,6 +1587,10 @@ function getDrywallForm() {
 	`;
 }
 
+/**
+ * Builds the form template for mini excavator work.
+ * @returns {string} HTML template.
+ */
 function getMiniExcavatorWorkForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1470,6 +1622,10 @@ function getMiniExcavatorWorkForm() {
 	`;
 }
 
+/**
+ * Builds the form template for wood chipper work.
+ * @returns {string} HTML template.
+ */
 function getWoodChipperForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1522,6 +1678,10 @@ function getWoodChipperForm() {
 	`;
 }
 
+/**
+ * Builds the custom furniture request form template.
+ * @returns {string} HTML template.
+ */
 function getCustomFurnitureRequestForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1579,6 +1739,10 @@ function getCustomFurnitureRequestForm() {
 	`;
 }
 
+/**
+ * Builds the custom kitchen request form template.
+ * @returns {string} HTML template.
+ */
 function getCustomKitchenRequestForm() {
 	return `
 		<form class="calc-card" id="calcForm">
@@ -1636,6 +1800,10 @@ function getCustomKitchenRequestForm() {
 	`;
 }
 
+/**
+ * Builds the kitchen assembly survey template.
+ * @returns {string} HTML template.
+ */
 function getAssemblySurvey() {
 	return `
 		<div class="assembly-survey" id="assemblySurvey">
@@ -1680,6 +1848,10 @@ function getAssemblySurvey() {
 	`;
 }
 
+/**
+ * Builds the optional transportation survey template.
+ * @returns {string} HTML template.
+ */
 function getTransportationSurvey() {
 	return `
 		<div class="transport-survey" id="transportSurvey">
@@ -1721,6 +1893,10 @@ function getTransportationSurvey() {
 	`;
 }
 
+/**
+ * Builds the direct transport address form template.
+ * @returns {string} HTML template.
+ */
 function getDirectTransportAddressForm() {
 	return `
 		<div class="transport-survey" id="directTransportSurvey">
@@ -1751,6 +1927,12 @@ function getDirectTransportAddressForm() {
 	`;
 }
 
+/**
+ * Builds one intermediate address field template.
+ * @param {number} index - Zero-based intermediate address index.
+ * @param {string} [idPrefix='transportViaAutocomplete'] - Autocomplete id prefix.
+ * @returns {string} HTML template.
+ */
 function getIntermediateAddressTemplate(index, idPrefix = 'transportViaAutocomplete') {
 	return `
 		<div class="field intermediate-address-field" data-intermediate-address-index="${index}">
@@ -1763,6 +1945,11 @@ function getIntermediateAddressTemplate(index, idPrefix = 'transportViaAutocompl
 	`;
 }
 
+/**
+ * Builds optional addon controls for a furniture item.
+ * @param {number} index - Zero-based item index.
+ * @returns {string} HTML template.
+ */
 function getFurnitureAddonControls(index) {
 	return `
 		<div class="field field-full furniture-addon-group">
@@ -1805,6 +1992,11 @@ function getFurnitureAddonControls(index) {
 	`;
 }
 
+/**
+ * Builds addon controls used when a transport item needs assembly or dismantling.
+ * @param {number} index - Zero-based item index.
+ * @returns {string} HTML template.
+ */
 function getTransportAssemblyAddonControls(index) {
 	return `
 		<div class="transport-assembly-addons" data-transport-assembly-addons hidden>
@@ -1813,6 +2005,11 @@ function getTransportAssemblyAddonControls(index) {
 	`;
 }
 
+/**
+ * Builds a furniture item card template.
+ * @param {number} index - Zero-based item index.
+ * @returns {string} HTML template.
+ */
 function getFurnitureItemCardTemplate(index) {
 	return `
 		<div class="furniture-item-card" data-item-index="${index}">
@@ -1838,6 +2035,11 @@ function getFurnitureItemCardTemplate(index) {
 	`;
 }
 
+/**
+ * Builds a furniture assembly item card template.
+ * @param {number} index - Zero-based item index.
+ * @returns {string} HTML template.
+ */
 function getFurnitureAssemblyItemCardTemplate(index) {
 	return `
 		<div class="furniture-item-card" data-item-index="${index}">
@@ -1864,6 +2066,11 @@ function getFurnitureAssemblyItemCardTemplate(index) {
 	`;
 }
 
+/**
+ * Builds a small transport item card template.
+ * @param {number} index - Zero-based item index.
+ * @returns {string} HTML template.
+ */
 function getTransportItemCardTemplate(index) {
 	return `
 		<div class="furniture-item-card" data-item-index="${index}">
@@ -1904,6 +2111,10 @@ function getTransportItemCardTemplate(index) {
 	`;
 }
 
+/**
+ * Builds the loading indicator template.
+ * @returns {string} HTML template.
+ */
 function getLoadingTemplate() {
 	return `
 		<div id="loading-indicator" class="loading-indicator">
@@ -1913,6 +2124,11 @@ function getLoadingTemplate() {
 	`;
 }
 
+/**
+ * Builds a basic numeric result template.
+ * @param {number|string} price - Price value to display.
+ * @returns {string} HTML template.
+ */
 function getResultTemplate(price) {
 	return `
 		<div id="result-display" class="result-display">
@@ -1926,6 +2142,11 @@ function getResultTemplate(price) {
 	`;
 }
 
+/**
+ * Builds an error display template.
+ * @param {string} message - Error message.
+ * @returns {string} HTML template.
+ */
 function getErrorTemplate(message) {
 	return `
 		<div id="error-display" class="error-display">
@@ -1938,6 +2159,11 @@ function getErrorTemplate(message) {
 	`;
 }
 
+/**
+ * Builds the request-sent confirmation template.
+ * @param {Object} [data={}] - Submitted request data.
+ * @returns {string} HTML template.
+ */
 function getRequestSentTemplate(data = {}) {
 	return `
 		<div id="result-display" class="result-display">
@@ -1951,6 +2177,10 @@ function getRequestSentTemplate(data = {}) {
 	`;
 }
 
+/**
+ * Builds the contact form used after a calculation result.
+ * @returns {string} HTML template.
+ */
 function getOfferRequestTemplate() {
 	return `
 		<div id="offer-request-block" class="result-display">
@@ -1994,6 +2224,11 @@ function getOfferRequestTemplate() {
 }
 
 
+/**
+ * Builds one service card template for category pages.
+ * @param {Object} service - Service card data.
+ * @returns {string} HTML template.
+ */
 function getServiceCardTemplate(service) {
     const appointmentClass = ['Möbelanfertigung', 'Küchenanfertigung'].includes(service.label)
         ? ' service-card--appointment'
@@ -2085,8 +2320,17 @@ const SERVICES_BY_CATEGORY = {
     ]
 };
 
+/**
+ * Tracks whether the services bottom CTA click handler has already been bound.
+ * @type {boolean}
+ */
 let servicesBottomCtaHandler = false;
 
+/**
+ * Renders service cards for the selected category.
+ * @param {string} [categoryKey='garden'] - Service category key.
+ * @returns {void}
+ */
 function renderServices(categoryKey = 'garden') {
 	const servicesBottomCta = document.getElementById('services-bottom-cta');
 	servicesBottomCta.innerHTML = '';
@@ -2108,6 +2352,11 @@ function renderServices(categoryKey = 'garden') {
 }
 
 
+/**
+ * Reveals additional hidden service cards for a category.
+ * @param {string} categoryKey - Service category key.
+ * @returns {void}
+ */
 function loadMoreServices(categoryKey) {
 	const showcase = document.getElementById('services-list');
 	if (!showcase) return;
@@ -2119,6 +2368,10 @@ function loadMoreServices(categoryKey) {
 	servicesBottomCtaButton.removeEventListener('click', loadMoreServices);
 }
 
+/**
+ * Builds the bottom call-to-action template for services pages.
+ * @returns {string} HTML template.
+ */
 function getServicesBottomCtaTemplate() {
 	return `<div class="services-bottom-cta">
     <div class="services-bottom-cta__text">
@@ -2148,16 +2401,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+/**
+ * Renders a kitchen form directly into the calculator layout.
+ * @param {string} kitchenType - Kitchen type key.
+ * @returns {HTMLFormElement} Rendered form element.
+ */
 function renderForm(kitchenType) {
     const formContainer = document.querySelector('.calc-layout .calc-main') || document.querySelector('.calc-layout');
     const oldForm = document.getElementById('calcForm');
 
-    // Удалить старую форму если она есть
+    // Altes Formular entfernen, falls vorhanden
     if (oldForm) {
         oldForm.remove();
     }
 
-    // Создать новую форму
+    // Neues Formular erstellen
     const formHTML = kitchenType === 'new' ? getNewKitchenForm() : getUsedKitchenForm();
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = formHTML;
@@ -2165,6 +2423,6 @@ function renderForm(kitchenType) {
 
     formContainer.appendChild(newForm);
 
-    // Вернуть ссылку на новую форму
+    // Referenz auf das neue Formular zurueckgeben
     return newForm;
 }

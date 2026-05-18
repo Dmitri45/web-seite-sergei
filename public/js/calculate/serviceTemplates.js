@@ -1,3 +1,15 @@
+/**
+ * Service label to calculator form template mappings.
+ * @module calculate/serviceTemplates
+ */
+
+/**
+ * Creates template factories keyed by the visible service label.
+ * @param {Object} options - Template creation dependencies.
+ * @param {HTMLElement|null} options.kitchenSurvey - Initial kitchen survey element.
+ * @param {HTMLElement|null} options.continueBtn - Initial survey continue button.
+ * @returns {Record<string, Function>} Service label to template factory map.
+ */
 export function createServiceFormTemplates({ kitchenSurvey, continueBtn }) {
 	return {
 		'Küchentransport': () => getKitchenTransportForm(),

@@ -1,3 +1,11 @@
+/**
+ * Home page service category rendering and navigation bindings.
+ */
+
+/**
+ * Category labels from the services navigation mapped to service data keys.
+ * @type {Record<string, string>}
+ */
 const CATEGORY_KEY_MAP = {
 	'Küchenservice':  'kitchen',
 	'Möbelservice':   'furniture',
@@ -5,6 +13,11 @@ const CATEGORY_KEY_MAP = {
 	'Gartenservice':  'garden',
 };
 
+/**
+ * Renders service cards for the selected home-page category.
+ * @param {string} categoryKey - Key used in SERVICES_BY_CATEGORY.
+ * @returns {void}
+ */
 function renderServicesGrid(categoryKey) {
 	const grid = document.querySelector('.services-grid');
 	if (!grid) return;
@@ -15,6 +28,10 @@ function renderServicesGrid(categoryKey) {
 		.join('');
 }
 
+/**
+ * Binds the category navigation and renders the initial services grid.
+ * @returns {void}
+ */
 function initServicesCategoryButtons() {
 	const buttons = document.querySelectorAll('.services-nav-item');
 	if (!buttons.length) return;
@@ -35,5 +52,3 @@ function initServicesCategoryButtons() {
 }
 
 document.addEventListener('DOMContentLoaded', initServicesCategoryButtons);
-
-

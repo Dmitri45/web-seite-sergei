@@ -1,3 +1,13 @@
+/**
+ * Address autocomplete helpers for Geoapify-backed calculator fields.
+ * @module calculate/autocomplete
+ */
+
+/**
+ * Maps a Geoapify location object to the transport point shape used by the backend.
+ * @param {Object|null} location - Geoapify location object.
+ * @returns {{address: string, coordinates: {lat: number, lon: number}}|null} Transport point.
+ */
 export function mapLocationToTransportPoint(location) {
 	if (!location) return null;
 
@@ -13,6 +23,11 @@ export function mapLocationToTransportPoint(location) {
 	};
 }
 
+/**
+ * Creates a Geoapify autocomplete instance for an element id.
+ * @param {string} elementId - Container element id.
+ * @returns {Object} Geoapify autocomplete instance.
+ */
 export function createAddressAutocomplete(elementId) {
 	return new autocomplete.GeocoderAutocomplete(
 		document.getElementById(elementId),
@@ -27,6 +42,11 @@ export function createAddressAutocomplete(elementId) {
 	);
 }
 
+/**
+ * Initializes inline address autocomplete fields inside a form.
+ * @param {HTMLFormElement|HTMLElement|null} formElement - Form or container to scan.
+ * @returns {void}
+ */
 export function initInlineAddressAutocompletes(formElement) {
 	if (!formElement) return;
 

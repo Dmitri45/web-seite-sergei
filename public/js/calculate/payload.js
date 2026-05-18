@@ -1,6 +1,17 @@
+/**
+ * Payload builders and normalizers for calculator forms.
+ * @module calculate/payload
+ */
+
 import { KITCHEN_CALCULATION_SERVICE_LABELS } from './constants.js';
 import { getSelectedServiceData } from './state.js';
 
+/**
+ * Adds assembly survey values to the calculation payload when needed.
+ * @param {Object} data - Payload being prepared for the backend.
+ * @param {Object} state - Shared calculator state.
+ * @returns {void}
+ */
 export function addAssemblyDataIfNeeded(data, state) {
 	if (state.selectedKitchenCondition !== 'new') return;
 
@@ -16,6 +27,12 @@ export function addAssemblyDataIfNeeded(data, state) {
 	}
 }
 
+/**
+ * Adds selected transport route points to the calculation payload.
+ * @param {Object} data - Payload being prepared for the backend.
+ * @param {Object} state - Shared calculator state.
+ * @returns {void}
+ */
 export function addTransportationDataIfNeeded(data, state) {
 	if (state.selectedTransportation !== 'yes') return;
 
@@ -24,6 +41,12 @@ export function addTransportationDataIfNeeded(data, state) {
 	data.transportTo = state.selectedTransportTo;
 }
 
+/**
+ * Builds a complete calculation payload from the current form and shared state.
+ * @param {HTMLFormElement|null} currentForm - Active calculator form.
+ * @param {Object} state - Shared calculator state.
+ * @returns {Object} Calculation payload.
+ */
 export function buildCalculationData(currentForm, state) {
 	const data = buildKitchenFormPayload(currentForm, state);
 	data.transportation = state.selectedTransportation;
@@ -35,6 +58,11 @@ export function buildCalculationData(currentForm, state) {
 	return data;
 }
 
+/**
+ * Validates required fields for custom furniture and kitchen requests.
+ * @param {Object} payload - Custom request payload.
+ * @returns {boolean} True when the payload is valid.
+ */
 export function validateCustomRequestPayload(payload) {
 	if (!payload.firstName?.trim() || !payload.lastName?.trim()) {
 		alert('Bitte geben Sie Vorname und Nachname ein.');
@@ -54,6 +82,11 @@ export function validateCustomRequestPayload(payload) {
 	return true;
 }
 
+/**
+ * Moves custom request contact fields into the customer object expected by email templates.
+ * @param {Object} payload - Custom request payload.
+ * @returns {void}
+ */
 export function adaptCustomRequestPayload(payload) {
 	payload.customer = {
 		firstName: payload.firstName || '',
@@ -67,6 +100,12 @@ export function adaptCustomRequestPayload(payload) {
 	delete payload.phone;
 }
 
+/**
+ * Normalizes kitchen payload fields for the backend controller.
+ * @param {Object} data - Kitchen calculation payload.
+ * @param {Object} state - Shared calculator state.
+ * @returns {Object} Normalized payload.
+ */
 export function adaptKitchenPayloadForBackend(data, state) {
 	if (!data || typeof data !== 'object') return data;
 	const serviceLabel = String(data.serviceLabel || '').trim();
@@ -80,6 +119,12 @@ export function adaptKitchenPayloadForBackend(data, state) {
 	return data;
 }
 
+/**
+ * Collects all named form controls into the base service payload.
+ * @param {HTMLFormElement|null} formElement - Active form element.
+ * @param {Object} state - Shared calculator state.
+ * @returns {Object} Form payload.
+ */
 export function buildKitchenFormPayload(formElement, state) {
 	const selectedService = getSelectedServiceData();
 	const serviceLabel = selectedService?.label || '';
@@ -103,6 +148,12 @@ export function buildKitchenFormPayload(formElement, state) {
 	return data;
 }
 
+/**
+ * Adds backend mode hints based on the selected service label.
+ * @param {Object} payload - Payload to mutate.
+ * @param {string} [serviceLabel=''] - Selected service label.
+ * @returns {void}
+ */
 export function adaptPayloadForService(payload, serviceLabel = '') {
 	if (!payload || typeof payload !== 'object') return;
 
@@ -137,12 +188,22 @@ export function adaptPayloadForService(payload, serviceLabel = '') {
 	}
 }
 
+/**
+ * Converts a field suffix into lower camelCase.
+ * @param {string} [rawFieldName=''] - Raw field suffix.
+ * @returns {string} Camel-cased field name.
+ */
 export function toCamelCaseFieldName(rawFieldName = '') {
 	const normalized = String(rawFieldName || '').trim();
 	if (!normalized) return '';
 	return normalized.charAt(0).toLowerCase() + normalized.slice(1);
 }
 
+/**
+ * Groups dynamic furniture item form fields into the moebelstuecke array.
+ * @param {Object} payload - Payload to mutate.
+ * @returns {void}
+ */
 export function groupFurnitureItemsInPayload(payload) {
 	if (!payload || typeof payload !== 'object') return;
 

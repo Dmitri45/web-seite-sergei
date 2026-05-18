@@ -1,3 +1,7 @@
+/**
+ * Stores selected service cards and applies the selection on the calculator page.
+ */
+
 (function() {
     /**
      * sessionStorage key for selected service payload.

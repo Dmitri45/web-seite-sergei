@@ -16,12 +16,12 @@ const testObject = {
 
 getRouteMatrixAndCalculatePrice(testObject)
   .then(result => {
-    console.log('Результат:', result);
+    console.log('Ergebnis:', result);
   })
   .catch(err => {
-    console.error('Ошибка:', err.message);
+    console.error('Fehler:', err.message);
   });
 
 // TODO: 
-// Нужно не забыть сделать правильную структуру проеккта, как предложил ChatGPT.
-// Сделать отдельно caloculator, routes, server, controller, validation и т.д. И юзать их в нужных местах, а не держать всё в одном файле.
+// Die Projektstruktur sollte noch sauber aufgeteilt werden.
+// Calculator, Routes, Server, Controller und Validation separat halten und nur dort nutzen, wo sie gebraucht werden.

@@ -1,7 +1,18 @@
+/**
+ * Form rendering and dynamic form control helpers for the calculator.
+ * @module calculate/forms
+ */
+
 import { getCalcMainContainer } from './dom.js';
 import { initInlineAddressAutocompletes, createAddressAutocomplete } from './autocomplete.js';
 import { applySelectedServiceData, setSelectedServiceData } from './state.js';
 
+/**
+ * Renders a standalone calculator form and initializes its interactive controls.
+ * @param {string} templateHTML - Form template HTML.
+ * @param {Object} [hooks={}] - Optional callbacks used by the main calculator flow.
+ * @returns {HTMLFormElement|null} Rendered form element.
+ */
 export function renderStandaloneForm(templateHTML, hooks = {}) {
 	const container = getCalcMainContainer();
 	if (!container) return null;
@@ -30,6 +41,11 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 	return newForm;
 }
 
+/**
+ * Binds optional furniture addon toggles to their quantity fields.
+ * @param {HTMLElement|null} containerElement - Container with addon controls.
+ * @returns {void}
+ */
 export function initFurnitureAddonToggles(containerElement) {
 	if (!containerElement) return;
 
@@ -54,6 +70,11 @@ export function initFurnitureAddonToggles(containerElement) {
 	});
 }
 
+/**
+ * Shows assembly addon controls only when transport item assembly is selected.
+ * @param {HTMLElement|null} containerElement - Container with transport item cards.
+ * @returns {void}
+ */
 export function initTransportAssemblyAddonVisibility(containerElement) {
 	if (!containerElement) return;
 
@@ -83,6 +104,11 @@ export function initTransportAssemblyAddonVisibility(containerElement) {
 	});
 }
 
+/**
+ * Initializes address autocompletes in the kitchen transport form.
+ * @param {HTMLFormElement|HTMLElement} formElement - Kitchen transport form.
+ * @returns {void}
+ */
 export function initKitchenTransportForm(formElement) {
 	const fromContainer = formElement.querySelector('#transportFromAddressAutocomplete');
 	const toContainer = formElement.querySelector('#transportToAddressAutocomplete');
@@ -102,6 +128,11 @@ export function initKitchenTransportForm(formElement) {
 	});
 }
 
+/**
+ * Toggles the kerbstone length field in the fence assembly form.
+ * @param {HTMLFormElement|HTMLElement} formElement - Fence assembly form.
+ * @returns {void}
+ */
 export function initFenceAssemblyForm(formElement) {
 	const withKerbstoneSelect = formElement.querySelector('#withKerbstone');
 	const kerbstoneLengthInput = formElement.querySelector('#kerbstoneLengthM');
@@ -122,6 +153,12 @@ export function initFenceAssemblyForm(formElement) {
 	syncKerbstoneField();
 }
 
+/**
+ * Creates a dynamic furniture, assembly, or transport item card.
+ * @param {number} index - Zero-based item index.
+ * @param {string} [templateType='furniture'] - Card template type.
+ * @returns {Element|null} Created card element.
+ */
 export function createFurnitureItemCard(index, templateType = 'furniture') {
 	const wrapper = document.createElement('div');
 	let templateHTML = getFurnitureItemCardTemplate(index);
@@ -139,6 +176,11 @@ export function createFurnitureItemCard(index, templateType = 'furniture') {
 	return card;
 }
 
+/**
+ * Renumbers dynamic item card headings and remove buttons.
+ * @param {HTMLElement} list - Dynamic item list container.
+ * @returns {void}
+ */
 export function refreshFurnitureItemHeaders(list) {
 	const cards = list.querySelectorAll('.furniture-item-card');
 	const itemLabel = list.dataset.itemLabel || 'Möbelstück';
@@ -153,6 +195,12 @@ export function refreshFurnitureItemHeaders(list) {
 	});
 }
 
+/**
+ * Applies the configured maximum item limit to a dynamic item list.
+ * @param {HTMLElement} itemsList - Dynamic item list container.
+ * @param {HTMLButtonElement} addBtn - Add item button.
+ * @returns {void}
+ */
 export function syncFurnitureItemLimit(itemsList, addBtn) {
 	const maxItems = Number.parseInt(itemsList.dataset.maxItems || '', 10);
 	if (!Number.isInteger(maxItems) || maxItems <= 0) return;
@@ -169,6 +217,12 @@ export function syncFurnitureItemLimit(itemsList, addBtn) {
 	}
 }
 
+/**
+ * Binds buttons that switch the calculator to another service form.
+ * @param {HTMLElement|null} containerElement - Container with switch buttons.
+ * @param {Function} renderServiceSpecificFormFromStorage - Callback to render the newly selected service.
+ * @returns {void}
+ */
 export function initServiceSwitchButtons(containerElement, renderServiceSpecificFormFromStorage) {
 	if (!containerElement) return;
 
@@ -197,6 +251,11 @@ export function initServiceSwitchButtons(containerElement, renderServiceSpecific
 	});
 }
 
+/**
+ * Initializes add/remove behavior for dynamic furniture-style item lists.
+ * @param {HTMLFormElement|HTMLElement} formElement - Form containing the dynamic list.
+ * @returns {void}
+ */
 export function initDynamicFurnitureItems(formElement) {
 	const itemsList = formElement.querySelector('#furnitureItemsList');
 	const addBtn = formElement.querySelector('#addFurnitureItemBtn');

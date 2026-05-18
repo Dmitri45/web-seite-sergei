@@ -1,3 +1,8 @@
+/**
+ * API helpers for calculation requests and request-email submissions.
+ * @module calculate/api
+ */
+
 import {
 	FURNITURE_CALCULATION_SERVICE_LABELS,
 	GARDEN_CALCULATION_SERVICE_LABELS,
@@ -6,6 +11,11 @@ import {
 	TRADES_CALCULATION_SERVICE_LABELS
 } from './constants.js';
 
+/**
+ * Resolves the backend calculation endpoint for the selected service.
+ * @param {Object} [data={}] - Calculation payload containing serviceLabel.
+ * @returns {string} Absolute API endpoint URL.
+ */
 export function getCalculationEndpoint(data = {}) {
 	const serviceLabel = String(data.serviceLabel || '').trim();
 
@@ -24,6 +34,11 @@ export function getCalculationEndpoint(data = {}) {
 	return 'http://localhost:3000/api/kitchen/calculate';
 }
 
+/**
+ * Builds a frontend fallback result for services with simple local pricing.
+ * @param {Object} [data={}] - Calculation payload from the form.
+ * @returns {Object|null} Calculation result or null when no fallback exists.
+ */
 export function buildLocalCalculationFallback(data = {}) {
 	const serviceLabel = String(data.serviceLabel || '').trim();
 	if (!TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel) && !GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) return null;
@@ -102,6 +117,12 @@ export function buildLocalCalculationFallback(data = {}) {
 	};
 }
 
+/**
+ * Sends a calculation payload to the matching backend endpoint.
+ * @param {Object} data - Calculation payload.
+ * @returns {Promise<Object>} Backend calculation result.
+ * @throws {Error} When the backend responds with a non-2xx status.
+ */
 export async function postCalculation(data) {
 	const response = await fetch(getCalculationEndpoint(data), {
 		method: 'POST',
@@ -112,12 +133,18 @@ export async function postCalculation(data) {
 	});
 
 	if (!response.ok) {
-		throw new Error(`Ошибка сервера: ${response.status}`);
+		throw new Error(`Serverfehler: ${response.status}`);
 	}
 
 	return response.json();
 }
 
+/**
+ * Wraps a request payload with metadata expected by the email backend.
+ * @param {Object} payload - Service request payload.
+ * @param {string} [requestType='offer'] - Request type, e.g. offer or custom-request.
+ * @returns {Object} Request payload with metadata.
+ */
 export function buildRequestSubmissionPayload(payload, requestType = 'offer') {
 	return {
 		requestType,
@@ -127,6 +154,13 @@ export function buildRequestSubmissionPayload(payload, requestType = 'offer') {
 	};
 }
 
+/**
+ * Sends an offer or custom request payload to the backend email route.
+ * @param {Object} payload - Request payload to submit.
+ * @param {string} [requestType='custom-request'] - Request type for Brevo template params.
+ * @returns {Promise<{requestPayload: Object, result: Object}>} Submitted payload and backend response.
+ * @throws {Error} When the backend responds with a non-2xx status.
+ */
 export async function postRequestPayload(payload, requestType = 'custom-request') {
 	const requestPayload = buildRequestSubmissionPayload(payload, requestType);
 	const response = await fetch(REQUEST_SEND_ENDPOINT, {
@@ -138,7 +172,7 @@ export async function postRequestPayload(payload, requestType = 'custom-request'
 	});
 
 	if (!response.ok) {
-		throw new Error(`Ошибка сервера: ${response.status}`);
+		throw new Error(`Serverfehler: ${response.status}`);
 	}
 
 	return {
