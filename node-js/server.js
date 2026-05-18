@@ -1,5 +1,9 @@
 const express = require("express");
 const path = require("path");
+const { loadEnv } = require('./config/loadEnv');
+
+loadEnv();
+
 const routes = require('./routes/routes');
 const app = express();
 

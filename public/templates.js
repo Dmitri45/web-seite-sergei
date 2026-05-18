@@ -1943,8 +1943,8 @@ function getRequestSentTemplate(data = {}) {
 		<div id="result-display" class="result-display">
 			<div class="result-card">
 				<p class="result-eyebrow">Anfrage</p>
-				<h2>${data.serviceLabel || 'Anfrage'} wurde vorbereitet</h2>
-				<p class="result-note">Vielen Dank. Ihre Angaben wurden aufgenommen.</p>
+				<h2>${data.serviceLabel || 'Anfrage'} wurde gesendet</h2>
+				<p class="result-note">Vielen Dank. Ihre Angaben wurden erfolgreich übermittelt.</p>
 				<button class="btn-secondary" onclick="location.reload()">Neue Anfrage</button>
 			</div>
 		</div>

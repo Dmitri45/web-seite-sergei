@@ -1,6 +1,7 @@
 const kitchenSurvey = document.getElementById('kitchenSurvey');
 const continueBtn = document.getElementById('continueBtn');
 const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
+const REQUEST_SEND_ENDPOINT = 'http://localhost:3000/api/request/send';
 
 let selectedKitchenCondition = '';
 let selectedTransportation = '';
@@ -261,7 +262,7 @@ function initOfferRequestButtons(formElement) {
 			adaptCustomRequestPayload(payload);
 			latestFrontendFormPayload = payload;
 			formElement.style.display = 'none';
-			showRequestSent(payload);
+			await submitRequestPayload(payload);
 			return;
 		}
 
@@ -861,6 +862,46 @@ function adaptCustomRequestPayload(payload) {
 	delete payload.phone;
 }
 
+function buildRequestSubmissionPayload(payload, requestType = 'offer') {
+	return {
+		requestType,
+		submittedAt: new Date().toISOString(),
+		source: 'website-calculator',
+		...payload
+	};
+}
+
+async function submitRequestPayload(payload, requestType = 'custom-request') {
+	const requestPayload = buildRequestSubmissionPayload(payload, requestType);
+	latestFrontendFormPayload = requestPayload;
+
+	try {
+		showLoadingIndicator();
+		const response = await fetch(REQUEST_SEND_ENDPOINT, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(requestPayload)
+		});
+
+		if (!response.ok) {
+			throw new Error(`Ошибка сервера: ${response.status}`);
+		}
+
+		const result = await response.json();
+		hideLoadingIndicator();
+		showRequestSent(requestPayload);
+		console.log('Request send response:', result);
+		return result;
+	} catch (error) {
+		console.error('Ошибка при отправке заявки:', error);
+		hideLoadingIndicator();
+		showError('Не удалось отправить заявку. Проверьте настройки Brevo или подключение к серверу.');
+		return null;
+	}
+}
+
 function adaptKitchenPayloadForBackend(data) {
 	if (!data || typeof data !== 'object') return data;
 	const serviceLabel = String(data.serviceLabel || '').trim();
@@ -1229,7 +1270,7 @@ function openOfferRequestForm(baseData) {
 		selectedOfferAddress = location?.properties?.formatted || '';
 	});
 
-	form.addEventListener('submit', (event) => {
+	form.addEventListener('submit', async (event) => {
 		event.preventDefault();
 
 		const contact = collectOfferContactData(form);
@@ -1252,6 +1293,7 @@ function openOfferRequestForm(baseData) {
 
 		console.log('Offer request payload:', resultObject);
 		console.log(JSON.stringify(resultObject, null, 2));
+		await submitRequestPayload(resultObject, 'offer');
 	});
 }
 
@@ -1301,6 +1343,8 @@ function showError(message) {
 
 function showRequestSent(data) {
 	removeFeedbackBlocks();
+	document.getElementById('offer-request-block')?.remove();
+	document.getElementById('calcForm')?.remove();
 	appendTemplateToCalcLayout(getRequestSentTemplate(data));
 	console.log('Custom request payload:', data);
 	console.log(JSON.stringify(data, null, 2));

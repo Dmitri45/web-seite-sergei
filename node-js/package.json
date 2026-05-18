@@ -7,9 +7,10 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-  "dev": "nodemon server.js"
-},
+    "dev": "nodemon server.js"
+  },
   "dependencies": {
+    "@getbrevo/brevo": "^5.0.4",
     "express": "^5.2.1"
   },
   "devDependencies": {

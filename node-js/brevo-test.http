@@ -1,0 +1,67 @@
+### Send offer request email via Brevo
+POST http://localhost:3000/api/request/send
+Content-Type: application/json
+
+{
+  "requestType": "offer",
+  "submittedAt": "2026-05-17T12:00:00.000Z",
+  "source": "website-calculator",
+  "serviceLabel": "Zäune aufbauen",
+  "mode": "fence-assembly",
+  "fenceElementsCount": "5",
+  "withKerbstone": "with",
+  "kerbstoneLengthM": "10",
+  "notes": "Test Anfrage aus brevo-test.http",
+  "transportation": "no",
+  "prices": {
+    "gardenPrice": 520,
+    "transportPrice": 0,
+    "totalPrice": 520,
+    "items": [
+      {
+        "index": 0,
+        "name": "Zaunmontage x 5 Elemente",
+        "price": 440
+      },
+      {
+        "index": 1,
+        "name": "Kantenstein / Bordstein x 10 m",
+        "price": 80
+      }
+    ]
+  },
+  "customer": {
+    "firstName": "Max",
+    "lastName": "Mustermann",
+    "phone": "+49123456789",
+    "email": "max@example.com",
+    "address": "Musterstraße 1, 47051 Duisburg"
+  }
+}
+
+### Send SMTP activation test email via Brevo SMTP
+POST http://localhost:3000/api/request/smtp-test
+Content-Type: application/json
+
+{}
+
+### Send custom anfertigung request email via Brevo
+POST http://localhost:3000/api/request/send
+Content-Type: application/json
+
+{
+  "requestType": "custom-request",
+  "submittedAt": "2026-05-17T12:05:00.000Z",
+  "source": "website-calculator",
+  "serviceLabel": "Möbelanfertigung",
+  "date": "2026-06-01",
+  "timeWindow": "morning",
+  "address": "Musterstraße 1, 47051 Duisburg",
+  "notes": "Einbauschrank nach Maß, ca. 2,4 m breit.",
+  "customer": {
+    "firstName": "Erika",
+    "lastName": "Mustermann",
+    "phone": "+491701234567",
+    "address": "Musterstraße 1, 47051 Duisburg"
+  }
+}
