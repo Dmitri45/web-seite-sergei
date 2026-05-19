@@ -19,8 +19,9 @@ let lastPortfolioTrigger = null;
 function getPortfolioApiUrls() {
 	const currentOriginUrl = `${window.location.origin}${PORTFOLIO_API_PATH}`;
 	const backendUrl = `${BACKEND_ORIGIN}${PORTFOLIO_API_PATH}`;
+	const isLocalDevHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
-	if (window.location.port === '3000') return [PORTFOLIO_API_PATH];
+	if (window.location.port === '3000' || !isLocalDevHost) return [PORTFOLIO_API_PATH];
 	if (window.location.protocol === 'file:') return [backendUrl];
 	return [currentOriginUrl, backendUrl];
 }
