@@ -5,6 +5,7 @@ const furnitureController = require('../controllers/furnitureController');
 const gardenController = require('../controllers/gardenController');
 const tradesController = require('../controllers/tradesController');
 const requestController = require('../controllers/requestController');
+const portfolioController = require('../controllers/portfolioController');
 
 const router = express.Router();
 
@@ -21,5 +22,7 @@ router.post('/trades/calculate', tradesController.calculateTrades);
 
 router.post('/request/send', requestController.sendRequest);
 router.post('/request/smtp-test', requestController.sendSmtpTest);
+
+router.get('/portfolio', portfolioController.listPortfolio);
 
 module.exports = router;

@@ -1,0 +1,24 @@
+{
+  "title": "Gartengestaltung - Köln",
+  "location": "Köln",
+  "serviceType": "Gartenservice",
+  "shortDescription": "Pflege- und Gestaltungsarbeiten für einen gepflegten Außenbereich.",
+  "description": "Der Gartenbereich wurde aufgeräumt, gepflegt und optisch neu strukturiert. Dabei wurden vorhandene Flächen sauber vorbereitet und die Arbeiten kundenfreundlich koordiniert.",
+  "workDone": [
+    "Gartenfläche vorbereitet",
+    "Pflegearbeiten ausgeführt",
+    "Grünbereich strukturiert",
+    "Schnittgut gesammelt"
+  ],
+  "details": [
+    "Projektart: Gartenpflege",
+    "Ausführung: Außenbereich",
+    "Ort: Köln"
+  ],
+  "preview": "preview.JPG",
+  "gallery": [
+    "preview.JPG",
+    "detail.png"
+  ],
+  "sortOrder": 2
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Komplettrenovierung - Düsseldorf",
+  "location": "Düsseldorf",
+  "serviceType": "Küchenservice",
+  "shortDescription": "Küchenarbeiten mit sauberer Montage und termingerechter Umsetzung.",
+  "description": "Bei diesem Projekt wurden Küchenarbeiten koordiniert und fachgerecht umgesetzt. Die Ausführung umfasste Montage, Anpassungen und eine saubere Übergabe.",
+  "workDone": [
+    "Küchenelemente montiert",
+    "Ausrichtung und Anpassungen durchgeführt",
+    "Arbeitsbereich kontrolliert",
+    "Projekt sauber abgeschlossen"
+  ],
+  "details": [
+    "Projektart: Küchenservice",
+    "Ausführung: Montage und Anpassung",
+    "Ort: Düsseldorf"
+  ],
+  "preview": "preview.JPG",
+  "gallery": [
+    "preview.JPG",
+    "aufbau.png"
+  ],
+  "sortOrder": 1
+}

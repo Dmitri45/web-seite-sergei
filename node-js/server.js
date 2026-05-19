@@ -17,6 +17,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.use('/projects', express.static(path.join(__dirname, '..', 'projects'), {
+  etag: true,
+  maxAge: '7d'
+}));
+
 // Statische Dateien aus dem Projektwurzelverzeichnis ausliefern
 app.use(express.static(path.join(__dirname, '..')));
 

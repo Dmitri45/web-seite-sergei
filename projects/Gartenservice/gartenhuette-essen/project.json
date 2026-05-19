@@ -1,0 +1,24 @@
+{
+  "title": "Gartenhütte - Essen",
+  "location": "Essen",
+  "serviceType": "Gartenservice",
+  "shortDescription": "Aufbau einer Gartenhütte inklusive Vorbereitung des Stellplatzes.",
+  "description": "Für den Kunden wurde eine Gartenhütte sauber aufgebaut und ausgerichtet. Der Fokus lag auf einem stabilen Stand, sauberer Montage und einem ordentlichen Abschluss im Gartenbereich.",
+  "workDone": [
+    "Untergrund geprüft und vorbereitet",
+    "Gartenhütte montiert und ausgerichtet",
+    "Türen und Beschläge eingestellt",
+    "Arbeitsbereich sauber übergeben"
+  ],
+  "details": [
+    "Projektart: Gartenhütte",
+    "Ausführung: Aufbau vor Ort",
+    "Bereich: Garten"
+  ],
+  "preview": "preview.JPG",
+  "gallery": [
+    "preview.JPG",
+    "aufbau.png"
+  ],
+  "sortOrder": 1
+}

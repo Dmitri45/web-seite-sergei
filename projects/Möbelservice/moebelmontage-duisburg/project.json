@@ -1,0 +1,24 @@
+{
+  "title": "Möbelmontage - Duisburg",
+  "location": "Duisburg",
+  "serviceType": "Möbelservice",
+  "shortDescription": "Montage und Platzierung von Möbeln für einen sauberen Wohnbereich.",
+  "description": "Die Möbel wurden fachgerecht aufgebaut, ausgerichtet und am gewünschten Platz positioniert. Dabei wurde auf saubere Kanten, stabile Montage und sorgfältiges Arbeiten geachtet.",
+  "workDone": [
+    "Möbelteile geprüft",
+    "Möbel montiert",
+    "Elemente ausgerichtet",
+    "Verpackungsmaterial gesammelt"
+  ],
+  "details": [
+    "Projektart: Möbelmontage",
+    "Ausführung: Aufbau vor Ort",
+    "Ort: Duisburg"
+  ],
+  "preview": "preview.png",
+  "gallery": [
+    "preview.png",
+    "detail.png"
+  ],
+  "sortOrder": 1
+}
