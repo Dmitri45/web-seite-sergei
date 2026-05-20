@@ -21,7 +21,8 @@ import {
 	initTransportAutocompletesIfNeeded,
 	renderDirectTransportAddressForm,
 	renderTransportationSurvey,
-	resetTransportSelection
+	resetTransportSelection,
+	validateConfirmedTransportAddresses
 } from './transport.js';
 import {
 	adaptCustomRequestPayload,
@@ -263,6 +264,8 @@ function bindTransportationCalculateHandler(survey) {
 	if (!calculateBtn) return;
 
 	calculateBtn.addEventListener('click', async () => {
+		if (!validateConfirmedTransportAddresses(survey, calcState)) return;
+
 		const data = buildCalculationData(calcState.currentForm, calcState);
 
 		survey.style.display = 'none';
@@ -281,10 +284,7 @@ function bindDirectTransportContinueHandler(survey) {
 	if (!continueBtn) return;
 
 	continueBtn.addEventListener('click', () => {
-		if (!calcState.selectedTransportFrom?.address || !calcState.selectedTransportTo?.address) {
-			alert('Bitte wählen Sie Start- und Zieladresse aus der Vorschlagsliste aus.');
-			return;
-		}
+		if (!validateConfirmedTransportAddresses(survey, calcState)) return;
 
 		const payload = buildCalculationData(calcState.currentForm, calcState);
 		calcState.latestFrontendFormPayload = payload;

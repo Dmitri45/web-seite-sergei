@@ -5,7 +5,7 @@
 
 import { GARDEN_CALCULATION_SERVICE_LABELS } from './constants.js';
 import { getCalcMainContainer } from './dom.js';
-import { createAddressAutocomplete, mapLocationToTransportPoint } from './autocomplete.js';
+import { createStrictAddressAutocomplete, mapLocationToTransportPoint, markAddressAutocompleteInvalid } from './autocomplete.js';
 import { getSelectedServiceData } from './state.js';
 
 /**
@@ -180,8 +180,13 @@ export function addIntermediateAddressAutocomplete(survey, transportUiState, app
 	if (!field) return;
 
 	const elementId = `${idPrefix}-${index}`;
-	const intermediateAutocomplete = createAddressAutocomplete(elementId);
-	intermediateAutocomplete.on('select', createIntermediateLocationHandler(index, appState));
+	const intermediateAutocomplete = createStrictAddressAutocomplete(elementId, {
+		onSelect: createIntermediateLocationHandler(index, appState),
+		onInvalidate: () => {
+			delete appState.selectedTransportVia[index];
+		}
+	});
+	if (!intermediateAutocomplete) return;
 
 	transportUiState.intermediateAutocompletes.push(intermediateAutocomplete);
 }
@@ -198,14 +203,71 @@ export function initTransportAutocompletesIfNeeded(transportUiState, appState, o
 	const toElementId = options.toElementId || 'transportToAutocomplete';
 
 	if (!transportUiState.fromAutocomplete) {
-		transportUiState.fromAutocomplete = createAddressAutocomplete(fromElementId);
-		transportUiState.fromAutocomplete.on('select', (location) => handleFromLocationSelect(location, appState));
+		transportUiState.fromAutocomplete = createStrictAddressAutocomplete(fromElementId, {
+			onSelect: (location) => handleFromLocationSelect(location, appState),
+			onInvalidate: () => {
+				appState.selectedTransportFrom = null;
+			}
+		});
 	}
 
 	if (!transportUiState.toAutocomplete) {
-		transportUiState.toAutocomplete = createAddressAutocomplete(toElementId);
-		transportUiState.toAutocomplete.on('select', (location) => handleToLocationSelect(location, appState));
+		transportUiState.toAutocomplete = createStrictAddressAutocomplete(toElementId, {
+			onSelect: (location) => handleToLocationSelect(location, appState),
+			onInvalidate: () => {
+				appState.selectedTransportTo = null;
+			}
+		});
 	}
+}
+
+/**
+ * Validates that visible transport addresses were selected from autocomplete.
+ * @param {HTMLElement} survey - Transport survey container.
+ * @param {Object} appState - Shared calculator state.
+ * @returns {boolean} Whether all required transport addresses are confirmed.
+ */
+export function validateConfirmedTransportAddresses(survey, appState) {
+	if (appState.selectedTransportation !== 'yes') return true;
+	let firstInvalidContainer = null;
+	const markInvalid = (container, message) => {
+		markAddressAutocompleteInvalid(container, message);
+		if (!firstInvalidContainer) firstInvalidContainer = container;
+	};
+
+	if (!appState.selectedTransportFrom?.address) {
+		markInvalid(
+			survey.querySelector('#transportFromAutocomplete, #directTransportFromAutocomplete'),
+			'Bitte Startadresse aus der Vorschlagsliste wählen.'
+		);
+	}
+
+	if (!appState.selectedTransportTo?.address) {
+		markInvalid(
+			survey.querySelector('#transportToAutocomplete, #directTransportToAutocomplete'),
+			'Bitte Zieladresse aus der Vorschlagsliste wählen.'
+		);
+	}
+
+	const intermediateFields = survey.querySelectorAll('[data-intermediate-address-index]');
+	for (const field of intermediateFields) {
+		const index = Number.parseInt(field.dataset.intermediateAddressIndex || '', 10);
+		if (!Number.isInteger(index)) continue;
+
+		if (!appState.selectedTransportVia[index]?.address) {
+			markInvalid(
+				field.querySelector('.autocomplete-container'),
+				'Bitte Zwischenziel aus der Vorschlagsliste wählen oder Feld löschen.'
+			);
+		}
+	}
+
+	if (firstInvalidContainer) {
+		firstInvalidContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		return false;
+	}
+
+	return true;
 }
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { getCalcMainContainer } from './dom.js';
-import { initInlineAddressAutocompletes, createAddressAutocomplete } from './autocomplete.js';
+import { initInlineAddressAutocompletes, createStrictAddressAutocomplete, markAddressAutocompleteInvalid } from './autocomplete.js';
 import { applySelectedServiceData, setSelectedServiceData } from './state.js';
 
 /**
@@ -117,15 +117,41 @@ export function initKitchenTransportForm(formElement) {
 
 	if (!fromContainer || !toContainer || !fromInput || !toInput) return;
 
-	const fromAutocomplete = createAddressAutocomplete('transportFromAddressAutocomplete');
-	fromAutocomplete.on('select', (location) => {
-		fromInput.value = location?.properties?.formatted || '';
+	createStrictAddressAutocomplete('transportFromAddressAutocomplete', {
+		onSelect: (location) => {
+			fromInput.value = location?.properties?.formatted || '';
+		},
+		onInvalidate: () => {
+			fromInput.value = '';
+		}
 	});
 
-	const toAutocomplete = createAddressAutocomplete('transportToAddressAutocomplete');
-	toAutocomplete.on('select', (location) => {
-		toInput.value = location?.properties?.formatted || '';
+	createStrictAddressAutocomplete('transportToAddressAutocomplete', {
+		onSelect: (location) => {
+			toInput.value = location?.properties?.formatted || '';
+		},
+		onInvalidate: () => {
+			toInput.value = '';
+		}
 	});
+
+	const continueButton = formElement.querySelector('#btn-continue, #btn-calculate');
+	if (continueButton && continueButton.dataset.strictTransportAddressBound !== '1') {
+		continueButton.dataset.strictTransportAddressBound = '1';
+		continueButton.addEventListener('click', (event) => {
+			if (fromInput.value && toInput.value) return;
+
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			if (!fromInput.value) {
+				markAddressAutocompleteInvalid(fromContainer, 'Bitte Startadresse aus der Vorschlagsliste wählen.');
+			}
+			if (!toInput.value) {
+				markAddressAutocompleteInvalid(toContainer, 'Bitte Zieladresse aus der Vorschlagsliste wählen.');
+			}
+			(!fromInput.value ? fromContainer : toContainer).scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}, true);
+	}
 }
 
 /**
