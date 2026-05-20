@@ -29,17 +29,25 @@ export function mapLocationToTransportPoint(location) {
  * @returns {Object} Geoapify autocomplete instance.
  */
 export function createAddressAutocomplete(elementId) {
-	return new autocomplete.GeocoderAutocomplete(
-		document.getElementById(elementId),
-		'c9acb6a7c41d4573814c3954fd7a232c',
-		{
-			lang: 'de',
-			filter: { countrycode: ['de'] },
-			limit: 5,
-			debounceDelay: 500,
-			addDetails: false
-		}
-	);
+	const targetElement = document.getElementById(elementId);
+	if (!targetElement || typeof autocomplete === 'undefined') return null;
+
+	try {
+		return new autocomplete.GeocoderAutocomplete(
+			targetElement,
+			'c9acb6a7c41d4573814c3954fd7a232c',
+			{
+				lang: 'de',
+				filter: { countrycode: ['de'] },
+				limit: 5,
+				debounceDelay: 500,
+				addDetails: false
+			}
+		);
+	} catch (error) {
+		console.warn('Geoapify autocomplete could not be initialized.', error);
+		return null;
+	}
 }
 
 /**
@@ -58,6 +66,7 @@ export function initInlineAddressAutocompletes(formElement) {
 		const targetName = element.dataset.addressTarget || 'address';
 		const targetInput = formElement.querySelector(`[name="${targetName}"]`);
 		const addressAutocomplete = createAddressAutocomplete(element.id);
+		if (!addressAutocomplete) return;
 
 		addressAutocomplete.on('select', (location) => {
 			if (targetInput) {

@@ -4,7 +4,8 @@
  */
 
 export const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
-export const REQUEST_SEND_ENDPOINT = 'http://localhost:3000/api/request/send';
+export const API_BASE_URL = '';
+export const REQUEST_SEND_ENDPOINT = `${API_BASE_URL}/api/request/send`;
 
 export const KITCHEN_CALCULATION_SERVICE_LABELS = new Set([
 	'Küche aufbauen',

@@ -1,7 +1,8 @@
 const kitchenSurvey = document.getElementById('kitchenSurvey');
 const continueBtn = document.getElementById('continueBtn');
 const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
-const REQUEST_SEND_ENDPOINT = 'http://localhost:3000/api/request/send';
+const API_BASE_URL = '';
+const REQUEST_SEND_ENDPOINT = `${API_BASE_URL}/api/request/send`;
 
 let selectedKitchenCondition = '';
 let selectedTransportation = '';
@@ -1101,18 +1102,18 @@ function getCalculationEndpoint(data = {}) {
 	const serviceLabel = String(data.serviceLabel || '').trim();
 
 	if (FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-		return 'http://localhost:3000/api/furniture/calculate';
+		return `${API_BASE_URL}/api/furniture/calculate`;
 	}
 
 	if (TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-		return 'http://localhost:3000/api/trades/calculate';
+		return `${API_BASE_URL}/api/trades/calculate`;
 	}
 
 	if (GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-		return 'http://localhost:3000/api/garden/calculate';
+		return `${API_BASE_URL}/api/garden/calculate`;
 	}
 
-	return 'http://localhost:3000/api/kitchen/calculate';
+	return `${API_BASE_URL}/api/kitchen/calculate`;
 }
 
 function buildKitchenFormPayload(formElement) {

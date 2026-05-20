@@ -7,6 +7,7 @@ import {
 	FURNITURE_CALCULATION_SERVICE_LABELS,
 	GARDEN_CALCULATION_SERVICE_LABELS,
 	KITCHEN_CALCULATION_SERVICE_LABELS,
+	API_BASE_URL,
 	REQUEST_SEND_ENDPOINT,
 	TRADES_CALCULATION_SERVICE_LABELS
 } from './constants.js';
@@ -20,18 +21,18 @@ export function getCalculationEndpoint(data = {}) {
 	const serviceLabel = String(data.serviceLabel || '').trim();
 
 	if (FURNITURE_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-		return 'http://localhost:3000/api/furniture/calculate';
+		return `${API_BASE_URL}/api/furniture/calculate`;
 	}
 
 	if (TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-		return 'http://localhost:3000/api/trades/calculate';
+		return `${API_BASE_URL}/api/trades/calculate`;
 	}
 
 	if (GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-		return 'http://localhost:3000/api/garden/calculate';
+		return `${API_BASE_URL}/api/garden/calculate`;
 	}
 
-	return 'http://localhost:3000/api/kitchen/calculate';
+	return `${API_BASE_URL}/api/kitchen/calculate`;
 }
 
 /**

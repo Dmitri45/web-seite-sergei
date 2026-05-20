@@ -2333,18 +2333,18 @@ let servicesBottomCtaHandler = false;
  */
 function renderServices(categoryKey = 'garden') {
 	const servicesBottomCta = document.getElementById('services-bottom-cta');
-	servicesBottomCta.innerHTML = '';
     const showcase = document.getElementById('services-list');
     if (!showcase) return;
+	if (servicesBottomCta) servicesBottomCta.innerHTML = '';
 
     const services = SERVICES_BY_CATEGORY[categoryKey] || [];
     const cards = services.slice(0, 6).map(getServiceCardTemplate).join('');
 
     showcase.innerHTML = cards;
 
-	if (services.length > 6) {
-		document.getElementById('services-bottom-cta').innerHTML = getServicesBottomCtaTemplate();
-		const servicesBottomCtaButton = document.getElementById('services-bottom-cta');
+	if (servicesBottomCta && services.length > 6) {
+		servicesBottomCta.innerHTML = getServicesBottomCtaTemplate();
+		const servicesBottomCtaButton = servicesBottomCta;
 		if(servicesBottomCtaHandler == false){
 			servicesBottomCtaButton.addEventListener('click', () => loadMoreServices(categoryKey)); 
 			servicesBottomCtaHandler = true;}
@@ -2363,9 +2363,10 @@ function loadMoreServices(categoryKey) {
     const services = SERVICES_BY_CATEGORY[categoryKey] || [];
     const cards = services.slice(6).map(getServiceCardTemplate).join('');
     showcase.innerHTML += cards;
-	document.getElementById('services-bottom-cta').innerHTML = '';
+	const servicesBottomCta = document.getElementById('services-bottom-cta');
+	if (servicesBottomCta) servicesBottomCta.innerHTML = '';
 	const servicesBottomCtaButton = document.getElementById('services-bottom-cta');
-	servicesBottomCtaButton.removeEventListener('click', loadMoreServices);
+	if (servicesBottomCtaButton) servicesBottomCtaButton.removeEventListener('click', loadMoreServices);
 }
 
 /**
