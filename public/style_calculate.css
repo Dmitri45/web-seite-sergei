@@ -86,6 +86,19 @@ body.page-calculate .hero-subtitle {
     align-items: start;
 }
 
+@media (min-width: 901px) {
+    body.page-calculate .hero-bg > .container {
+        max-width: calc(800px + 320px + 24px);
+    }
+
+    .calc-layout {
+        grid-template-columns: minmax(0, 800px) 320px;
+        justify-content: center;
+        gap: 24px;
+    }
+}
+
+
 .calc-main {
     background: transparent;
     border: none;
