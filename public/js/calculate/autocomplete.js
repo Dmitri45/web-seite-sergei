@@ -141,7 +141,7 @@ export function createStrictAddressAutocomplete(elementId, handlers = {}) {
 		window.setTimeout(() => {
 			const input = getAutocompleteInput(container);
 			if (input && confirmedAddress) input.value = confirmedAddress;
-			setAddressConfirmationState(container, 'confirmed', 'Adresse bestätigt.');
+			setAddressConfirmationState(container, 'confirmed', '');
 		}, 0);
 	});
 

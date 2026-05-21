@@ -35,7 +35,7 @@ async function checkServiceArea(req, res) {
 			radiusKm,
 			message: allowed
 				? 'Der Einsatzort liegt in unserem Einsatzgebiet.'
-				: `Der Einsatzort liegt ${distanceKm} km entfernt und damit außerhalb unseres Einsatzgebiets von ${radiusKm} km.`
+				: 'Der Einsatzort liegt außerhalb unseres Einsatzgebiets.'
 		});
 	} catch (error) {
 		console.error('Fehler bei der Einsatzgebiet-Prüfung:', error.message);
