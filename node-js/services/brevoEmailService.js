@@ -101,6 +101,8 @@ function buildDetailsHtml(payload = {}) {
 		row('Ausführungsart', payload.plasteringType),
 		row('Helfer', payload.helpersCount),
 		row('Stunden', payload.workHours),
+		row('Transport von', payload.transportFromAddress),
+		row('Transport nach', payload.transportToAddress),
 		row('Zaunelemente', payload.fenceElementsCount),
 		row('Kantenstein / Bordstein', payload.withKerbstone),
 		row('Kantenstein Länge', payload.kerbstoneLengthM ? `${payload.kerbstoneLengthM} m` : '')

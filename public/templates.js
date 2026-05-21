@@ -568,6 +568,18 @@ function getMovingHelpersEstimateForm() {
 				</div>
 
 				<div class="field field-full">
+					<label for="transportFromAddressAutocomplete">Transport von (Adresse)</label>
+					<div id="transportFromAddressAutocomplete" class="autocomplete-container"></div>
+					<input id="transportFromAddress" name="transportFromAddress" type="hidden" required>
+				</div>
+
+				<div class="field field-full">
+					<label for="transportToAddressAutocomplete">Transport nach (Adresse)</label>
+					<div id="transportToAddressAutocomplete" class="autocomplete-container"></div>
+					<input id="transportToAddress" name="transportToAddress" type="hidden" required>
+				</div>
+
+				<div class="field field-full">
 					<label for="additionalNotes">Zusätzliche Hinweise</label>
 					<textarea id="additionalNotes" name="additionalNotes" rows="4" placeholder="z.B. Etage, Aufzug, Laufwege, Besonderheiten"></textarea>
 				</div>
@@ -1901,7 +1913,7 @@ function getDirectTransportAddressForm() {
 	return `
 		<div class="transport-survey" id="directTransportSurvey">
 			<div class="survey-card">
-				<h2>Transportadresse</h2>
+				<h2>Transportadressen</h2>
 				<p>Bitte geben Sie Start- und Zieladresse für den Transport an.</p>
 
 				<div id="transportFields" style="margin-top: 20px;">
