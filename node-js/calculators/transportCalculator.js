@@ -75,9 +75,9 @@ function calculateTransportPrice(distances) {
     for (let i = 0; i < distances.length - 1; i++) {
         const segment = distances[i][i + 1];
         if (segment > 40) {
-            total += segment * 0.5; 
+            total += segment * 1.3;
         } else {
-            total += segment * 0.25;
+            total += segment * 0.5;
         }
     }
     return total;
