@@ -360,11 +360,6 @@ body.page-calculate .hero-subtitle {
     box-shadow: 0 0 0 4px rgba(15, 61, 46, 0.10);
 }
 
-.autocomplete-container.is-address-confirmed input {
-    border-color: rgba(29, 158, 117, 0.55);
-    box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.10);
-}
-
 .autocomplete-container.is-address-invalid input {
     border-color: rgba(191, 69, 69, 0.55);
     box-shadow: 0 0 0 3px rgba(191, 69, 69, 0.10);
@@ -384,10 +379,6 @@ body.page-calculate .hero-subtitle {
 
 .address-confirmation-status:empty {
     display: none;
-}
-
-.address-confirmation-status[data-state="confirmed"] {
-    color: #1d7a5d;
 }
 
 .address-confirmation-status[data-state="invalid"] {
