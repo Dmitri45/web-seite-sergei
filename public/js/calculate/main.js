@@ -13,7 +13,12 @@ import {
 import { appendTemplateToCalcLayout, getCalcMainContainer, removeFeedbackBlocks, removeFlowBlocks } from './dom.js';
 import { createAddressAutocomplete } from './autocomplete.js';
 import { createServiceFormTemplates } from './serviceTemplates.js';
-import { renderStandaloneForm } from './forms.js';
+import {
+	initServiceAreaField,
+	markServiceAreaDenied,
+	renderStandaloneForm,
+	validateServiceAreaSelection
+} from './forms.js';
 import {
 	bindAddIntermediateAddressHandler,
 	bindRemoveIntermediateAddressHandler,
@@ -32,7 +37,8 @@ import {
 import {
 	buildLocalCalculationFallback,
 	postCalculation,
-	postRequestPayload
+	postRequestPayload,
+	postServiceAreaCheck
 } from './api.js';
 import {
 	applySelectedServiceData,
@@ -45,6 +51,33 @@ import {
  * @type {Record<string, Function>|null}
  */
 let serviceFormTemplatesByLabel = null;
+
+/**
+ * Checks the selected Einsatzort before the customer can continue the flow.
+ * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
+ * @returns {Promise<boolean>} True when the service area check passes.
+ */
+async function validateServiceAreaBeforeContinue(formElement) {
+	if (!validateServiceAreaSelection(formElement)) return false;
+	if (!calcState.selectedServiceArea?.coordinates) return true;
+
+	try {
+		const result = await postServiceAreaCheck(calcState.selectedServiceArea);
+		if (result.allowed) return true;
+
+		markServiceAreaDenied(
+			formElement,
+			result.message || 'Dieser Einsatzort liegt außerhalb unseres Einsatzgebiets.'
+		);
+		return false;
+	} catch (error) {
+		markServiceAreaDenied(
+			formElement,
+			error.message || 'Das Einsatzgebiet konnte nicht geprüft werden. Bitte versuchen Sie es erneut.'
+		);
+		return false;
+	}
+}
 
 /**
  * Lazily creates and returns service form template factories.
@@ -105,6 +138,8 @@ function initOfferRequestButtons(formElement) {
 		const selectedService = getSelectedServiceData();
 		const serviceLabel = selectedService?.label?.trim() || '';
 
+		if (!await validateServiceAreaBeforeContinue(formElement)) return;
+
 		if (KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
 			formElement.style.display = 'none';
 			showTransportationSurvey();
@@ -162,7 +197,9 @@ function attachFormContinueListener(formElement) {
 	if (!button || button.dataset.transportContinueBound === '1') return;
 	button.dataset.transportContinueBound = '1';
 
-	button.addEventListener('click', () => {
+	button.addEventListener('click', async () => {
+		if (!await validateServiceAreaBeforeContinue(formElement)) return;
+
 		formElement.style.display = 'none';
 		showTransportationSurvey();
 	});
@@ -238,6 +275,8 @@ function bindAssemblyContinueHandler(survey) {
 		const calcForm = renderForm('new');
 		calcForm.style.display = 'block';
 		calcState.currentForm = calcForm;
+		calcState.selectedServiceArea = null;
+		initServiceAreaField(calcForm);
 		attachFormContinueListener(calcForm);
 	});
 }
@@ -587,6 +626,8 @@ export function initCalculator() {
 				const calcForm = renderForm('used');
 				calcForm.style.display = 'block';
 				calcState.currentForm = calcForm;
+				calcState.selectedServiceArea = null;
+				initServiceAreaField(calcForm);
 				attachFormContinueListener(calcForm);
 			}
 		});

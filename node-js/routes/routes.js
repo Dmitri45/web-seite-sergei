@@ -6,6 +6,7 @@ const gardenController = require('../controllers/gardenController');
 const tradesController = require('../controllers/tradesController');
 const requestController = require('../controllers/requestController');
 const portfolioController = require('../controllers/portfolioController');
+const serviceAreaController = require('../controllers/serviceAreaController');
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.post('/request/send', requestController.sendRequest);
 router.post('/request/smtp-test', requestController.sendSmtpTest);
 
 router.get('/portfolio', portfolioController.listPortfolio);
+router.post('/service-area/check', serviceAreaController.checkServiceArea);
 
 module.exports = router;

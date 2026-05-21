@@ -6,6 +6,7 @@
 export const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
 export const API_BASE_URL = '';
 export const REQUEST_SEND_ENDPOINT = `${API_BASE_URL}/api/request/send`;
+export const SERVICE_AREA_CHECK_ENDPOINT = `${API_BASE_URL}/api/service-area/check`;
 
 export const KITCHEN_CALCULATION_SERVICE_LABELS = new Set([
 	'Küche aufbauen',
@@ -31,4 +32,12 @@ export const GARDEN_CALCULATION_SERVICE_LABELS = new Set([
 export const CUSTOM_REQUEST_SERVICE_LABELS = new Set([
 	'Küchenanfertigung',
 	'Möbelanfertigung'
+]);
+
+export const SERVICE_AREA_EXCLUDED_LABELS = new Set([
+	'Küchenanfertigung',
+	'Möbelanfertigung',
+	'Küchentransport',
+	'Kleintransporte',
+	'Umzugshelfer'
 ]);

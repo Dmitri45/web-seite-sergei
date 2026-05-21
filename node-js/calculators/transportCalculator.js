@@ -9,20 +9,35 @@
  * All errors and logs are output in German.
  */
 
-const axios = require('axios'); 
-const e = require('express');
+const axios = require('axios');
 
 /**
  * OpenRouteService API Key
  * @type {string}
  */
-const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImUzOTQwODUyYTQxYzQ3OWFiZjkyMDY1NDcyM2JlZGI0IiwiaCI6Im11cm11cjY0In0=';
+const ORS_API_KEY = process.env.ORS_API_KEY || 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImUzOTQwODUyYTQxYzQ3OWFiZjkyMDY1NDcyM2JlZGI0IiwiaCI6Im11cm11cjY0In0=';
 
 /**
  * Base coordinates (office/warehouse)
  * @type {[number, number]}
  */
-const BASE_COORDS = [6.779844555473214, 51.56523808298011];
+const BASE_COORDS = [
+    Number(process.env.COMPANY_LON) || 6.779844555473214,
+    Number(process.env.COMPANY_LAT) || 51.56523808298011
+];
+
+/**
+ * Normalizes an address point into OpenRouteService coordinates.
+ * @param {Object} point - Address point with coordinates.
+ * @returns {[number, number]|null} Longitude/latitude tuple.
+ */
+function normalizeRoutePoint(point) {
+    const lat = Number(point?.coordinates?.lat);
+    const lon = Number(point?.coordinates?.lon);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    return [lon, lat];
+}
 
 /**
  * Builds an array of route points from the order object
@@ -32,26 +47,20 @@ const BASE_COORDS = [6.779844555473214, 51.56523808298011];
 function getClientPoints(object) {
     const clientPoints = [];
     if (object.transportFrom && object.transportFrom.coordinates) {
-        clientPoints.push([
-            object.transportFrom.coordinates.lon,
-            object.transportFrom.coordinates.lat
-        ]);
+        const point = normalizeRoutePoint(object.transportFrom);
+        if (point) clientPoints.push(point);
     }
     if (Array.isArray(object.transportVia)) {
         object.transportVia.forEach(via => {
             if (via && via.coordinates) {
-                clientPoints.push([
-                    via.coordinates.lon,
-                    via.coordinates.lat
-                ]);
+                const point = normalizeRoutePoint(via);
+                if (point) clientPoints.push(point);
             }
         });
     }
     if (object.transportTo && object.transportTo.coordinates) {
-        clientPoints.push([
-            object.transportTo.coordinates.lon,
-            object.transportTo.coordinates.lat
-        ]);
+        const point = normalizeRoutePoint(object.transportTo);
+        if (point) clientPoints.push(point);
     }
     return clientPoints;
 }
@@ -80,11 +89,10 @@ function calculateTransportPrice(distances) {
  * @returns {Promise<Array<Array<number>>>} distance matrix
  * @throws {Error} Navigationsfehler
  */
-async function fetchORSMatrix(clientPoints) {
-    let allPoints = [BASE_COORDS, ...clientPoints, BASE_COORDS];
+async function fetchORSMatrixForLocations(locations) {
     try {
         const orsResponse = await axios.post('https://api.openrouteservice.org/v2/matrix/driving-car', {
-            locations: allPoints,
+            locations,
             metrics: ['distance'],
             units: 'km'
         }, {
@@ -100,6 +108,38 @@ async function fetchORSMatrix(clientPoints) {
 }
 
 /**
+ * Requests the distance matrix from OpenRouteService for a round trip from the base.
+ * @param {Array<[number, number]>} clientPoints - array of route coordinates
+ * @returns {Promise<Array<Array<number>>>} distance matrix
+ * @throws {Error} Navigationsfehler
+ */
+async function fetchORSMatrix(clientPoints) {
+    const allPoints = [BASE_COORDS, ...clientPoints, BASE_COORDS];
+    return fetchORSMatrixForLocations(allPoints);
+}
+
+/**
+ * Calculates the driving distance from the company base to one address point.
+ * @param {Object} point - Address point with coordinates.
+ * @returns {Promise<number>} Distance in kilometers.
+ */
+async function getRouteDistanceFromBaseKm(point) {
+    const routePoint = normalizeRoutePoint(point);
+    if (!routePoint) {
+        throw new Error('Ungueltiger Einsatzort');
+    }
+
+    const distances = await fetchORSMatrixForLocations([BASE_COORDS, routePoint]);
+    const distanceKm = Number(distances?.[0]?.[1]);
+
+    if (!Number.isFinite(distanceKm)) {
+        throw new Error('Navigationsfehler');
+    }
+
+    return Number(distanceKm.toFixed(2));
+}
+
+/**
  * Main function: calculates the route price for the order
  * @param {Object} object - order object
  * @returns {Promise<number>} route price
@@ -111,4 +151,7 @@ async function getRouteMatrixAndCalculatePrice(object) {
     return Number(total.toFixed(2)); 
 }
 
-module.exports = { getRouteMatrixAndCalculatePrice };
+module.exports = {
+    getRouteMatrixAndCalculatePrice,
+    getRouteDistanceFromBaseKm
+};

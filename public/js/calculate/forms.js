@@ -4,8 +4,16 @@
  */
 
 import { getCalcMainContainer } from './dom.js';
-import { initInlineAddressAutocompletes, createStrictAddressAutocomplete, markAddressAutocompleteInvalid } from './autocomplete.js';
-import { applySelectedServiceData, setSelectedServiceData } from './state.js';
+import {
+	initInlineAddressAutocompletes,
+	createStrictAddressAutocomplete,
+	markAddressAutocompleteInvalid,
+	mapLocationToTransportPoint
+} from './autocomplete.js';
+import { SERVICE_AREA_EXCLUDED_LABELS } from './constants.js';
+import { applySelectedServiceData, calcState, getSelectedServiceData, setSelectedServiceData } from './state.js';
+
+const SERVICE_AREA_AUTOCOMPLETE_ID = 'serviceAreaAutocomplete';
 
 /**
  * Renders a standalone calculator form and initializes its interactive controls.
@@ -26,6 +34,8 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 	if (!newForm) return null;
 
 	container.appendChild(newForm);
+	calcState.selectedServiceArea = null;
+	initServiceAreaField(newForm);
 	initDynamicFurnitureItems(newForm);
 	initFenceAssemblyForm(newForm);
 	initKitchenTransportForm(newForm);
@@ -39,6 +49,74 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 	}
 
 	return newForm;
+}
+
+/**
+ * Checks whether the current service needs an Einsatzort radius check.
+ * @returns {boolean} True when the current service requires an Einsatzort.
+ */
+export function isServiceAreaRequiredForCurrentService() {
+	const serviceLabel = getSelectedServiceData()?.label?.trim() || '';
+	return Boolean(serviceLabel && !SERVICE_AREA_EXCLUDED_LABELS.has(serviceLabel));
+}
+
+/**
+ * Adds the strict Einsatzort autocomplete field to services that need radius checks.
+ * @param {HTMLFormElement|HTMLElement} formElement - Active service form.
+ * @returns {void}
+ */
+export function initServiceAreaField(formElement) {
+	if (!formElement || !isServiceAreaRequiredForCurrentService()) return;
+	if (formElement.querySelector(`#${SERVICE_AREA_AUTOCOMPLETE_ID}`)) return;
+
+	const grid = formElement.querySelector('.calc-grid') || formElement;
+	const field = document.createElement('div');
+	field.className = 'field field-full service-area-field';
+	field.innerHTML = `
+		<label for="${SERVICE_AREA_AUTOCOMPLETE_ID}">Einsatzort</label>
+		<div id="${SERVICE_AREA_AUTOCOMPLETE_ID}" class="autocomplete-container"></div>
+	`;
+
+	grid.insertBefore(field, grid.firstElementChild);
+
+	createStrictAddressAutocomplete(SERVICE_AREA_AUTOCOMPLETE_ID, {
+		onSelect: (location) => {
+			calcState.selectedServiceArea = mapLocationToTransportPoint(location);
+		},
+		onInvalidate: () => {
+			calcState.selectedServiceArea = null;
+		}
+	});
+}
+
+/**
+ * Validates that the Einsatzort was selected from the Geoapify dropdown.
+ * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
+ * @returns {boolean} True when service area is not required or a valid point is selected.
+ */
+export function validateServiceAreaSelection(formElement) {
+	if (!isServiceAreaRequiredForCurrentService()) return true;
+
+	const container = formElement?.querySelector(`#${SERVICE_AREA_AUTOCOMPLETE_ID}`);
+	if (calcState.selectedServiceArea?.coordinates?.lat != null && calcState.selectedServiceArea?.coordinates?.lon != null) {
+		return true;
+	}
+
+	markAddressAutocompleteInvalid(container, 'Bitte Einsatzort aus der Vorschlagsliste wählen.');
+	container?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	return false;
+}
+
+/**
+ * Shows an inline service-area rejection message below the Einsatzort field.
+ * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
+ * @param {string} message - Rejection message.
+ * @returns {void}
+ */
+export function markServiceAreaDenied(formElement, message) {
+	const container = formElement?.querySelector(`#${SERVICE_AREA_AUTOCOMPLETE_ID}`);
+	markAddressAutocompleteInvalid(container, message);
+	container?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 /**

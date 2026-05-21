@@ -9,6 +9,7 @@ import {
 	KITCHEN_CALCULATION_SERVICE_LABELS,
 	API_BASE_URL,
 	REQUEST_SEND_ENDPOINT,
+	SERVICE_AREA_CHECK_ENDPOINT,
 	TRADES_CALCULATION_SERVICE_LABELS
 } from './constants.js';
 
@@ -138,6 +139,30 @@ export async function postCalculation(data) {
 	}
 
 	return response.json();
+}
+
+/**
+ * Checks whether the selected Einsatzort is inside the service radius.
+ * @param {{address?: string, coordinates?: {lat: number, lon: number}}} einsatzort - Selected Geoapify address point.
+ * @returns {Promise<{allowed: boolean, distanceKm?: number, radiusKm?: number, message?: string}>} Service area check result.
+ * @throws {Error} When the backend responds with a non-2xx status.
+ */
+export async function postServiceAreaCheck(einsatzort) {
+	const response = await fetch(SERVICE_AREA_CHECK_ENDPOINT, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ einsatzort })
+	});
+
+	const result = await response.json().catch(() => ({}));
+
+	if (!response.ok) {
+		throw new Error(result.message || `Serverfehler: ${response.status}`);
+	}
+
+	return result;
 }
 
 /**
