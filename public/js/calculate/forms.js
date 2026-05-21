@@ -35,6 +35,8 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 
 	container.appendChild(newForm);
 	calcState.selectedServiceArea = null;
+	calcState.selectedFormTransportFrom = null;
+	calcState.selectedFormTransportTo = null;
 	initServiceAreaField(newForm);
 	initDynamicFurnitureItems(newForm);
 	initFenceAssemblyForm(newForm);
@@ -198,18 +200,22 @@ export function initKitchenTransportForm(formElement) {
 	createStrictAddressAutocomplete('transportFromAddressAutocomplete', {
 		onSelect: (location) => {
 			fromInput.value = location?.properties?.formatted || '';
+			calcState.selectedFormTransportFrom = mapLocationToTransportPoint(location);
 		},
 		onInvalidate: () => {
 			fromInput.value = '';
+			calcState.selectedFormTransportFrom = null;
 		}
 	});
 
 	createStrictAddressAutocomplete('transportToAddressAutocomplete', {
 		onSelect: (location) => {
 			toInput.value = location?.properties?.formatted || '';
+			calcState.selectedFormTransportTo = mapLocationToTransportPoint(location);
 		},
 		onInvalidate: () => {
 			toInput.value = '';
+			calcState.selectedFormTransportTo = null;
 		}
 	});
 

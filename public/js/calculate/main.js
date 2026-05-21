@@ -11,7 +11,7 @@ import {
 	TRADES_CALCULATION_SERVICE_LABELS
 } from './constants.js';
 import { appendTemplateToCalcLayout, getCalcMainContainer, removeFeedbackBlocks, removeFlowBlocks } from './dom.js';
-import { createAddressAutocomplete } from './autocomplete.js';
+import { createAddressAutocomplete, markAddressAutocompleteInvalid } from './autocomplete.js';
 import { createServiceFormTemplates } from './serviceTemplates.js';
 import {
 	initServiceAreaField,
@@ -38,6 +38,7 @@ import {
 	buildLocalCalculationFallback,
 	postCalculation,
 	postRequestPayload,
+	postServiceAreaBatchCheck,
 	postServiceAreaCheck
 } from './api.js';
 import {
@@ -77,6 +78,103 @@ async function validateServiceAreaBeforeContinue(formElement) {
 		);
 		return false;
 	}
+}
+
+/**
+ * Checks whether the selected transport start and destination are inside the service radius.
+ * @param {Object} options - Route validation options.
+ * @param {HTMLElement|null} options.rootElement - Root element containing address fields.
+ * @param {Object|null} options.fromPoint - Selected start point.
+ * @param {Object|null} options.toPoint - Selected destination point.
+ * @param {string} options.fromSelector - Start autocomplete selector.
+ * @param {string} options.toSelector - Destination autocomplete selector.
+ * @returns {Promise<boolean>} True when both endpoints are inside the service area.
+ */
+async function validateTransportEndpointServiceArea({
+	rootElement,
+	fromPoint,
+	toPoint,
+	fromSelector,
+	toSelector
+}) {
+	const fromContainer = rootElement?.querySelector(fromSelector);
+	const toContainer = rootElement?.querySelector(toSelector);
+	if (!fromContainer || !toContainer) return true;
+
+	const markInvalid = (container, message) => {
+		markAddressAutocompleteInvalid(container, message);
+		container?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	};
+
+	if (!fromPoint?.coordinates) {
+		markInvalid(fromContainer, 'Bitte Startadresse aus der Vorschlagsliste wählen.');
+		return false;
+	}
+
+	if (!toPoint?.coordinates) {
+		markInvalid(toContainer, 'Bitte Zieladresse aus der Vorschlagsliste wählen.');
+		return false;
+	}
+
+	try {
+		const result = await postServiceAreaBatchCheck([
+			{ ...fromPoint, role: 'from' },
+			{ ...toPoint, role: 'to' }
+		]);
+		if (result.allowed) return true;
+
+		const failedFrom = result.results?.some(point => point.role === 'from' && point.allowed === false);
+		const failedTo = result.results?.some(point => point.role === 'to' && point.allowed === false);
+		const message = 'Diese Adresse liegt außerhalb unseres Einsatzgebiets.';
+
+		if (failedFrom || (!failedFrom && !failedTo)) {
+			markAddressAutocompleteInvalid(fromContainer, message);
+		}
+		if (failedTo || (!failedFrom && !failedTo)) {
+			markAddressAutocompleteInvalid(toContainer, message);
+		}
+		(failedFrom ? fromContainer : toContainer).scrollIntoView({ behavior: 'smooth', block: 'center' });
+		return false;
+	} catch (error) {
+		markInvalid(
+			fromContainer,
+			error.message || 'Das Einsatzgebiet konnte nicht geprüft werden. Bitte versuchen Sie es erneut.'
+		);
+		return false;
+	}
+}
+
+/**
+ * Checks standalone transport-address fields used by Küchentransport and Umzugshelfer.
+ * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
+ * @returns {Promise<boolean>} True when no standalone route exists or both endpoints are allowed.
+ */
+async function validateStandaloneTransportEndpointServiceArea(formElement) {
+	return validateTransportEndpointServiceArea({
+		rootElement: formElement,
+		fromPoint: calcState.selectedFormTransportFrom,
+		toPoint: calcState.selectedFormTransportTo,
+		fromSelector: '#transportFromAddressAutocomplete',
+		toSelector: '#transportToAddressAutocomplete'
+	});
+}
+
+/**
+ * Checks route endpoints from the transport survey flows.
+ * @param {HTMLElement|null} survey - Transport survey.
+ * @param {Object} selectors - Autocomplete selectors.
+ * @returns {Promise<boolean>} True when both endpoints are inside the service area.
+ */
+async function validateSurveyTransportEndpointServiceArea(survey, selectors) {
+	if (calcState.selectedTransportation !== 'yes') return true;
+
+	return validateTransportEndpointServiceArea({
+		rootElement: survey,
+		fromPoint: calcState.selectedTransportFrom,
+		toPoint: calcState.selectedTransportTo,
+		fromSelector: selectors.from,
+		toSelector: selectors.to
+	});
 }
 
 /**
@@ -139,6 +237,7 @@ function initOfferRequestButtons(formElement) {
 		const serviceLabel = selectedService?.label?.trim() || '';
 
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
+		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
 
 		if (KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
 			formElement.style.display = 'none';
@@ -199,6 +298,7 @@ function attachFormContinueListener(formElement) {
 
 	button.addEventListener('click', async () => {
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
+		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
 
 		formElement.style.display = 'none';
 		showTransportationSurvey();
@@ -304,6 +404,10 @@ function bindTransportationCalculateHandler(survey) {
 
 	calculateBtn.addEventListener('click', async () => {
 		if (!validateConfirmedTransportAddresses(survey, calcState)) return;
+		if (!await validateSurveyTransportEndpointServiceArea(survey, {
+			from: '#transportFromAutocomplete',
+			to: '#transportToAutocomplete'
+		})) return;
 
 		const data = buildCalculationData(calcState.currentForm, calcState);
 
@@ -322,8 +426,12 @@ function bindDirectTransportContinueHandler(survey) {
 	const continueBtn = survey.querySelector('#btn-main');
 	if (!continueBtn) return;
 
-	continueBtn.addEventListener('click', () => {
+	continueBtn.addEventListener('click', async () => {
 		if (!validateConfirmedTransportAddresses(survey, calcState)) return;
+		if (!await validateSurveyTransportEndpointServiceArea(survey, {
+			from: '#directTransportFromAutocomplete',
+			to: '#directTransportToAutocomplete'
+		})) return;
 
 		const payload = buildCalculationData(calcState.currentForm, calcState);
 		calcState.latestFrontendFormPayload = payload;

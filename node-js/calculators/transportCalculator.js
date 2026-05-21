@@ -124,19 +124,39 @@ async function fetchORSMatrix(clientPoints) {
  * @returns {Promise<number>} Distance in kilometers.
  */
 async function getRouteDistanceFromBaseKm(point) {
-    const routePoint = normalizeRoutePoint(point);
-    if (!routePoint) {
-        throw new Error('Ungueltiger Einsatzort');
-    }
+	const routePoint = normalizeRoutePoint(point);
+	if (!routePoint) {
+		throw new Error('Ungueltiger Einsatzort');
+	}
 
-    const distances = await fetchORSMatrixForLocations([BASE_COORDS, routePoint]);
-    const distanceKm = Number(distances?.[0]?.[1]);
+	const [distanceKm] = await getRouteDistancesFromBaseKm([point]);
 
-    if (!Number.isFinite(distanceKm)) {
-        throw new Error('Navigationsfehler');
-    }
+	if (!Number.isFinite(distanceKm)) {
+		throw new Error('Navigationsfehler');
+	}
 
-    return Number(distanceKm.toFixed(2));
+	return Number(distanceKm.toFixed(2));
+}
+
+/**
+ * Calculates driving distances from the company base to multiple address points.
+ * @param {Array<Object>} points - Address points with coordinates.
+ * @returns {Promise<Array<number>>} Distances in kilometers.
+ */
+async function getRouteDistancesFromBaseKm(points = []) {
+	const routePoints = points.map(normalizeRoutePoint);
+	if (!routePoints.length || routePoints.some(point => !point)) {
+		throw new Error('Ungueltiger Einsatzort');
+	}
+
+	const distances = await fetchORSMatrixForLocations([BASE_COORDS, ...routePoints]);
+	const baseDistances = distances?.[0]?.slice(1) || [];
+
+	if (baseDistances.length !== routePoints.length || baseDistances.some(distance => !Number.isFinite(Number(distance)))) {
+		throw new Error('Navigationsfehler');
+	}
+
+	return baseDistances.map(distance => Number(Number(distance).toFixed(2)));
 }
 
 /**
@@ -152,6 +172,7 @@ async function getRouteMatrixAndCalculatePrice(object) {
 }
 
 module.exports = {
-    getRouteMatrixAndCalculatePrice,
-    getRouteDistanceFromBaseKm
+	getRouteMatrixAndCalculatePrice,
+	getRouteDistanceFromBaseKm,
+	getRouteDistancesFromBaseKm
 };

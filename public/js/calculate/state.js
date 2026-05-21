@@ -12,6 +12,8 @@ export const calcState = {
 	selectedTransportFrom: null,
 	selectedTransportVia: [],
 	selectedTransportTo: null,
+	selectedFormTransportFrom: null,
+	selectedFormTransportTo: null,
 	selectedServiceArea: null,
 	selectedOfferAddress: '',
 	latestCalculationResult: null,
