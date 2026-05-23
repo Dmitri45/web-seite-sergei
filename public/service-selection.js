@@ -15,14 +15,33 @@
         'page-garden': 'GARTENSERVICE'
     };
 
-    const CATEGORY_BY_IMAGE_MARKER = [
+	const CATEGORY_BY_IMAGE_MARKER = [
         { marker: 'kuechenservice', label: 'KÜCHENSERVICE' },
         { marker: 'moebelservice', label: 'MÖBELSERVICE' },
         { marker: 'gartenservice', label: 'GARTENSERVICE' },
         { marker: 'tradeservice', label: 'HANDWERK' },
         { marker: 'handwerk', label: 'HANDWERK' },
-        { marker: 'handwerker', label: 'HANDWERK' }
-    ];
+		{ marker: 'handwerker', label: 'HANDWERK' }
+	];
+	const OFFER_ONLY_SERVICES = new Set([
+		'Möbel entsorgen',
+		'Kleintransporte',
+		'Fugenreinigung',
+		'Hecken schneiden',
+		'Rasen mähen',
+		'Rollrasen verlegen',
+		'Wurzeln entfernen',
+		'Pflastern',
+		'Minibagger-Arbeiten',
+		'Gartenhütten aufbauen',
+		'Gartenhütten schleifen/streichen',
+		'Hecken entfernen',
+		'Kleine Bäume fällen',
+		'Sträucher schneiden',
+		'Entsorgung von Grünschnitt',
+		'Überdachung',
+		'Holzhäcksler'
+	]);
 
     /**
      * Removes wrapping quotes and extra whitespace from URL-like strings.
@@ -104,13 +123,28 @@
      * before navigation to calculate.html.
      * @returns {void}
      */
-    function bindServiceCardSelection() {
-        document.addEventListener('click', (event) => {
-            const card = event.target.closest('a.service-card[href*="calculate.html"]');
-            if (!card) return;
-            saveServiceSelection(card);
-        });
-    }
+	function bindServiceCardSelection() {
+		document.addEventListener('click', (event) => {
+			const card = event.target.closest('a.service-card[href*="calculate.html"]');
+			if (!card) return;
+			saveServiceSelection(card);
+		});
+	}
+
+	/**
+	 * Adds hover intent classes for services that open an offer flow without a calculation.
+	 * @returns {void}
+	 */
+	function applyServiceCardHoverClasses() {
+		document.querySelectorAll('a.service-card[href*="calculate.html"]').forEach((card) => {
+			if (card.classList.contains('service-card--appointment')) return;
+
+			const label = extractLabelFromCard(card);
+			if (OFFER_ONLY_SERVICES.has(label)) {
+				card.classList.add('service-card--offer-only');
+			}
+		});
+	}
 
     /**
      * Applies selected service data on calculate page:
@@ -161,8 +195,9 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        bindServiceCardSelection();
-        applySelectionOnCalculatePage();
-    });
+	document.addEventListener('DOMContentLoaded', () => {
+		applyServiceCardHoverClasses();
+		bindServiceCardSelection();
+		applySelectionOnCalculatePage();
+	});
 })();

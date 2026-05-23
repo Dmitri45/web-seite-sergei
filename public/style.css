@@ -1520,7 +1520,7 @@ body.has-portfolio-open {
 }
 
 .service-card::before {
-    content: "Preis berechnen / Angebot anfragen";
+    content: "Preis berechnen / Angebot anfordern";
     position: absolute;
     left: 50%;
     top: 50%;
@@ -1538,6 +1538,10 @@ body.has-portfolio-open {
     transition: opacity 0.25s ease;
     white-space: nowrap;
     pointer-events: none;
+}
+
+.service-card--offer-only::before {
+    content: "Angebot anfordern";
 }
 
 .service-card--appointment::before {
