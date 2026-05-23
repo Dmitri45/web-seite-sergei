@@ -215,23 +215,13 @@ function getNewKitchenForm() {
 				</div>
 
 				<div class="field">
-					<label for="appliances">Elektrogeräte</label>
-					<select id="appliances" name="appliances">
-						<option value="">Bitte wählen…</option>
-						<option value="none">Ohne Geräte</option>
-						<option value="some">Teilweise</option>
-						<option value="full">Komplett (Herd, Ofen, Spülmaschine, etc.)</option>
-					</select>
-				</div>
-
-				<div class="field">
 					<label for="lowerCabinets">Anzahl der Unterschränke</label>
 					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
 				</div>
 
                 
 				<div class="field">
-                <label for="worktopMaterial">Arbeitsplatte anpassen?</label>
+                <label for="worktopMaterial">Neue Arbeitsplatte zuschneiden/anpassen?</label>
                 <select id="worktopMaterial" name="worktopMaterial">
                 <option value="">Bitte wählen…</option>
 						<option value="yes">Ja</option>
@@ -298,16 +288,7 @@ function getUsedKitchenForm() {
 				</div>
 
 				<div class="field">
-					<label for="dismantling">Alte Küche abbauen?</label>
-					<select id="dismantling" name="dismantling">
-						<option value="">Bitte wählen…</option>
-						<option value="yes">Ja - Kompletter Abbau</option>
-						<option value="no">Nein - In-Ort bereits abgebaut</option>
-					</select>
-				</div>
-
-				<div class="field">
-					<label for="worktopAdjust">Arbeitsplatte anpassen?</label>
+					<label for="worktopAdjust">Neue Arbeitsplatte zuschneiden/anpassen?</label>
 					<select id="worktopAdjust" name="worktopAdjust">
 						<option value="">Bitte wählen…</option>
 						<option value="yes">Ja</option>
@@ -315,15 +296,6 @@ function getUsedKitchenForm() {
 					</select>
 				</div>
 
-				<div class="field">
-					<label for="appliances">Neue Elektrogeräte installieren?</label>
-					<select id="appliances" name="appliances">
-						<option value="">Bitte wählen…</option>
-						<option value="none">Nein</option>
-						<option value="some">Teilweise</option>
-						<option value="full">Ja - Komplett (Herd, Ofen, Spülmaschine, etc.)</option>
-					</select>
-				</div>
                 <div class="field">
 					<label for="worktopPickup">Arbeitsplatte vom Baumarkt abholen?</label>
 					<select id="worktopPickup" name="worktopPickup">
@@ -434,6 +406,22 @@ function getKitchenTransportForm() {
 				</div>
 
 				<div class="field field-full">
+					<label class="furniture-addon-toggle">
+						<span class="furniture-addon-title">Ist die Küche bereits abgebaut?</span>
+						<input id="kitchenAlreadyDismantled" name="kitchenAlreadyDismantled" type="checkbox" value="yes">
+						<span class="furniture-addon-switch"></span>
+					</label>
+				</div>
+
+				<div class="field field-full">
+					<label class="furniture-addon-toggle">
+						<span class="furniture-addon-title">Soll die Küche am neuen Ort wieder aufgebaut werden?</span>
+						<input id="kitchenAssembleAtDestination" name="kitchenAssembleAtDestination" type="checkbox" value="yes">
+						<span class="furniture-addon-switch"></span>
+					</label>
+				</div>
+
+				<div class="field field-full">
 					<label for="transportFromAddressAutocomplete">Transport von (Adresse)</label>
 					<div id="transportFromAddressAutocomplete" class="autocomplete-container"></div>
 					<input id="transportFromAddress" name="transportFromAddress" type="hidden" required>
@@ -454,6 +442,54 @@ function getKitchenTransportForm() {
 			<div class="calc-actions">
 				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
 				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
+}
+
+/**
+ * Builds the supplemental kitchen assembly fields for kitchen transport.
+ * @returns {string} HTML template.
+ */
+function getKitchenTransportAssemblyDetailsForm() {
+	return `
+		<form class="calc-card" id="kitchenTransportAssemblyDetailsForm">
+			<h2>Aufbau am neuen Ort</h2>
+			<p>Bitte ergänzen Sie, wie die Küche am neuen Ort aufgebaut werden soll.</p>
+
+			<div class="calc-grid">
+				<div class="field">
+					<label for="kitchenType">Küchentyp am neuen Ort</label>
+					<select id="kitchenType" name="kitchenType">
+						<option value="">Bitte wählen…</option>
+						<option value="zeile">I-Form</option>
+						<option value="l-form">L-Form</option>
+						<option value="u-form">U-Form</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="worktopAdjust">Neue Arbeitsplatte zuschneiden/anpassen?</label>
+					<select id="worktopAdjust" name="worktopAdjust">
+						<option value="">Bitte wählen…</option>
+						<option value="yes">Ja</option>
+						<option value="no">Nein</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="worktopPickup">Arbeitsplatte vom Baumarkt abholen?</label>
+					<select id="worktopPickup" name="worktopPickup">
+						<option value="">Bitte wählen…</option>
+						<option value="yes">Ja</option>
+						<option value="no">Nein</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Weiter</button>
+				<button class="btn-secondary" type="button" data-back-to-kitchen-transport>Zurück</button>
 			</div>
 		</form>
 	`;

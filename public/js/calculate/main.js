@@ -54,6 +54,25 @@ import {
 let serviceFormTemplatesByLabel = null;
 
 /**
+ * Merges supplemental form values into a base payload object.
+ * @param {Object} payload - Payload to mutate.
+ * @param {HTMLFormElement|null} formElement - Supplemental form.
+ * @returns {Object} Mutated payload.
+ */
+function mergeFormValuesIntoPayload(payload, formElement) {
+	if (!payload || !formElement) return payload;
+
+	formElement.querySelectorAll('input, select, textarea').forEach((input) => {
+		if (!input.name) return;
+		payload[input.name] = input.type === 'checkbox'
+			? (input.checked ? (input.value || 'yes') : 'no')
+			: (input.value || '');
+	});
+
+	return payload;
+}
+
+/**
  * Checks the selected Einsatzort before the customer can continue the flow.
  * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
  * @returns {Promise<boolean>} True when the service area check passes.
@@ -160,6 +179,45 @@ async function validateStandaloneTransportEndpointServiceArea(formElement) {
 }
 
 /**
+ * Opens supplemental assembly fields for Küchentransport before the contact form.
+ * @param {HTMLFormElement} previousForm - Original Küchentransport form.
+ * @param {Object} basePayload - Payload collected from the original form.
+ * @returns {void}
+ */
+function showKitchenTransportAssemblyDetailsForm(previousForm, basePayload) {
+	const calcSection = getCalcMainContainer();
+	if (!calcSection) return;
+
+	previousForm.style.display = 'none';
+	removeFeedbackBlocks();
+	document.getElementById('offer-request-block')?.remove();
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = getKitchenTransportAssemblyDetailsForm();
+	const detailsForm = tempDiv.querySelector('#kitchenTransportAssemblyDetailsForm');
+	if (!detailsForm) return;
+
+	calcSection.appendChild(detailsForm);
+
+	const continueButton = detailsForm.querySelector('#btn-continue');
+	continueButton?.addEventListener('click', () => {
+		const payload = mergeFormValuesIntoPayload(basePayload, detailsForm);
+		payload.assembly = 'yes';
+		payload.condition = 'new';
+		payload.kitchenCondition = 'new';
+		calcState.latestFrontendFormPayload = payload;
+		detailsForm.remove();
+		showLoadingIndicator();
+		requestCalculation(payload);
+	});
+
+	detailsForm.querySelector('[data-back-to-kitchen-transport]')?.addEventListener('click', () => {
+		detailsForm.remove();
+		previousForm.style.display = 'block';
+	});
+}
+
+/**
  * Checks route endpoints from the transport survey flows.
  * @param {HTMLElement|null} survey - Transport survey.
  * @param {Object} selectors - Autocomplete selectors.
@@ -238,6 +296,21 @@ function initOfferRequestButtons(formElement) {
 
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
 		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
+
+		if (serviceLabel === 'Küchentransport') {
+			const payload = buildCalculationData(calcState.currentForm, calcState);
+			calcState.latestFrontendFormPayload = payload;
+
+			if (payload.kitchenAssembleAtDestination === 'yes') {
+				showKitchenTransportAssemblyDetailsForm(formElement, payload);
+				return;
+			}
+
+			formElement.style.display = 'none';
+			showLoadingIndicator();
+			await requestCalculation(payload);
+			return;
+		}
 
 		if (KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
 			formElement.style.display = 'none';

@@ -42,6 +42,21 @@ export function addTransportationDataIfNeeded(data, state) {
 }
 
 /**
+ * Adds standalone transport endpoints used by forms such as Küchentransport.
+ * @param {Object} data - Payload being prepared for the backend.
+ * @param {Object} state - Shared calculator state.
+ * @returns {void}
+ */
+export function addStandaloneTransportDataIfNeeded(data, state) {
+	if (!state.selectedFormTransportFrom || !state.selectedFormTransportTo) return;
+
+	data.transportation = 'yes';
+	data.transportFrom = state.selectedFormTransportFrom;
+	data.transportVia = [];
+	data.transportTo = state.selectedFormTransportTo;
+}
+
+/**
  * Builds a complete calculation payload from the current form and shared state.
  * @param {HTMLFormElement|null} currentForm - Active calculator form.
  * @param {Object} state - Shared calculator state.
@@ -53,6 +68,7 @@ export function buildCalculationData(currentForm, state) {
 
 	addAssemblyDataIfNeeded(data, state);
 	addTransportationDataIfNeeded(data, state);
+	addStandaloneTransportDataIfNeeded(data, state);
 	adaptKitchenPayloadForBackend(data, state);
 
 	return data;
@@ -138,7 +154,9 @@ export function buildKitchenFormPayload(formElement, state) {
 	const inputs = formElement.querySelectorAll('input, select, textarea');
 	inputs.forEach(input => {
 		if (input.name) {
-			data[input.name] = input.value || '';
+			data[input.name] = input.type === 'checkbox'
+				? (input.checked ? (input.value || 'yes') : 'no')
+				: (input.value || '');
 		}
 	});
 
