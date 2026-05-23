@@ -30,7 +30,7 @@ async function calculateKitchen(req, res) {
 			isKitchenDismantlingService ||
 			formData.abbau === true ||
 			formData.abbau === 'true' ||
-			(isKitchenTransportService && formData.kitchenAlreadyDismantled !== 'yes')
+			(isKitchenTransportService && formData.kitchenNeedsDismantling === 'yes')
 		) {
 			disassemblyPrice = calculateKitchenDisassembly(formData).price;
 		}

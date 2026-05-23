@@ -405,20 +405,25 @@ function getKitchenTransportForm() {
 					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
 				</div>
 
-				<div class="field field-full">
-					<label class="furniture-addon-toggle">
-						<span class="furniture-addon-title">Ist die Küche bereits abgebaut?</span>
-						<input id="kitchenAlreadyDismantled" name="kitchenAlreadyDismantled" type="checkbox" value="yes">
-						<span class="furniture-addon-switch"></span>
-					</label>
-				</div>
+				<div class="field field-full furniture-addon-group">
+					<label>Zusatzleistungen</label>
+					<div class="furniture-addon-list">
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Küchenabbau erforderlich?</span>
+								<input id="kitchenNeedsDismantling" name="kitchenNeedsDismantling" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
 
-				<div class="field field-full">
-					<label class="furniture-addon-toggle">
-						<span class="furniture-addon-title">Soll die Küche am neuen Ort wieder aufgebaut werden?</span>
-						<input id="kitchenAssembleAtDestination" name="kitchenAssembleAtDestination" type="checkbox" value="yes">
-						<span class="furniture-addon-switch"></span>
-					</label>
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Küchenaufbau erforderlich?</span>
+								<input id="kitchenAssembleAtDestination" name="kitchenAssembleAtDestination" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
+					</div>
 				</div>
 
 				<div class="field field-full">
@@ -2281,9 +2286,30 @@ function getServiceCardTemplate(service) {
     const appointmentClass = ['Möbelanfertigung', 'Küchenanfertigung'].includes(service.label)
         ? ' service-card--appointment'
         : '';
+    const offerOnlyClass = [
+        'Möbel entsorgen',
+        'Kleintransporte',
+        'Fugenreinigung',
+        'Hecken schneiden',
+        'Rasen mähen',
+        'Rollrasen verlegen',
+        'Wurzeln entfernen',
+        'Pflastern',
+        'Minibagger-Arbeiten',
+        'Gartenhütten aufbauen',
+        'Gartenhütten schleifen/streichen',
+        'Hecken entfernen',
+        'Kleine Bäume fällen',
+        'Sträucher schneiden',
+        'Entsorgung von Grünschnitt',
+        'Überdachung',
+        'Holzhäcksler'
+    ].includes(service.label) && !appointmentClass
+        ? ' service-card--offer-only'
+        : '';
 
     return `
-        <a class="service-card${appointmentClass}" href="${service.href}" aria-label="${service.label}">
+        <a class="service-card${appointmentClass}${offerOnlyClass}" href="${service.href}" aria-label="${service.label}">
             <div class="service-card-bg" style="background-image: url('${service.img}');"></div>
 
             <div class="service-card-copy">
@@ -2330,10 +2356,10 @@ const SERVICE_CATEGORY_META = {
 
 const SERVICES_BY_CATEGORY = {
     kitchen: [
-        { label: 'Küchentransport', href: 'calculate.html', img: 'img/services/kuechenservice/kuechetransport.png', desc: 'Sicherer Transport & Trageservice' },
-        { label: 'Küche abbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
+        { label: 'Küchentransport', href: 'calculate.html', img: 'img/services/kuechenservice/kuechetransport.png', desc: 'Transport optional mit Abbau & Aufbau' },
         { label: 'Küche aufbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenaufbau.png', desc: 'Montage inkl. Ausrichtung' },
         { label: 'Küche anpassen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanpassung.png', desc: 'Ausschnitte, Anschlüsse & Feinschliff' },
+        { label: 'Küche abbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
         { label: 'Küchenanfertigung', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
     ],
     furniture: [

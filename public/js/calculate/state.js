@@ -20,6 +20,21 @@ export const calcState = {
 	latestFrontendFormPayload: null
 };
 
+const SERVICE_ASIDE_DETAILS = {
+	'Küchentransport': {
+		items: [
+			'Sicherer Küchentransport',
+			'Küchenabbau optional',
+			'Küchenaufbau optional'
+		],
+		subitems: [
+			'Transportpreis online',
+			'Abbau & Aufbau bei Bedarf',
+			'Persönliches Angebot auf Anfrage'
+		]
+	}
+};
+
 /**
  * Reads the selected service data from sessionStorage.
  * @returns {{label?: string, image?: string, category?: string}|null} Selected service data.
@@ -58,10 +73,21 @@ export function applySelectedServiceData(serviceData) {
 	const heroTitle = document.querySelector('.hero-title');
 	const asideTitle = document.querySelector('#selectedServiceAsideTitle');
 	const previewImage = document.querySelector('#selectedServicePreviewImage');
+	const asideItems = document.querySelectorAll('.calc-placeholder__list li');
+	const asideSubitems = document.querySelectorAll('.calc-placeholder__sublist li');
+	const asideDetails = serviceData.label ? SERVICE_ASIDE_DETAILS[serviceData.label] : null;
 
 	if (heroEyebrow && serviceData.category) heroEyebrow.textContent = serviceData.category;
 	if (heroTitle && serviceData.label) heroTitle.textContent = serviceData.label;
 	if (asideTitle && serviceData.label) asideTitle.textContent = serviceData.label;
 	if (previewImage && serviceData.image) previewImage.src = serviceData.image;
+	if (asideDetails) {
+		asideItems.forEach((item, index) => {
+			if (asideDetails.items[index]) item.textContent = asideDetails.items[index];
+		});
+		asideSubitems.forEach((item, index) => {
+			if (asideDetails.subitems[index]) item.textContent = asideDetails.subitems[index];
+		});
+	}
 	if (serviceData.label) document.title = `${serviceData.label} – S.K. SERVICE`;
 }

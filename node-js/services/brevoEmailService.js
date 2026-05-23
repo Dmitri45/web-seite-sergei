@@ -93,7 +93,7 @@ function buildDetailsHtml(payload = {}) {
 		row('Termin', payload.date),
 		row('Zeitfenster', payload.timeWindow),
 		row('Besichtigungsort', payload.address),
-		row('Küche bereits abgebaut', payload.kitchenAlreadyDismantled),
+		row('Küche vor Transport abbauen', payload.kitchenNeedsDismantling),
 		row('Aufbau am neuen Ort', payload.kitchenAssembleAtDestination),
 		row('Fläche', payload.areaTotal ? `${payload.areaTotal} m²` : ''),
 		row('Länge', payload.length ? `${payload.length} m` : ''),
