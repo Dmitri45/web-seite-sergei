@@ -355,6 +355,19 @@ function getKitchenDismantlingForm() {
 					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
 				</div>
 
+				<div class="field field-full furniture-addon-group">
+					<label>Zusatzleistungen</label>
+					<div class="furniture-addon-list">
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Küchenaufbau erforderlich?</span>
+								<input id="kitchenAssembleAtDestination" name="kitchenAssembleAtDestination" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+
 				<div class="field field-full">
 					<label for="notes">Zusätzliche Hinweise</label>
 					<textarea id="notes" name="notes" rows="4" placeholder="z.B. Etage, Aufzug, Zustand der Küche, Besonderheiten"></textarea>

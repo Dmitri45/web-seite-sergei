@@ -18,8 +18,9 @@ async function calculateKitchen(req, res) {
 		const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
 		const isKitchenDismantlingService = serviceLabel === 'küche abbauen';
 		const isKitchenTransportService = serviceLabel === 'küchentransport';
+		const hasDestinationAssembly = formData.kitchenAssembleAtDestination === 'yes';
 		const condition = formData.kitchenCondition || formData.condition;
-		const kitchenPrice = isKitchenDismantlingService || (isKitchenTransportService && formData.kitchenAssembleAtDestination !== 'yes')
+		const kitchenPrice = (isKitchenDismantlingService && !hasDestinationAssembly) || (isKitchenTransportService && !hasDestinationAssembly)
 			? 0
 			: isKitchenTransportService || condition === 'used'
 				? calculateTotalForUsedKitchen(formData).price

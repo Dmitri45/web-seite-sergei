@@ -73,6 +73,31 @@ function mergeFormValuesIntoPayload(payload, formElement) {
 }
 
 /**
+ * Persists supplemental values as hidden fields on the original form.
+ * @param {HTMLFormElement} targetForm - Form that remains the current calculator form.
+ * @param {Object} values - Values to persist.
+ * @returns {void}
+ */
+function writeHiddenValuesToForm(targetForm, values = {}) {
+	if (!targetForm || !values || typeof values !== 'object') return;
+
+	Object.entries(values).forEach(([name, value]) => {
+		if (!name) return;
+
+		let input = targetForm.querySelector(`input[type="hidden"][name="${name}"][data-supplemental-field="true"]`);
+		if (!input) {
+			input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = name;
+			input.dataset.supplementalField = 'true';
+			targetForm.appendChild(input);
+		}
+
+		input.value = value ?? '';
+	});
+}
+
+/**
  * Checks the selected Einsatzort before the customer can continue the flow.
  * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
  * @returns {Promise<boolean>} True when the service area check passes.
@@ -179,12 +204,14 @@ async function validateStandaloneTransportEndpointServiceArea(formElement) {
 }
 
 /**
- * Opens supplemental assembly fields for Küchentransport before the contact form.
- * @param {HTMLFormElement} previousForm - Original Küchentransport form.
+ * Opens supplemental assembly fields before the next kitchen flow step.
+ * @param {HTMLFormElement} previousForm - Original kitchen form.
  * @param {Object} basePayload - Payload collected from the original form.
+ * @param {Object} [options={}] - Flow callbacks.
+ * @param {Function} [options.onContinue] - Called after supplemental values are collected.
  * @returns {void}
  */
-function showKitchenTransportAssemblyDetailsForm(previousForm, basePayload) {
+function showKitchenTransportAssemblyDetailsForm(previousForm, basePayload, options = {}) {
 	const calcSection = getCalcMainContainer();
 	if (!calcSection) return;
 
@@ -207,6 +234,12 @@ function showKitchenTransportAssemblyDetailsForm(previousForm, basePayload) {
 		payload.kitchenCondition = 'new';
 		calcState.latestFrontendFormPayload = payload;
 		detailsForm.remove();
+
+		if (typeof options.onContinue === 'function') {
+			options.onContinue(payload);
+			return;
+		}
+
 		showLoadingIndicator();
 		requestCalculation(payload);
 	});
@@ -310,6 +343,29 @@ function initOfferRequestButtons(formElement) {
 			showLoadingIndicator();
 			await requestCalculation(payload);
 			return;
+		}
+
+		if (serviceLabel === 'Küche abbauen') {
+			const payload = buildCalculationData(calcState.currentForm, calcState);
+			calcState.latestFrontendFormPayload = payload;
+
+			if (payload.kitchenAssembleAtDestination === 'yes') {
+				showKitchenTransportAssemblyDetailsForm(formElement, payload, {
+					onContinue: (detailsPayload) => {
+						writeHiddenValuesToForm(formElement, {
+							kitchenType: detailsPayload.kitchenType || '',
+							worktopAdjust: detailsPayload.worktopAdjust || '',
+							worktopPickup: detailsPayload.worktopPickup || '',
+							assembly: 'yes',
+							condition: 'new',
+							kitchenCondition: 'new'
+						});
+						formElement.style.display = 'none';
+						showTransportationSurvey();
+					}
+				});
+				return;
+			}
 		}
 
 		if (KITCHEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
