@@ -219,16 +219,6 @@ function getNewKitchenForm() {
 					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
 				</div>
 
-                
-				<div class="field">
-                <label for="worktopMaterial">Neue Arbeitsplatte zuschneiden/anpassen?</label>
-                <select id="worktopMaterial" name="worktopMaterial">
-                <option value="">Bitte wählen…</option>
-						<option value="yes">Ja</option>
-						<option value="no">Nein</option>
-                </select>
-				</div>
-
 				<div class="field">
 					<label for="worktopPickup">Arbeitsplatte vom Baumarkt abholen?</label>
 					<select id="worktopPickup" name="worktopPickup">

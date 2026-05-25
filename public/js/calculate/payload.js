@@ -131,6 +131,9 @@ export function adaptKitchenPayloadForBackend(data, state) {
 	data.condition = data.kitchenCondition || state.selectedKitchenCondition || data.condition || 'new';
 	data.abbau = data.dismantling === 'yes' || data.abbau === true || data.abbau === 'true';
 	data.worktopAdjust = data.worktopAdjust || data.worktopMaterial || '';
+	if (serviceLabel === 'Küche aufbauen' && data.condition === 'new') {
+		data.worktopAdjust = 'yes';
+	}
 
 	return data;
 }

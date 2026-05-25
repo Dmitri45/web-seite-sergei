@@ -416,7 +416,7 @@ function initOfferRequestButtons(formElement) {
 }
 
 /**
- * Binds a simple continue button that opens the transportation survey.
+ * Binds the continue button for the kitchen assembly flow.
  * @param {HTMLFormElement} formElement - Active kitchen form.
  * @returns {void}
  */
@@ -428,6 +428,17 @@ function attachFormContinueListener(formElement) {
 	button.addEventListener('click', async () => {
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
 		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
+
+		const selectedService = getSelectedServiceData();
+		const serviceLabel = selectedService?.label?.trim() || '';
+		if (['Küche aufbauen', 'Küche anpassen'].includes(serviceLabel)) {
+			const payload = buildCalculationData(calcState.currentForm, calcState);
+			calcState.latestFrontendFormPayload = payload;
+			formElement.style.display = 'none';
+			showLoadingIndicator();
+			await requestCalculation(payload);
+			return;
+		}
 
 		formElement.style.display = 'none';
 		showTransportationSurvey();
