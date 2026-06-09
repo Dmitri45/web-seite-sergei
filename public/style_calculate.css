@@ -512,6 +512,24 @@ body.page-calculate .hero-subtitle {
     display: none;
 }
 
+.trade-addon-options {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(15, 61, 46, 0.12);
+}
+
+.trade-addon-options label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.trade-addon-options select {
+    width: 100%;
+}
+
 .calc-actions {
     margin-top: 16px;
     display: flex;

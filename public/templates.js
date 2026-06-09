@@ -1635,18 +1635,17 @@ function getWallPlasteringForm() {
 								<input id="includeFinePlaster" name="includeFinePlaster" type="checkbox" value="yes" data-trade-addon-toggle data-target="wallFinePlasterOptions">
 								<span class="furniture-addon-switch"></span>
 							</label>
+							<div id="wallFinePlasterOptions" class="trade-addon-options" data-trade-addon-options hidden>
+								<label for="finePlasterQualityLevel">Qualitätsstufe für Feinputz</label>
+								<select id="finePlasterQualityLevel" name="finePlasterQualityLevel" disabled>
+									<option value="">Bitte wählen…</option>
+									<option value="q1q2">Q1 / Q2</option>
+									<option value="q3">Q3</option>
+									<option value="q4">Q4</option>
+								</select>
+							</div>
 						</div>
 					</div>
-				</div>
-
-				<div id="wallFinePlasterOptions" class="field field-full" data-trade-addon-options hidden>
-					<label for="finePlasterQualityLevel">Qualitätsstufe für Feinputz</label>
-					<select id="finePlasterQualityLevel" name="finePlasterQualityLevel" disabled>
-						<option value="">Bitte wählen…</option>
-						<option value="q1q2">Q1 / Q2</option>
-						<option value="q3">Q3</option>
-						<option value="q4">Q4</option>
-					</select>
 				</div>
 
 				<div class="field field-full">
@@ -1688,6 +1687,14 @@ function getDrywallForm() {
 								<input id="includeWallPlastering" name="includeWallPlastering" type="checkbox" value="yes" data-trade-addon-toggle data-target="drywallWallPlasteringOptions">
 								<span class="furniture-addon-switch"></span>
 							</label>
+							<div id="drywallWallPlasteringOptions" class="trade-addon-options" data-trade-addon-options hidden>
+								<label for="addonPlasteringType">Ausführungsart für Wandverputz</label>
+								<select id="addonPlasteringType" name="addonPlasteringType" disabled>
+									<option value="">Bitte wählen…</option>
+									<option value="grobeschicht-frei-hand">Wandverputz / Grobschicht (frei Hand, nicht lotgerecht)</option>
+									<option value="lotgerecht-wasserwaage">Wandverputz (mit Wasserwaage, lotgerecht)</option>
+								</select>
+							</div>
 						</div>
 
 						<div class="furniture-addon-row">
@@ -1696,27 +1703,17 @@ function getDrywallForm() {
 								<input id="includeFinePlaster" name="includeFinePlaster" type="checkbox" value="yes" data-trade-addon-toggle data-target="drywallFinePlasterOptions">
 								<span class="furniture-addon-switch"></span>
 							</label>
+							<div id="drywallFinePlasterOptions" class="trade-addon-options" data-trade-addon-options hidden>
+								<label for="finePlasterQualityLevel">Qualitätsstufe für Feinputz</label>
+								<select id="finePlasterQualityLevel" name="finePlasterQualityLevel" disabled>
+									<option value="">Bitte wählen…</option>
+									<option value="q1q2">Q1 / Q2</option>
+									<option value="q3">Q3</option>
+									<option value="q4">Q4</option>
+								</select>
+							</div>
 						</div>
 					</div>
-				</div>
-
-				<div id="drywallWallPlasteringOptions" class="field field-full" data-trade-addon-options hidden>
-					<label for="addonPlasteringType">Ausführungsart für Wandverputz</label>
-					<select id="addonPlasteringType" name="addonPlasteringType" disabled>
-						<option value="">Bitte wählen…</option>
-						<option value="grobeschicht-frei-hand">Wandverputz / Grobschicht (frei Hand, nicht lotgerecht)</option>
-						<option value="lotgerecht-wasserwaage">Wandverputz (mit Wasserwaage, lotgerecht)</option>
-					</select>
-				</div>
-
-				<div id="drywallFinePlasterOptions" class="field field-full" data-trade-addon-options hidden>
-					<label for="finePlasterQualityLevel">Qualitätsstufe für Feinputz</label>
-					<select id="finePlasterQualityLevel" name="finePlasterQualityLevel" disabled>
-						<option value="">Bitte wählen…</option>
-						<option value="q1q2">Q1 / Q2</option>
-						<option value="q3">Q3</option>
-						<option value="q4">Q4</option>
-					</select>
 				</div>
 
 				<div class="field field-full">
