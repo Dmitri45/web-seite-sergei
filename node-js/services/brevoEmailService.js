@@ -145,6 +145,7 @@ function buildPricesHtml(prices = {}) {
 		row('Abbau', prices.disassemblyPrice ? formatEuro(prices.disassemblyPrice) : ''),
 		row('Gartenpreis', prices.gardenPrice ? formatEuro(prices.gardenPrice) : ''),
 		row('Transport', prices.transportPrice ? formatEuro(prices.transportPrice) : ''),
+		row('Anfahrt / Abfahrt', prices.travelPrice ? formatEuro(prices.travelPrice) : ''),
 		`<tr><td style="padding-top:14px;font-size:20px;font-weight:bold;">Gesamtpreis</td><td style="padding-top:14px;text-align:right;font-size:20px;font-weight:bold;color:#1d7a1d;">${formatEuro(prices.totalPrice)}</td></tr>`
 	].join('');
 }
