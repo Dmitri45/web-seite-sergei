@@ -48,7 +48,7 @@ function normalizeItem(raw = {}) {
 }
 
 /**
- * Calculates one item for "Neue Möbel aufbauen".
+ * Calculates one new-furniture assembly item.
  * @param {{lengthCm:number,heightCm:number,drawers:number,pullouts:number,lights:number}} item
  * @returns {number}
  */
@@ -99,7 +99,7 @@ function calcOldItem(item, mode) {
 }
 
 /**
- * Neue Möbel aufbauen.
+ * Calculates new-furniture assembly.
  * @param {{moebelstuecke?:Object[]}} formData
  * @returns {number}
  */
@@ -109,7 +109,7 @@ function calculateNewFurnitureAssemblyPrice(formData = {}) {
 }
 
 /**
- * Neue Möbel aufbauen, with one result row per item.
+ * Calculates new-furniture assembly with one result row per item.
  * @param {{moebelstuecke?:Object[]}} formData
  * @returns {Array<{index:number,name:string,price:number}>}
  */
@@ -147,7 +147,7 @@ function calculateOldFurnitureDisassemblyItems(formData = {}) {
 }
 
 /**
- * Alte Möbel aufbauen.
+ * Calculates used-furniture assembly.
  * @param {{moebelstuecke?:Object[]}} formData
  * @returns {number}
  */
@@ -157,7 +157,7 @@ function calculateOldFurnitureAssemblyPrice(formData = {}) {
 }
 
 /**
- * Alte Möbel aufbauen, with one result row per item.
+ * Calculates used-furniture assembly with one result row per item.
  * @param {{moebelstuecke?:Object[]}} formData
  * @returns {Array<{index:number,name:string,price:number}>}
  */
@@ -171,7 +171,7 @@ function calculateOldFurnitureAssemblyItems(formData = {}) {
 }
 
 /**
- * Umzugshelfer hourly rate by helper count, incl. MwSt.
+ * Moving-assistance hourly rate by helper count, including VAT.
  * @param {string|number|undefined|null} helpersCount
  * @returns {number}
  */
@@ -186,7 +186,7 @@ function getMovingHelpersHourlyRate(helpersCount) {
 }
 
 /**
- * Umzugshelfer.
+ * Calculates moving assistance.
  * @param {{helpersCount?:string|number,workHours?:string|number}} formData
  * @returns {number}
  */
@@ -195,7 +195,7 @@ function calculateMovingHelpersPrice(formData = {}) {
 }
 
 /**
- * Umzugshelfer, with one result row for the selected hourly calculation.
+ * Calculates moving assistance with one result row for the selected hourly calculation.
  * @param {{helpersCount?:string|number,workHours?:string|number}} formData
  * @returns {Array<{index:number,name:string,price:number,rate:number,hours:number}>}
  */

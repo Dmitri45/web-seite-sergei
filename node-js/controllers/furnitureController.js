@@ -19,8 +19,8 @@ const {
  * - moving-helpers
  *
  * Fallback mapping by serviceLabel:
- * - "Möbel aufbauen" => new-assembly
- * - "Umzugshelfer" => moving-helpers
+ * - "Möbelmontage" => new-assembly
+ * - "Umzugshilfe" => moving-helpers
  *
  * @param {Object} formData
  * @returns {"new-assembly"|"old-disassembly"|"old-assembly"|"moving-helpers"|""}
@@ -37,8 +37,9 @@ function resolveFurnitureMode(formData = {}) {
 	}
 
 	const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
-	if (serviceLabel === 'möbel aufbauen') return 'new-assembly';
-	if (serviceLabel === 'umzugshelfer') return 'moving-helpers';
+	if (serviceLabel === 'möbelmontage') return 'new-assembly';
+	if (serviceLabel === 'möbelentsorgung') return 'old-disassembly';
+	if (serviceLabel === 'umzugshilfe') return 'moving-helpers';
 
 	return '';
 }

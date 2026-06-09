@@ -5,6 +5,7 @@
 
 import { KITCHEN_CALCULATION_SERVICE_LABELS } from './constants.js';
 import { getSelectedServiceData } from './state.js';
+import { SERVICE_LABELS } from './serviceLabels.js';
 
 /**
  * Adds assembly survey values to the calculation payload when needed.
@@ -131,7 +132,7 @@ export function adaptKitchenPayloadForBackend(data, state) {
 	data.condition = data.kitchenCondition || state.selectedKitchenCondition || data.condition || 'new';
 	data.abbau = data.dismantling === 'yes' || data.abbau === true || data.abbau === 'true';
 	data.worktopAdjust = data.worktopAdjust || data.worktopMaterial || '';
-	if (serviceLabel === 'Küche aufbauen' && data.condition === 'new') {
+	if (serviceLabel === SERVICE_LABELS.KITCHEN_ASSEMBLY && data.condition === 'new') {
 		data.worktopAdjust = 'yes';
 	}
 
@@ -180,31 +181,31 @@ export function adaptPayloadForService(payload, serviceLabel = '') {
 
 	const normalizedLabel = String(serviceLabel || '').trim().toLowerCase();
 
-	if (normalizedLabel === 'möbel aufbauen') {
+	if (normalizedLabel === SERVICE_LABELS.FURNITURE_ASSEMBLY.toLowerCase()) {
 		payload.mode = 'new-assembly';
 	}
 
-	if (normalizedLabel === 'möbel entsorgen') {
+	if (normalizedLabel === SERVICE_LABELS.FURNITURE_DISPOSAL.toLowerCase()) {
 		payload.mode = 'old-disassembly';
 	}
 
-	if (normalizedLabel === 'umzugshelfer') {
+	if (normalizedLabel === SERVICE_LABELS.MOVING_HELPERS.toLowerCase()) {
 		payload.mode = 'moving-helpers';
 	}
 
-	if (normalizedLabel === 'feinputz') {
+	if (normalizedLabel === SERVICE_LABELS.FINE_PLASTER.toLowerCase()) {
 		payload.mode = 'feinputz';
 	}
 
-	if (normalizedLabel === 'wände verputzen') {
+	if (normalizedLabel === SERVICE_LABELS.WALL_PLASTERING.toLowerCase()) {
 		payload.mode = 'wall-plastering';
 	}
 
-	if (normalizedLabel === 'trockenbau (rigipsausbau)') {
+	if (normalizedLabel === SERVICE_LABELS.DRYWALL.toLowerCase()) {
 		payload.mode = 'drywall';
 	}
 
-	if (normalizedLabel === 'zäune aufbauen') {
+	if (normalizedLabel === SERVICE_LABELS.FENCE_ASSEMBLY.toLowerCase()) {
 		payload.mode = 'fence-assembly';
 	}
 }

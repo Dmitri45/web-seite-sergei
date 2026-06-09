@@ -6,7 +6,7 @@ Content-Type: application/json
   "requestType": "offer",
   "submittedAt": "2026-05-17T12:00:00.000Z",
   "source": "website-calculator",
-  "serviceLabel": "Zäune aufbauen",
+  "serviceLabel": "Zaunmontage",
   "mode": "fence-assembly",
   "fenceElementsCount": "5",
   "withKerbstone": "with",

@@ -46,6 +46,7 @@ import {
 	calcState,
 	getSelectedServiceData
 } from './state.js';
+import { SERVICE_LABELS } from './serviceLabels.js';
 
 /**
  * Cached service form template factories keyed by service label.
@@ -191,7 +192,7 @@ async function validateTransportEndpointServiceArea({
 }
 
 /**
- * Checks standalone transport-address fields used by Küchentransport and Umzugshelfer.
+ * Checks standalone transport-address fields used by Küchentransport and Umzugshilfe.
  * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
  * @returns {Promise<boolean>} True when no standalone route exists or both endpoints are allowed.
  */
@@ -332,7 +333,7 @@ function initOfferRequestButtons(formElement) {
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
 		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
 
-		if (serviceLabel === 'Küchentransport') {
+		if (serviceLabel === SERVICE_LABELS.KITCHEN_TRANSPORT) {
 			const payload = buildCalculationData(calcState.currentForm, calcState);
 			calcState.latestFrontendFormPayload = payload;
 
@@ -347,7 +348,7 @@ function initOfferRequestButtons(formElement) {
 			return;
 		}
 
-		if (serviceLabel === 'Küche abbauen') {
+		if (serviceLabel === SERVICE_LABELS.KITCHEN_DISMANTLING) {
 			const payload = buildCalculationData(calcState.currentForm, calcState);
 			calcState.latestFrontendFormPayload = payload;
 
@@ -376,7 +377,7 @@ function initOfferRequestButtons(formElement) {
 			return;
 		}
 
-		if (serviceLabel === 'Kleintransporte') {
+		if (serviceLabel === SERVICE_LABELS.SMALL_TRANSPORTS) {
 			formElement.style.display = 'none';
 			showDirectTransportAddressForm();
 			return;
@@ -433,7 +434,7 @@ function attachFormContinueListener(formElement) {
 
 		const selectedService = getSelectedServiceData();
 		const serviceLabel = selectedService?.label?.trim() || '';
-		if (['Küche aufbauen', 'Küche anpassen'].includes(serviceLabel)) {
+		if ([SERVICE_LABELS.KITCHEN_ASSEMBLY, SERVICE_LABELS.KITCHEN_ADJUSTMENT].includes(serviceLabel)) {
 			const payload = buildCalculationData(calcState.currentForm, calcState);
 			calcState.latestFrontendFormPayload = payload;
 			formElement.style.display = 'none';

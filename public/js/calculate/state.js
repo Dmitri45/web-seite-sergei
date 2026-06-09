@@ -1,4 +1,5 @@
 import { SERVICE_SELECTION_STORAGE_KEY } from './constants.js';
+import { SERVICE_LABELS } from './serviceLabels.js';
 
 /**
  * Mutable calculator state shared across modular calculator flows.
@@ -21,7 +22,7 @@ export const calcState = {
 };
 
 const SERVICE_ASIDE_DETAILS = {
-	'Küchentransport': {
+	[SERVICE_LABELS.KITCHEN_TRANSPORT]: {
 		items: [
 			'Sicherer Küchentransport',
 			'Küchenabbau optional',

@@ -12,6 +12,7 @@ import {
 	SERVICE_AREA_CHECK_ENDPOINT,
 	TRADES_CALCULATION_SERVICE_LABELS
 } from './constants.js';
+import { SERVICE_LABELS } from './serviceLabels.js';
 
 /**
  * Resolves the backend calculation endpoint for the selected service.
@@ -49,7 +50,7 @@ export function buildLocalCalculationFallback(data = {}) {
 	let totalPrice = 0;
 	let itemName = '';
 
-	if (serviceLabel === 'Feinputz') {
+	if (serviceLabel === SERVICE_LABELS.FINE_PLASTER) {
 		const qualityRates = { q1q2: 14, q3: 21, q4: 50 };
 		const qualityLabels = { q1q2: 'Q1 / Q2', q3: 'Q3', q4: 'Q4' };
 		const quality = String(data.qualityLevel || '').trim().toLowerCase();
@@ -57,7 +58,7 @@ export function buildLocalCalculationFallback(data = {}) {
 		itemName = `${qualityLabels[quality] || 'Qualitätsstufe'} x ${area} m²`;
 	}
 
-	if (serviceLabel === 'Wände Verputzen') {
+	if (serviceLabel === SERVICE_LABELS.WALL_PLASTERING) {
 		const plasteringRates = {
 			'grobeschicht-frei-hand': 12,
 			'lotgerecht-wasserwaage': 23
@@ -71,12 +72,12 @@ export function buildLocalCalculationFallback(data = {}) {
 		itemName = `${plasteringLabels[plasteringType] || 'Ausführungsart'} x ${area} m²`;
 	}
 
-	if (serviceLabel === 'Trockenbau (Rigipsausbau)') {
+	if (serviceLabel === SERVICE_LABELS.DRYWALL) {
 		totalPrice = area * 9;
 		itemName = `Trockenbau x ${area} m²`;
 	}
 
-	if (serviceLabel === 'Zäune aufbauen') {
+	if (serviceLabel === SERVICE_LABELS.FENCE_ASSEMBLY) {
 		const elementsCount = Math.max(0, Math.floor(Number.parseFloat(String(data.fenceElementsCount || '0').replace(',', '.')) || 0));
 		const kerbstoneLengthM = Math.max(0, Number.parseFloat(String(data.kerbstoneLengthM || '0').replace(',', '.')) || 0);
 		const fencePrice = elementsCount > 0

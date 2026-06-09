@@ -3,41 +3,43 @@
  * @module calculate/constants
  */
 
+import { SERVICE_LABELS } from './serviceLabels.js';
+
 export const SERVICE_SELECTION_STORAGE_KEY = 'selectedServiceData';
 export const API_BASE_URL = '';
 export const REQUEST_SEND_ENDPOINT = `${API_BASE_URL}/api/request/send`;
 export const SERVICE_AREA_CHECK_ENDPOINT = `${API_BASE_URL}/api/service-area/check`;
 
 export const KITCHEN_CALCULATION_SERVICE_LABELS = new Set([
-	'Küche aufbauen',
-	'Küche abbauen',
-	'Küche anpassen'
+	SERVICE_LABELS.KITCHEN_ASSEMBLY,
+	SERVICE_LABELS.KITCHEN_DISMANTLING,
+	SERVICE_LABELS.KITCHEN_ADJUSTMENT
 ]);
 
 export const FURNITURE_CALCULATION_SERVICE_LABELS = new Set([
-	'Möbel aufbauen',
-	'Umzugshelfer'
+	SERVICE_LABELS.FURNITURE_ASSEMBLY,
+	SERVICE_LABELS.MOVING_HELPERS
 ]);
 
 export const TRADES_CALCULATION_SERVICE_LABELS = new Set([
-	'Feinputz',
-	'Wände Verputzen',
-	'Trockenbau (Rigipsausbau)'
+	SERVICE_LABELS.FINE_PLASTER,
+	SERVICE_LABELS.WALL_PLASTERING,
+	SERVICE_LABELS.DRYWALL
 ]);
 
 export const GARDEN_CALCULATION_SERVICE_LABELS = new Set([
-	'Zäune aufbauen'
+	SERVICE_LABELS.FENCE_ASSEMBLY
 ]);
 
 export const CUSTOM_REQUEST_SERVICE_LABELS = new Set([
-	'Küchenanfertigung',
-	'Möbelanfertigung'
+	SERVICE_LABELS.CUSTOM_KITCHEN,
+	SERVICE_LABELS.CUSTOM_FURNITURE
 ]);
 
 export const SERVICE_AREA_EXCLUDED_LABELS = new Set([
-	'Küchenanfertigung',
-	'Möbelanfertigung',
-	'Küchentransport',
-	'Kleintransporte',
-	'Umzugshelfer'
+	SERVICE_LABELS.CUSTOM_KITCHEN,
+	SERVICE_LABELS.CUSTOM_FURNITURE,
+	SERVICE_LABELS.KITCHEN_TRANSPORT,
+	SERVICE_LABELS.SMALL_TRANSPORTS,
+	SERVICE_LABELS.MOVING_HELPERS
 ]);

@@ -14,7 +14,7 @@ function resolveGardenMode(formData = {}) {
 	if (rawMode === 'fence-assembly') return rawMode;
 
 	const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
-	if (serviceLabel === 'zäune aufbauen') return 'fence-assembly';
+	if (serviceLabel === 'zaunmontage') return 'fence-assembly';
 
 	return '';
 }

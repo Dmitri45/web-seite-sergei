@@ -35,7 +35,7 @@ function resolveLawnArea(formData = {}) {
 }
 
 /**
- * Calculates price for "Rollrasen verlegen".
+ * Calculates the price for roll turf installation.
  * Rate: 16 €/m².
  *
  * @param {Object} formData
@@ -58,7 +58,7 @@ function isWithKerbstone(value) {
 }
 
 /**
- * Calculates price for "Zäune aufbauen" (without materials).
+ * Calculates the price for fence assembly without materials.
  * Rules:
  * - First 2 fence elements: 200 € total
  * - From the 3rd element: +80 € per element

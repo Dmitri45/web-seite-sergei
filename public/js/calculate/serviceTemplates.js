@@ -3,6 +3,8 @@
  * @module calculate/serviceTemplates
  */
 
+import { SERVICE_LABELS } from './serviceLabels.js';
+
 /**
  * Creates template factories keyed by the visible service label.
  * @param {Object} options - Template creation dependencies.
@@ -12,40 +14,40 @@
  */
 export function createServiceFormTemplates({ kitchenSurvey, continueBtn }) {
 	return {
-		'Küchentransport': () => getKitchenTransportForm(),
-		'Küche abbauen': () => getKitchenDismantlingForm(),
-		'Küche aufbauen': () => {
+		[SERVICE_LABELS.KITCHEN_TRANSPORT]: () => getKitchenTransportForm(),
+		[SERVICE_LABELS.KITCHEN_DISMANTLING]: () => getKitchenDismantlingForm(),
+		[SERVICE_LABELS.KITCHEN_ASSEMBLY]: () => {
 			if (kitchenSurvey) {
 				kitchenSurvey.style.display = 'block';
 				continueBtn.style.display = 'none';
 			}
 			return '';
 		},
-		'Küche anpassen': () => getKitchenAdjustmentEstimateForm(),
-		'Küchenanfertigung': () => getCustomKitchenRequestForm(),
-		'Möbel aufbauen': () => getFurnitureAssemblyForm(),
-		'Möbel entsorgen': () => getFurnitureDisposalForm(),
-		'Möbelanfertigung': () => getCustomFurnitureRequestForm(),
-		'Umzugshelfer': () => getMovingHelpersEstimateForm(),
-		'Kleintransporte': () => getSmallItemsTransportForm(),
-		'Fugenreinigung': () => getJointCleaningForm(),
-		'Feinputz': () => getFinePlasterForm(),
-		'Wände Verputzen': () => getWallPlasteringForm(),
-		'Trockenbau (Rigipsausbau)': () => getDrywallForm(),
-		'Hecken schneiden': () => getHedgeTrimmingForm(),
-		'Rasen mähen': () => getLawnMowingForm(),
-		'Rollrasen verlegen': () => getLawnInstallationForm(),
-		'Wurzeln entfernen': () => getRootRemovalForm(),
-		'Pflastern': () => getPavingForm(),
-		'Minibagger-Arbeiten': () => getMiniExcavatorWorkForm(),
-		'Gartenhütten aufbauen': () => getGardenHutAssemblyForm(),
-		'Gartenhütten schleifen/streichen': () => getGardenHutSandingPaintingForm(),
-		'Hecken entfernen': () => getHedgeRemovalForm(),
-		'Kleine Bäume fällen': () => getSmallTreeFellingForm(),
-		'Sträucher schneiden': () => getShrubTrimmingForm(),
-		'Entsorgung von Grünschnitt': () => getGreenWasteDisposalForm(),
-		'Überdachung': () => getCanopyForm(),
-		'Holzhäcksler': () => getWoodChipperForm(),
-		'Zäune aufbauen': () => getFenceAssemblyForm()
+		[SERVICE_LABELS.KITCHEN_ADJUSTMENT]: () => getKitchenAdjustmentEstimateForm(),
+		[SERVICE_LABELS.CUSTOM_KITCHEN]: () => getCustomKitchenRequestForm(),
+		[SERVICE_LABELS.FURNITURE_ASSEMBLY]: () => getFurnitureAssemblyForm(),
+		[SERVICE_LABELS.FURNITURE_DISPOSAL]: () => getFurnitureDisposalForm(),
+		[SERVICE_LABELS.CUSTOM_FURNITURE]: () => getCustomFurnitureRequestForm(),
+		[SERVICE_LABELS.MOVING_HELPERS]: () => getMovingHelpersEstimateForm(),
+		[SERVICE_LABELS.SMALL_TRANSPORTS]: () => getSmallItemsTransportForm(),
+		[SERVICE_LABELS.JOINT_CLEANING]: () => getJointCleaningForm(),
+		[SERVICE_LABELS.FINE_PLASTER]: () => getFinePlasterForm(),
+		[SERVICE_LABELS.WALL_PLASTERING]: () => getWallPlasteringForm(),
+		[SERVICE_LABELS.DRYWALL]: () => getDrywallForm(),
+		[SERVICE_LABELS.HEDGE_TRIMMING]: () => getHedgeTrimmingForm(),
+		[SERVICE_LABELS.LAWN_MOWING]: () => getLawnMowingForm(),
+		[SERVICE_LABELS.LAWN_INSTALLATION]: () => getLawnInstallationForm(),
+		[SERVICE_LABELS.ROOT_REMOVAL]: () => getRootRemovalForm(),
+		[SERVICE_LABELS.PAVING]: () => getPavingForm(),
+		[SERVICE_LABELS.MINI_EXCAVATOR]: () => getMiniExcavatorWorkForm(),
+		[SERVICE_LABELS.GARDEN_HOUSE_ASSEMBLY]: () => getGardenHutAssemblyForm(),
+		[SERVICE_LABELS.GARDEN_HOUSE_RENOVATION]: () => getGardenHutSandingPaintingForm(),
+		[SERVICE_LABELS.HEDGE_REMOVAL]: () => getHedgeRemovalForm(),
+		[SERVICE_LABELS.SMALL_TREE_FELLING]: () => getSmallTreeFellingForm(),
+		[SERVICE_LABELS.SHRUB_TRIMMING]: () => getShrubTrimmingForm(),
+		[SERVICE_LABELS.GREEN_WASTE_DISPOSAL]: () => getGreenWasteDisposalForm(),
+		[SERVICE_LABELS.CANOPY_ASSEMBLY]: () => getCanopyForm(),
+		[SERVICE_LABELS.WOOD_CHIPPING]: () => getWoodChipperForm(),
+		[SERVICE_LABELS.FENCE_ASSEMBLY]: () => getFenceAssemblyForm()
 	};
 }

@@ -11,9 +11,9 @@ function resolveTradesMode(formData = {}) {
 	if (rawMode === 'drywall') return rawMode;
 
 	const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
-	if (serviceLabel === 'feinputz') return 'feinputz';
-	if (serviceLabel === 'wände verputzen') return 'wall-plastering';
-	if (serviceLabel === 'trockenbau (rigipsausbau)') return 'drywall';
+	if (serviceLabel === 'feinputz / fertigbeschichtung') return 'feinputz';
+	if (serviceLabel === 'wandverputz') return 'wall-plastering';
+	if (serviceLabel === 'trockenbau') return 'drywall';
 
 	return '';
 }

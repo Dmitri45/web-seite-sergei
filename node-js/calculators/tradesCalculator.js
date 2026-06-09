@@ -38,7 +38,7 @@ function calculateFeinputzPrice(formData = {}) {
 }
 
 /**
- * Calculates price for "Trockenbau (Rigipsausbau)".
+ * Calculates the drywall installation price.
  * Rate: 9 €/m (as provided by current requirements).
  *
  * @param {Object} formData
@@ -52,7 +52,7 @@ function calculateTrockenbauPrice(formData = {}) {
 }
 
 /**
- * Calculates price for "Wände Verputzen".
+ * Calculates the wall plastering price.
  * Rates:
  * - Grobeschicht (frei Hand, nicht lotgerecht): 12 €/m²
  * - Mit Wasserwaage, lotgerecht: 23 €/m²

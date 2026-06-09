@@ -16,7 +16,7 @@ async function calculateKitchen(req, res) {
 	try {
 		const formData = req.body;
 		const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
-		const isKitchenDismantlingService = serviceLabel === 'küche abbauen';
+		const isKitchenDismantlingService = serviceLabel === 'küchendemontage';
 		const isKitchenTransportService = serviceLabel === 'küchentransport';
 		const hasDestinationAssembly = formData.kitchenAssembleAtDestination === 'yes';
 		const condition = formData.kitchenCondition || formData.condition;

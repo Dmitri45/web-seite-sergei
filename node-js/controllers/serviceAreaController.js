@@ -2,23 +2,23 @@ const { getRouteDistanceFromBaseKm, getRouteDistancesFromBaseKm } = require('../
 
 const DEFAULT_SERVICE_RADIUS_KM = 40;
 const SERVICE_RADIUS_50_KM_LABELS = new Set([
-	'Küche aufbauen',
-	'Küche abbauen',
-	'Möbel aufbauen',
-	'Möbel entsorgen'
+	'küchenmontage',
+	'küchendemontage',
+	'möbelmontage',
+	'möbelentsorgung'
 ]);
 const SERVICE_RADIUS_120_KM_LABELS = new Set([
-	'Hecken schneiden',
-	'Rasen mähen',
-	'Rollrasen verlegen',
-	'Sträucher schneiden',
-	'Kleine Bäume fällen',
-	'Hecken entfernen',
-	'Entsorgung von Grünschnitt'
+	'heckenschnitt',
+	'rasenmähen',
+	'rollrasenverlegung',
+	'strauchschnitt',
+	'baumfällung (kleine bäume)',
+	'heckenentfernung',
+	'grünschnittentsorgung'
 ]);
 const SERVICE_AREA_UNLIMITED_LABELS = new Set([
-	'Küchenanfertigung',
-	'Möbelanfertigung'
+	'küchenanfertigung',
+	'möbelanfertigung'
 ]);
 
 /**
@@ -27,7 +27,7 @@ const SERVICE_AREA_UNLIMITED_LABELS = new Set([
  * @returns {number|null} Radius in kilometers or null when no area check is required.
  */
 function resolveServiceRadiusKm(serviceLabel = '') {
-	const normalizedLabel = String(serviceLabel).trim();
+	const normalizedLabel = String(serviceLabel).trim().toLowerCase();
 
 	if (SERVICE_AREA_UNLIMITED_LABELS.has(normalizedLabel)) return null;
 	if (SERVICE_RADIUS_50_KM_LABELS.has(normalizedLabel)) return 50;

@@ -316,7 +316,7 @@ function getUsedKitchenForm() {
 function getKitchenDismantlingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Küche abbauen</h2>
+			<h2>Küchendemontage</h2>
 			<p>Bitte geben Sie die wichtigsten Angaben für den Küchenabbau an.</p>
 
 			<div class="calc-grid">
@@ -510,7 +510,7 @@ function getKitchenTransportAssemblyDetailsForm() {
 function getSmallItemsTransportForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Transport von kleinen Sachen</h2>
+			<h2>Kleintransporte</h2>
 			<p>Fügen Sie die Positionen einzeln hinzu und geben Sie Maße sowie Ab-/Aufbauwunsch an.</p>
 
 			<div class="calc-grid">
@@ -555,8 +555,8 @@ function getSmallItemsTransportForm() {
 					</div>
 					<button id="addFurnitureItemBtn" class="btn-secondary" type="button">Position hinzufügen</button>
 					<div id="smallTransportLimitNotice" class="calc-hint" hidden>
-						<p>Bei mehr als 3 Positionen wählen Sie bitte die Leistung Umzugshelfer.</p>
-						<button class="btn-secondary" type="button" data-switch-service="Umzugshelfer">Zu Umzugshelfer wechseln</button>
+						<p>Bei mehr als 3 Positionen wählen Sie bitte die Leistung Umzugshilfe.</p>
+						<button class="btn-secondary" type="button" data-switch-service="Umzugshilfe">Zur Umzugshilfe wechseln</button>
 					</div>
 				</div>
 
@@ -586,7 +586,7 @@ function getSmallItemsTransportForm() {
 function getMovingHelpersEstimateForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Umzugshelfer</h2>
+			<h2>Umzugshilfe</h2>
 			<p>Preiseinschätzung: Bitte geben Sie Helferanzahl, Zeitbedarf und Hinweise an.</p>
 
 			<div class="calc-grid">
@@ -653,7 +653,7 @@ function getKitchenAdjustmentEstimateForm() {
 function getFurnitureDisposalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Möbel entsorgen</h2>
+			<h2>Möbelentsorgung</h2>
 			<p>Fügen Sie Ihre Möbelstücke einzeln hinzu und geben Sie die Maße an.</p>
 
 			<div class="calc-grid">
@@ -710,7 +710,7 @@ function getFurnitureDisposalForm() {
 function getFurnitureAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Möbel aufbauen</h2>
+			<h2>Möbelmontage</h2>
 			<p>Fügen Sie Ihre Möbelstücke einzeln hinzu und geben Sie die Maße an.</p>
 
 			<div class="calc-grid">
@@ -763,7 +763,7 @@ function getFurnitureAssemblyForm() {
 function getGardenHutSandingPaintingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Gartenhütten schleifen / streichen</h2>
+			<h2>Gartenhaus-Renovierung</h2>
 			<p>Bitte geben Sie die Flächenangaben sowie gewünschte Leistungen an.</p>
 
 			<div class="calc-grid">
@@ -811,7 +811,7 @@ function getGardenHutSandingPaintingForm() {
 function getGardenHutAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Gartenhütten aufbauen</h2>
+			<h2>Gartenhausmontage</h2>
 			<p>Bitte geben Sie die wichtigsten Angaben für Aufbau, Boden und Zugang an.</p>
 
 			<div class="calc-grid">
@@ -871,7 +871,7 @@ function getGardenHutAssemblyForm() {
 function getHedgeTrimmingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Hecken schneiden</h2>
+			<h2>Heckenschnitt</h2>
 			<p>Bitte geben Sie aktuelle Maße, Zielmaße und Entsorgungswunsch an.</p>
 
 			<div class="calc-grid">
@@ -936,7 +936,7 @@ function getHedgeTrimmingForm() {
 function getHedgeRemovalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Hecken entfernen</h2>
+			<h2>Heckenentfernung</h2>
 			<p>Bitte geben Sie die Maße der Hecke und Entsorgungsdetails an.</p>
 
 			<div class="calc-grid">
@@ -990,7 +990,7 @@ function getHedgeRemovalForm() {
 function getRootRemovalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Wurzeln entfernen</h2>
+			<h2>Wurzelentfernung</h2>
 			<p>Bitte geben Sie den Durchmesser sowie Entsorgungs- und Zugangsinformationen an.</p>
 
 			<div class="calc-grid">
@@ -1034,7 +1034,7 @@ function getRootRemovalForm() {
 function getSmallTreeFellingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Kleine Bäume fällen</h2>
+			<h2>Baumfällung (kleine Bäume)</h2>
 			<p>Bitte geben Sie Durchmesser, Zusatzleistungen und Zugangsinformationen an.</p>
 
 			<div class="calc-grid">
@@ -1088,7 +1088,7 @@ function getLawnInstallationForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2 class="label-with-tooltip">
-				Rollrasen verlegen
+				Rollrasenverlegung
 				<span class="help-tooltip">
 					<span class="help-tooltip__icon" aria-label="Hinweis">i</span>
 					<span class="help-tooltip__content">Ohne Bodenvorbereitung.</span>
@@ -1145,7 +1145,7 @@ function getLawnInstallationForm() {
 function getLawnMowingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Rasen mähen</h2>
+			<h2>Rasenmähen</h2>
 			<p>Bitte geben Sie die Fläche als Quadratmeter oder über Länge und Breite an.</p>
 
 			<div class="calc-grid">
@@ -1197,7 +1197,7 @@ function getLawnMowingForm() {
 function getShrubTrimmingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Sträucher schneiden (jede Art und Größe)</h2>
+			<h2>Strauchschnitt</h2>
 			<p>Bitte wählen Sie jeweils den aktuellen und den gewünschten Zustand: in Form oder nach Maßen.</p>
 
 			<div class="calc-grid">
@@ -1312,7 +1312,7 @@ function getShrubTrimmingForm() {
 function getGreenWasteDisposalForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Entsorgung von Grünschnitt und Gartenabfällen</h2>
+			<h2>Grünschnittentsorgung</h2>
 			<p>Bitte geben Sie die Menge entweder als Kubikmeter (geschätzt) oder über Maße an.</p>
 
 			<div class="calc-grid">
@@ -1368,7 +1368,7 @@ function getGreenWasteDisposalForm() {
 function getPavingForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Pflastern</h2>
+			<h2>Pflasterarbeiten</h2>
 			<p>Bitte geben Sie Fläche, aktuellen Boden und Zugangsinformationen an.</p>
 
 			<div class="calc-grid">
@@ -1414,7 +1414,7 @@ function getPavingForm() {
 function getFenceAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Zäune aufbauen</h2>
+			<h2>Zaunmontage</h2>
 			<p>Bitte geben Sie die Anzahl der Zaunelemente und optionale Bordstein-Angaben an.</p>
 
 			<div class="calc-grid">
@@ -1464,7 +1464,7 @@ function getFenceAssemblyForm() {
 function getCanopyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Überdachungen</h2>
+			<h2>Überdachungsmontage</h2>
 			<p>Bitte geben Sie Fläche, Dachbeschichtung und Seitenangaben an.</p>
 
 			<div class="calc-grid">
@@ -1541,7 +1541,7 @@ function getJointCleaningForm() {
 function getFinePlasterForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Feinputz / Fertigeschicht</h2>
+			<h2>Feinputz / Fertigbeschichtung</h2>
 			<p>Bitte geben Sie Fläche und gewünschte Qualitätsstufe an.</p>
 
 			<div class="calc-grid">
@@ -1581,7 +1581,7 @@ function getFinePlasterForm() {
 function getWallPlasteringForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Wände Verputzen</h2>
+			<h2>Wandverputz</h2>
 			<p>Bitte geben Sie Fläche und Ausführungsart an.</p>
 
 			<div class="calc-grid">
@@ -1594,8 +1594,8 @@ function getWallPlasteringForm() {
 					<label for="plasteringType">Ausführungsart</label>
 					<select id="plasteringType" name="plasteringType">
 						<option value="">Bitte wählen…</option>
-						<option value="grobeschicht-frei-hand">Wände Verputzen / Grobeschicht (frei Hand, nicht lotgerecht)</option>
-						<option value="lotgerecht-wasserwaage">Wände Verputzen (mit Wasserwaage, lotgerecht)</option>
+						<option value="grobeschicht-frei-hand">Wandverputz / Grobschicht (frei Hand, nicht lotgerecht)</option>
+						<option value="lotgerecht-wasserwaage">Wandverputz (mit Wasserwaage, lotgerecht)</option>
 					</select>
 				</div>
 
@@ -1620,7 +1620,7 @@ function getWallPlasteringForm() {
 function getDrywallForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Trockenbau (Rigipsausbau)</h2>
+			<h2>Trockenbau</h2>
 			<p>Bitte geben Sie Fläche und kurze Projektangaben an.</p>
 
 			<div class="calc-grid">
@@ -1650,7 +1650,7 @@ function getDrywallForm() {
 function getMiniExcavatorWorkForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Arbeiten mit Minibagger</h2>
+			<h2>Minibaggerarbeiten</h2>
 			<p>Bitte beschreiben Sie kurz die Arbeiten und geben Sie Zugangsinformationen an.</p>
 
 			<div class="calc-grid">
@@ -1685,7 +1685,7 @@ function getMiniExcavatorWorkForm() {
 function getWoodChipperForm() {
 	return `
 		<form class="calc-card" id="calcForm">
-			<h2>Holzhäcksler</h2>
+			<h2>Holzhäckselarbeiten</h2>
 			<p>Bitte geben Sie die Menge entweder als Kubikmeter (geschätzt) oder über Astdaten an.</p>
 
 			<div class="calc-grid">
@@ -2290,23 +2290,23 @@ function getServiceCardTemplate(service) {
         ? ' service-card--appointment'
         : '';
     const offerOnlyClass = [
-        'Möbel entsorgen',
+        'Möbelentsorgung',
         'Kleintransporte',
         'Fugenreinigung',
-        'Hecken schneiden',
-        'Rasen mähen',
-        'Rollrasen verlegen',
-        'Wurzeln entfernen',
-        'Pflastern',
-        'Minibagger-Arbeiten',
-        'Gartenhütten aufbauen',
-        'Gartenhütten schleifen/streichen',
-        'Hecken entfernen',
-        'Kleine Bäume fällen',
-        'Sträucher schneiden',
-        'Entsorgung von Grünschnitt',
-        'Überdachung',
-        'Holzhäcksler'
+        'Heckenschnitt',
+        'Rasenmähen',
+        'Rollrasenverlegung',
+        'Wurzelentfernung',
+        'Pflasterarbeiten',
+        'Minibaggerarbeiten',
+        'Gartenhausmontage',
+        'Gartenhaus-Renovierung',
+        'Heckenentfernung',
+        'Baumfällung (kleine Bäume)',
+        'Strauchschnitt',
+        'Grünschnittentsorgung',
+        'Überdachungsmontage',
+        'Holzhäckselarbeiten'
     ].includes(service.label) && !appointmentClass
         ? ' service-card--offer-only'
         : '';
@@ -2360,40 +2360,40 @@ const SERVICE_CATEGORY_META = {
 const SERVICES_BY_CATEGORY = {
     kitchen: [
         { label: 'Küchentransport', href: 'calculate.html', img: 'img/services/kuechenservice/kuechetransport.png', desc: 'Transport optional mit Abbau & Aufbau' },
-        { label: 'Küche aufbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenaufbau.png', desc: 'Montage inkl. Ausrichtung' },
-        { label: 'Küche anpassen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanpassung.png', desc: 'Ausschnitte, Anschlüsse & Feinschliff' },
-        { label: 'Küche abbauen', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
+        { label: 'Küchenmontage', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenaufbau.png', desc: 'Montage inkl. Ausrichtung' },
+        { label: 'Küchenanpassung', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanpassung.png', desc: 'Ausschnitte, Anschlüsse & Feinschliff' },
+        { label: 'Küchendemontage', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
         { label: 'Küchenanfertigung', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
     ],
     furniture: [
-        { label: 'Möbel aufbauen', href: 'calculate.html', img: 'img/services/moebelservice/moebelaufbauen.png', desc: 'Schränke, Betten und Regale' },
-        { label: 'Möbel entsorgen', href: 'calculate.html', img: 'img/services/moebelservice/moebelentsorgen.png', desc: 'Abholung inkl. fachgerechter Entsorgung' },
-        { label: 'Umzugshelfer', href: 'calculate.html', img: 'img/services/moebelservice/umzugshelfer.png', desc: 'Tragen, Laden und Positionieren' },
+        { label: 'Möbelmontage', href: 'calculate.html', img: 'img/services/moebelservice/moebelaufbauen.png', desc: 'Schränke, Betten und Regale' },
+        { label: 'Möbelentsorgung', href: 'calculate.html', img: 'img/services/moebelservice/moebelentsorgen.png', desc: 'Abholung inkl. fachgerechter Entsorgung' },
+        { label: 'Umzugshilfe', href: 'calculate.html', img: 'img/services/moebelservice/umzugshelfer.png', desc: 'Tragen, Laden und Positionieren' },
         { label: 'Kleintransporte', href: 'calculate.html', img: 'img/services/moebelservice/kleintransporte.png', desc: 'Flexible Transporte nach Bedarf' },
         { label: 'Möbelanfertigung', href: 'calculate.html', img: 'img/services/moebelservice/moebelanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
     ],
     trades: [
-        { label: 'Feinputz', href: 'calculate.html', img: 'img/services/handwerker/feinputz.png', desc: 'Saubere Endschicht in passender Qualitätsstufe' },
-        { label: 'Wände Verputzen', href: 'calculate.html', img: 'img/services/handwerker/waendeverputzen.png', desc: 'Grobeschicht oder lotgerechte Ausführung' },
-        { label: 'Trockenbau (Rigipsausbau)', href: 'calculate.html', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' },
+        { label: 'Feinputz / Fertigbeschichtung', href: 'calculate.html', img: 'img/services/handwerker/feinputz.png', desc: 'Saubere Endschicht in passender Qualitätsstufe' },
+        { label: 'Wandverputz', href: 'calculate.html', img: 'img/services/handwerker/waendeverputzen.png', desc: 'Grobeschicht oder lotgerechte Ausführung' },
+        { label: 'Trockenbau', href: 'calculate.html', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' },
         { label: 'Fugenreinigung', href: 'calculate.html', img: 'img/services/handwerker/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
     ],
     garden: [
-        { label: 'Hecken schneiden', href: 'calculate.html', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
-        { label: 'Rasen mähen', href: 'calculate.html', img: 'img/services/gartenservice/rasenmaehen.png', desc: 'Regelmäßiger Schnitt & Pflege' },
-        { label: 'Rollrasen verlegen', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen ohne Bodenvorbereitung' },
-        { label: 'Wurzeln entfernen', href: 'calculate.html', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
-        { label: 'Pflastern', href: 'calculate.html', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
-        { label: 'Zäune aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
-        { label: 'Minibagger-Arbeiten', href: 'calculate.html', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
-        { label: 'Gartenhütten aufbauen', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Aufbau inkl. Bodenvorbereitung optional' },
-        { label: 'Gartenhütten schleifen/streichen', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Vorbereitung und Schutzanstrich im Gartenbereich' },
-        { label: 'Hecken entfernen', href: 'calculate.html', img: 'img/services/gartenservice/heckenentfernen.png', desc: 'Rückbau inkl. Schnittgut' },
-        { label: 'Kleine Bäume fällen', href: 'calculate.html', img: 'img/services/gartenservice/kleinebaeumefaellen.png', desc: 'Sicher und sauber durchgeführt' },
-        { label: 'Sträucher schneiden', href: 'calculate.html', img: 'img/services/gartenservice/straeucherschneiden.png', desc: 'Pflegeschnitt nach Saison' },
-        { label: 'Entsorgung von Grünschnitt', href: 'calculate.html', img: 'img/services/gartenservice/entsorgungvongruenschnitt.png', desc: 'Abtransport und Entsorgung' },
-        { label: 'Überdachung', href: 'calculate.html', img: 'img/services/gartenservice/ueberdachung.png', desc: 'Montage für Terrasse und Garten' },
-        { label: 'Holzhäcksler', href: 'calculate.html', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' }
+        { label: 'Heckenschnitt', href: 'calculate.html', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
+        { label: 'Rasenmähen', href: 'calculate.html', img: 'img/services/gartenservice/rasenmaehen.png', desc: 'Regelmäßiger Schnitt & Pflege' },
+        { label: 'Rollrasenverlegung', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen ohne Bodenvorbereitung' },
+        { label: 'Wurzelentfernung', href: 'calculate.html', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
+        { label: 'Pflasterarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
+        { label: 'Zaunmontage', href: 'calculate.html', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
+        { label: 'Minibaggerarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
+        { label: 'Gartenhausmontage', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Aufbau inkl. Bodenvorbereitung optional' },
+        { label: 'Gartenhaus-Renovierung', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Vorbereitung und Schutzanstrich im Gartenbereich' },
+        { label: 'Heckenentfernung', href: 'calculate.html', img: 'img/services/gartenservice/heckenentfernen.png', desc: 'Rückbau inkl. Schnittgut' },
+        { label: 'Baumfällung (kleine Bäume)', href: 'calculate.html', img: 'img/services/gartenservice/kleinebaeumefaellen.png', desc: 'Sicher und sauber durchgeführt' },
+        { label: 'Strauchschnitt', href: 'calculate.html', img: 'img/services/gartenservice/straeucherschneiden.png', desc: 'Pflegeschnitt nach Saison' },
+        { label: 'Grünschnittentsorgung', href: 'calculate.html', img: 'img/services/gartenservice/entsorgungvongruenschnitt.png', desc: 'Abtransport und Entsorgung' },
+        { label: 'Überdachungsmontage', href: 'calculate.html', img: 'img/services/gartenservice/ueberdachung.png', desc: 'Montage für Terrasse und Garten' },
+        { label: 'Holzhäckselarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' }
     ]
 };
 

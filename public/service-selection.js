@@ -24,23 +24,23 @@
 		{ marker: 'handwerker', label: 'HANDWERK' }
 	];
 	const OFFER_ONLY_SERVICES = new Set([
-		'Möbel entsorgen',
+		'Möbelentsorgung',
 		'Kleintransporte',
 		'Fugenreinigung',
-		'Hecken schneiden',
-		'Rasen mähen',
-		'Rollrasen verlegen',
-		'Wurzeln entfernen',
-		'Pflastern',
-		'Minibagger-Arbeiten',
-		'Gartenhütten aufbauen',
-		'Gartenhütten schleifen/streichen',
-		'Hecken entfernen',
-		'Kleine Bäume fällen',
-		'Sträucher schneiden',
-		'Entsorgung von Grünschnitt',
-		'Überdachung',
-		'Holzhäcksler'
+		'Heckenschnitt',
+		'Rasenmähen',
+		'Rollrasenverlegung',
+		'Wurzelentfernung',
+		'Pflasterarbeiten',
+		'Minibaggerarbeiten',
+		'Gartenhausmontage',
+		'Gartenhaus-Renovierung',
+		'Heckenentfernung',
+		'Baumfällung (kleine Bäume)',
+		'Strauchschnitt',
+		'Grünschnittentsorgung',
+		'Überdachungsmontage',
+		'Holzhäckselarbeiten'
 	]);
 
     /**
