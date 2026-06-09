@@ -49,14 +49,18 @@ export function buildLocalCalculationFallback(data = {}) {
 
 	const area = Number.parseFloat(String(data.areaTotal || '0').replace(',', '.')) || 0;
 	let totalPrice = 0;
-	let itemName = '';
+	let items = [];
 
 	if (serviceLabel === SERVICE_LABELS.FINE_PLASTER) {
 		const qualityRates = { q1q2: 14, q3: 21, q4: 50 };
 		const qualityLabels = { q1q2: 'Q1 / Q2', q3: 'Q3', q4: 'Q4' };
 		const quality = String(data.qualityLevel || '').trim().toLowerCase();
 		totalPrice = area * (qualityRates[quality] || 0);
-		itemName = `${qualityLabels[quality] || 'Qualitätsstufe'} x ${area} m²`;
+		items = [{
+			index: 0,
+			name: `Feinputz ${qualityLabels[quality] || 'Qualitätsstufe'} x ${area} m²`,
+			price: totalPrice
+		}];
 	}
 
 	if (serviceLabel === SERVICE_LABELS.WALL_PLASTERING) {
@@ -69,13 +73,62 @@ export function buildLocalCalculationFallback(data = {}) {
 			'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht'
 		};
 		const plasteringType = String(data.plasteringType || '').trim().toLowerCase();
-		totalPrice = area * (plasteringRates[plasteringType] || 0);
-		itemName = `${plasteringLabels[plasteringType] || 'Ausführungsart'} x ${area} m²`;
+		const wallPrice = area * (plasteringRates[plasteringType] || 0);
+		items = [{
+			index: 0,
+			name: `Wandverputz: ${plasteringLabels[plasteringType] || 'Ausführungsart'} x ${area} m²`,
+			price: wallPrice
+		}];
+
+		if (data.includeFinePlaster === 'yes') {
+			const qualityRates = { q1q2: 14, q3: 21, q4: 50 };
+			const qualityLabels = { q1q2: 'Q1 / Q2', q3: 'Q3', q4: 'Q4' };
+			const quality = String(data.finePlasterQualityLevel || '').trim().toLowerCase();
+			items.push({
+				index: items.length,
+				name: `Feinputz ${qualityLabels[quality] || 'Qualitätsstufe'} x ${area} m²`,
+				price: area * (qualityRates[quality] || 0)
+			});
+		}
+		totalPrice = items.reduce((sum, item) => sum + item.price, 0);
 	}
 
 	if (serviceLabel === SERVICE_LABELS.DRYWALL) {
-		totalPrice = area * 9;
-		itemName = `Trockenbau x ${area} m²`;
+		const plasteringRates = {
+			'grobeschicht-frei-hand': 12,
+			'lotgerecht-wasserwaage': 23
+		};
+		const plasteringLabels = {
+			'grobeschicht-frei-hand': 'Grobeschicht frei Hand, nicht lotgerecht',
+			'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht'
+		};
+		const qualityRates = { q1q2: 14, q3: 21, q4: 50 };
+		const qualityLabels = { q1q2: 'Q1 / Q2', q3: 'Q3', q4: 'Q4' };
+		items = [{
+			index: 0,
+			name: `Trockenbau x ${area} m²`,
+			price: area * 9
+		}];
+
+		if (data.includeWallPlastering === 'yes') {
+			const plasteringType = String(data.addonPlasteringType || '').trim().toLowerCase();
+			items.push({
+				index: items.length,
+				name: `Wandverputz: ${plasteringLabels[plasteringType] || 'Ausführungsart'} x ${area} m²`,
+				price: area * (plasteringRates[plasteringType] || 0)
+			});
+		}
+
+		if (data.includeFinePlaster === 'yes') {
+			const quality = String(data.finePlasterQualityLevel || '').trim().toLowerCase();
+			items.push({
+				index: items.length,
+				name: `Feinputz ${qualityLabels[quality] || 'Qualitätsstufe'} x ${area} m²`,
+				price: area * (qualityRates[quality] || 0)
+			});
+		}
+
+		totalPrice = items.reduce((sum, item) => sum + item.price, 0);
 	}
 
 	if (serviceLabel === SERVICE_LABELS.FENCE_ASSEMBLY) {
@@ -112,11 +165,7 @@ export function buildLocalCalculationFallback(data = {}) {
 		...data,
 		prices: {
 			totalPrice,
-			items: [{
-				index: 0,
-				name: itemName,
-				price: totalPrice
-			}]
+			items
 		}
 	};
 }

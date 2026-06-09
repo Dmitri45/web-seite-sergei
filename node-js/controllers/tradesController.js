@@ -38,6 +38,10 @@ function getWallPlasteringTypeLabel(plasteringType = '') {
 	return labels[String(plasteringType || '').trim().toLowerCase()] || 'Ausführungsart';
 }
 
+function isEnabled(value) {
+	return value === true || value === 'true' || value === 'yes' || value === 'on';
+}
+
 async function calculateTrades(req, res) {
 	try {
 		const formData = req.body || {};
@@ -50,24 +54,91 @@ async function calculateTrades(req, res) {
 			});
 		}
 
+		if (
+			isEnabled(formData.includeFinePlaster) &&
+			!String(formData.finePlasterQualityLevel || '').trim()
+		) {
+			return res.status(400).json({
+				error: 'Missing fine plaster quality',
+				message: 'Bitte wählen Sie die Qualitätsstufe für Feinputz.'
+			});
+		}
+
+		if (
+			mode === 'drywall' &&
+			isEnabled(formData.includeWallPlastering) &&
+			!String(formData.addonPlasteringType || '').trim()
+		) {
+			return res.status(400).json({
+				error: 'Missing wall plastering type',
+				message: 'Bitte wählen Sie die Ausführungsart für Wandverputz.'
+			});
+		}
+
 		const area = Number.parseFloat(String(formData.areaTotal || '0').replace(',', '.')) || 0;
-		let price = 0;
-		let itemName = '';
+		const items = [];
 
 		if (mode === 'feinputz') {
-			price = calculateFeinputzPrice(formData);
-			itemName = `${getFeinputzQualityLabel(formData.qualityLevel)} x ${area} m²`;
+			items.push({
+				index: items.length,
+				name: `Feinputz ${getFeinputzQualityLabel(formData.qualityLevel)} x ${area} m²`,
+				price: calculateFeinputzPrice(formData)
+			});
 		}
 
 		if (mode === 'wall-plastering') {
-			price = calculateWallPlasteringPrice(formData);
-			itemName = `${getWallPlasteringTypeLabel(formData.plasteringType)} x ${area} m²`;
+			items.push({
+				index: items.length,
+				name: `Wandverputz: ${getWallPlasteringTypeLabel(formData.plasteringType)} x ${area} m²`,
+				price: calculateWallPlasteringPrice(formData)
+			});
+
+			if (isEnabled(formData.includeFinePlaster)) {
+				const finePlasterData = {
+					...formData,
+					qualityLevel: formData.finePlasterQualityLevel
+				};
+				items.push({
+					index: items.length,
+					name: `Feinputz ${getFeinputzQualityLabel(formData.finePlasterQualityLevel)} x ${area} m²`,
+					price: calculateFeinputzPrice(finePlasterData)
+				});
+			}
 		}
 
 		if (mode === 'drywall') {
-			price = calculateTrockenbauPrice(formData);
-			itemName = `Trockenbau x ${area} m²`;
+			items.push({
+				index: items.length,
+				name: `Trockenbau x ${area} m²`,
+				price: calculateTrockenbauPrice(formData)
+			});
+
+			if (isEnabled(formData.includeWallPlastering)) {
+				const wallPlasteringData = {
+					...formData,
+					plasteringType: formData.addonPlasteringType
+				};
+				items.push({
+					index: items.length,
+					name: `Wandverputz: ${getWallPlasteringTypeLabel(formData.addonPlasteringType)} x ${area} m²`,
+					price: calculateWallPlasteringPrice(wallPlasteringData)
+				});
+			}
+
+			if (isEnabled(formData.includeFinePlaster)) {
+				const finePlasterData = {
+					...formData,
+					qualityLevel: formData.finePlasterQualityLevel
+				};
+				items.push({
+					index: items.length,
+					name: `Feinputz ${getFeinputzQualityLabel(formData.finePlasterQualityLevel)} x ${area} m²`,
+					price: calculateFeinputzPrice(finePlasterData)
+				});
+			}
 		}
+
+		const servicePrice = items.reduce((sum, item) => sum + item.price, 0);
 
 		let routeCosts = {
 			arrivalPrice: 0,
@@ -87,12 +158,8 @@ async function calculateTrades(req, res) {
 				arrivalPrice: routeCosts.arrivalPrice,
 				departurePrice: routeCosts.departurePrice,
 				travelPrice: routeCosts.travelPrice,
-				totalPrice: price + routeCosts.travelPrice,
-				items: [{
-					index: 0,
-					name: itemName,
-					price
-				}]
+				totalPrice: servicePrice + routeCosts.travelPrice,
+				items
 			}
 		});
 	} catch (error) {

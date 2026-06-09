@@ -508,6 +508,10 @@ body.page-calculate .hero-subtitle {
     padding: 7px 9px;
 }
 
+[data-trade-addon-options][hidden] {
+    display: none;
+}
+
 .calc-actions {
     margin-top: 16px;
     display: flex;

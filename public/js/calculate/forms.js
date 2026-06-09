@@ -44,6 +44,7 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 	initInlineAddressAutocompletes(newForm);
 	initFurnitureAddonToggles(newForm);
 	initTransportAssemblyAddonVisibility(newForm);
+	initTradeAddonToggles(newForm);
 	initServiceSwitchButtons(newForm, hooks.renderServiceSpecificFormFromStorage);
 
 	if (typeof hooks.initOfferRequestButtons === 'function') {
@@ -148,6 +149,53 @@ export function initFurnitureAddonToggles(containerElement) {
 		toggleInput.addEventListener('change', syncVisibility);
 		syncVisibility();
 	});
+}
+
+/**
+ * Shows trade addon configuration fields when their toggle is enabled.
+ * @param {HTMLElement|null} containerElement - Trade form containing addon toggles.
+ * @returns {void}
+ */
+export function initTradeAddonToggles(containerElement) {
+	if (!containerElement) return;
+
+	containerElement.querySelectorAll('[data-trade-addon-toggle]').forEach((toggleInput) => {
+		if (toggleInput.dataset.tradeAddonBound === '1') return;
+		toggleInput.dataset.tradeAddonBound = '1';
+
+		const optionsElement = containerElement.querySelector(`#${toggleInput.dataset.target}`);
+		if (!optionsElement) return;
+
+		const syncVisibility = () => {
+			const isEnabled = toggleInput.checked;
+			optionsElement.hidden = !isEnabled;
+			optionsElement.querySelectorAll('input, select, textarea').forEach((input) => {
+				input.disabled = !isEnabled;
+				input.required = isEnabled;
+				if (!isEnabled) input.value = '';
+			});
+		};
+
+		toggleInput.addEventListener('change', syncVisibility);
+		containerElement.addEventListener('reset', () => {
+			window.setTimeout(syncVisibility, 0);
+		});
+		syncVisibility();
+	});
+
+	const actionButton = containerElement.querySelector('#btn-continue, #btn-calculate');
+	if (actionButton && actionButton.dataset.tradeAddonValidationBound !== '1') {
+		actionButton.dataset.tradeAddonValidationBound = '1';
+		actionButton.addEventListener('click', (event) => {
+			const invalidInput = [...containerElement.querySelectorAll('[data-trade-addon-options] select:enabled')]
+				.find((input) => input.required && !input.value);
+			if (!invalidInput) return;
+
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			invalidInput.reportValidity();
+		}, true);
+	}
 }
 
 /**
