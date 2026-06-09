@@ -60,9 +60,9 @@ function isWithKerbstone(value) {
 /**
  * Calculates the price for fence assembly without materials.
  * Rules:
- * - First 2 fence elements: 200 € total
+ * - First 2 fence elements: 230 € total
  * - From the 3rd element: +80 € per element
- * - Optional Kantenstein/Bordstein: +8 € per meter
+ * - Optional Kantenstein/Bordstein: +14 € per meter
  *
  * @param {Object} formData
  * @param {string|number} [formData.fenceElementsCount]
@@ -77,14 +77,14 @@ function calculateFenceAssemblyPrice(formData = {}) {
   let fencePrice = 0;
 
   if (elementsCount > 0) {
-    fencePrice = 200;
+    fencePrice = 230;
     if (elementsCount > 2) {
       fencePrice += (elementsCount - 2) * 80;
     }
   }
 
   const kerbstonePrice = isWithKerbstone(formData.withKerbstone)
-    ? kerbstoneLengthM * 8
+    ? kerbstoneLengthM * 14
     : 0;
 
   return fencePrice + kerbstonePrice;

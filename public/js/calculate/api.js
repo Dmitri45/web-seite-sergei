@@ -82,10 +82,10 @@ export function buildLocalCalculationFallback(data = {}) {
 		const elementsCount = Math.max(0, Math.floor(Number.parseFloat(String(data.fenceElementsCount || '0').replace(',', '.')) || 0));
 		const kerbstoneLengthM = Math.max(0, Number.parseFloat(String(data.kerbstoneLengthM || '0').replace(',', '.')) || 0);
 		const fencePrice = elementsCount > 0
-			? 200 + Math.max(0, elementsCount - 2) * 80
+			? 230 + Math.max(0, elementsCount - 2) * 80
 			: 0;
 		const kerbstonePrice = String(data.withKerbstone || '').trim().toLowerCase() === 'with'
-			? kerbstoneLengthM * 8
+			? kerbstoneLengthM * 14
 			: 0;
 
 		return {

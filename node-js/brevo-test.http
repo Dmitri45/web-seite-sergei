@@ -14,19 +14,19 @@ Content-Type: application/json
   "notes": "Test Anfrage aus brevo-test.http",
   "transportation": "no",
   "prices": {
-    "gardenPrice": 520,
+    "gardenPrice": 610,
     "transportPrice": 0,
-    "totalPrice": 520,
+    "totalPrice": 610,
     "items": [
       {
         "index": 0,
         "name": "Zaunmontage x 5 Elemente",
-        "price": 440
+        "price": 470
       },
       {
         "index": 1,
         "name": "Kantenstein / Bordstein x 10 m",
-        "price": 80
+        "price": 140
       }
     ]
   },

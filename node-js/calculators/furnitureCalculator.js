@@ -54,10 +54,10 @@ function normalizeItem(raw = {}) {
  */
 function calcNewAssemblyItem(item) {
   const lengthPrice = byRange(item.lengthCm, [
-    { min: 50, max: 150, price: 15 },
-    { min: 150, max: 210, price: 25 },
-    { min: 210, max: 300, price: 30 },
-    { min: 300, max: 400, price: 40 }
+    { min: 50, max: 150, price: 40 },
+    { min: 150, max: 210, price: 50 },
+    { min: 210, max: 300, price: 55 },
+    { min: 300, max: 400, price: 60 }
   ]);
 
   const heightPrice = byRange(item.heightCm, [
@@ -67,24 +67,28 @@ function calcNewAssemblyItem(item) {
     { min: 200, max: 240, price: 5 }
   ]);
 
-  return lengthPrice + heightPrice + item.drawers * 5 + item.pullouts * 2 + item.lights * 2;
+  return lengthPrice + heightPrice + item.drawers * 8 + item.pullouts * 2 + item.lights * 9;
 }
 
 /**
  * Calculates one item for old furniture (abbau/aufbau).
- * Rule: items below 150 cm are not disassembled/assembled -> 0.
+ * Rule: items below 210 cm are transported without disassembly/assembly -> 0.
  * @param {{lengthCm:number,heightCm:number,drawers:number,pullouts:number,lights:number}} item
  * @param {'abbau'|'aufbau'} mode
  * @returns {number}
  */
 function calcOldItem(item, mode) {
-  if (item.lengthCm < 150) return 0;
+  if (item.lengthCm < 210) return 0;
 
-  const lengthPrice = byRange(item.lengthCm, [
-    { min: 150, max: 210, price: 15 },
-    { min: 210, max: 300, price: 15 },
-    { min: 300, max: 400, price: 15 }
-  ]);
+  const lengthPrice = mode === 'abbau'
+    ? byRange(item.lengthCm, [
+      { min: 210, max: 300, price: 15 },
+      { min: 300, max: 400, price: 20 }
+    ])
+    : byRange(item.lengthCm, [
+      { min: 210, max: 300, price: 45 },
+      { min: 300, max: 400, price: 50 }
+    ]);
 
   const heightPrice = byRange(item.heightCm, [
     { min: 100, max: 150, price: 5 },
@@ -92,10 +96,11 @@ function calcOldItem(item, mode) {
     { min: 200, max: 240, price: 5 }
   ]);
 
-  const drawerRate = mode === 'abbau' ? 0.5 : 1;
-  const pulloutRate = mode === 'abbau' ? 0.1 : 0.5;
+  const drawerRate = 1;
+  const pulloutRate = 0.5;
+  const lightRate = mode === 'abbau' ? 4 : 6;
 
-  return lengthPrice + heightPrice + item.drawers * drawerRate + item.pullouts * pulloutRate + item.lights * 2;
+  return lengthPrice + heightPrice + item.drawers * drawerRate + item.pullouts * pulloutRate + item.lights * lightRate;
 }
 
 /**

@@ -26,7 +26,7 @@ function buildFenceAssemblyItems(formData = {}) {
 
 	let fencePrice = 0;
 	if (elementsCount > 0) {
-		fencePrice = 200;
+		fencePrice = 230;
 		if (elementsCount > 2) {
 			fencePrice += (elementsCount - 2) * 80;
 		}
@@ -42,7 +42,7 @@ function buildFenceAssemblyItems(formData = {}) {
 		items.push({
 			index: 1,
 			name: `Kantenstein / Bordstein x ${kerbstoneLengthM} m`,
-			price: kerbstoneLengthM * 8
+			price: kerbstoneLengthM * 14
 		});
 	}
 
