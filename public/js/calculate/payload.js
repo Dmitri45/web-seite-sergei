@@ -66,6 +66,9 @@ export function addStandaloneTransportDataIfNeeded(data, state) {
 export function buildCalculationData(currentForm, state) {
 	const data = buildKitchenFormPayload(currentForm, state);
 	data.transportation = state.selectedTransportation;
+	if (state.selectedServiceArea?.coordinates) {
+		data.einsatzort = state.selectedServiceArea;
+	}
 
 	addAssemblyDataIfNeeded(data, state);
 	addTransportationDataIfNeeded(data, state);

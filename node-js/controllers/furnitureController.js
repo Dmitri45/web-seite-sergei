@@ -8,6 +8,7 @@ const {
 	calculateMovingHelpersPrice,
 	calculateMovingHelpersItems
 } = require('../calculators/furnitureCalculator');
+const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
 /**
  * Resolves furniture calculation mode from request payload.
@@ -78,10 +79,28 @@ async function calculateFurniture(req, res) {
 			});
 		}
 
+		let routeCosts = {
+			arrivalPrice: 0,
+			departurePrice: 0,
+			travelPrice: 0
+		};
+		if (
+			(mode === 'new-assembly' && formData.einsatzort) ||
+			(mode === 'moving-helpers' && formData.transportFrom && formData.transportTo)
+		) {
+			routeCosts = await getRouteCostBreakdown(formData, {
+				includeCompanyTravel: true,
+				includeTransport: false
+			});
+		}
+
 		return res.json({
 			...formData,
 			prices: {
-				totalPrice: price,
+				arrivalPrice: routeCosts.arrivalPrice,
+				departurePrice: routeCosts.departurePrice,
+				travelPrice: routeCosts.travelPrice,
+				totalPrice: price + routeCosts.travelPrice,
 				items
 			}
 		});

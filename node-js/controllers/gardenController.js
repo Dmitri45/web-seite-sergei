@@ -1,7 +1,7 @@
 const {
 	calculateFenceAssemblyPrice
 } = require('../calculators/gardenCalculator');
-const { getRouteMatrixAndCalculatePrice } = require('../calculators/transportCalculator');
+const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
 function toNumber(value) {
 	if (value === null || value === undefined) return 0;
@@ -62,22 +62,26 @@ async function calculateGarden(req, res) {
 		}
 
 		const gardenPrice = calculateFenceAssemblyPrice(formData);
-		let transportPrice = 0;
+		let routeCosts = {
+			arrivalPrice: 0,
+			departurePrice: 0,
+			travelPrice: 0,
+			transportPrice: 0
+		};
 
-		if (formData.transportFrom && formData.transportTo) {
-			try {
-				transportPrice = await getRouteMatrixAndCalculatePrice(formData);
-			} catch (_) {
-				transportPrice = 0;
-			}
+		if (formData.einsatzort || (formData.transportFrom && formData.transportTo)) {
+			routeCosts = await getRouteCostBreakdown(formData, {
+				includeCompanyTravel: true,
+				includeTransport: Boolean(formData.transportFrom && formData.transportTo)
+			});
 		}
 
 		const items = buildFenceAssemblyItems(formData);
-		if (transportPrice > 0) {
+		if (routeCosts.transportPrice > 0) {
 			items.push({
 				index: items.length,
 				name: 'Transport',
-				price: transportPrice
+				price: routeCosts.transportPrice
 			});
 		}
 
@@ -85,8 +89,11 @@ async function calculateGarden(req, res) {
 			...formData,
 			prices: {
 				gardenPrice,
-				transportPrice,
-				totalPrice: gardenPrice + transportPrice,
+				arrivalPrice: routeCosts.arrivalPrice,
+				departurePrice: routeCosts.departurePrice,
+				travelPrice: routeCosts.travelPrice,
+				transportPrice: routeCosts.transportPrice,
+				totalPrice: gardenPrice + routeCosts.transportPrice + routeCosts.travelPrice,
 				items
 			}
 		});

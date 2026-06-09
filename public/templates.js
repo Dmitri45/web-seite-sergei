@@ -66,6 +66,18 @@ function getYesNoLabel(value) {
 }
 
 /**
+ * Builds arrival and departure rows for calculation results.
+ * @param {Object} prices - Calculation price breakdown.
+ * @returns {Array<[string, number]>} Non-empty company travel rows.
+ */
+function getCompanyTravelRows(prices = {}) {
+	return [
+		['Anfahrt', prices.arrivalPrice],
+		['Abfahrt', prices.departurePrice]
+	].filter(([, value]) => Number(value || 0) > 0);
+}
+
+/**
  * Builds the result template for kitchen calculations.
  * @param {Object} data - Kitchen calculation result.
  * @returns {string} HTML template.
@@ -76,7 +88,8 @@ function getKitchenResultTemplate(data) {
 	const priceRows = [
 		['Montage / Aufbau', prices.assemblyPrice],
 		['Abbau', prices.disassemblyPrice],
-		['Transport', prices.transportPrice]
+		['Transport', prices.transportPrice],
+		...getCompanyTravelRows(prices)
 	].filter(([, value]) => Number(value || 0) > 0);
 
 	return `
@@ -116,6 +129,7 @@ function getFurnitureResultTemplate(data) {
 	const prices = data?.prices || {};
 	const totalPrice = prices.totalPrice || 0;
 	const items = Array.isArray(prices.items) ? prices.items : [];
+	const travelRows = getCompanyTravelRows(prices);
 
 	return `
 		<div id="result-display" class="result-display">
@@ -133,6 +147,12 @@ function getFurnitureResultTemplate(data) {
 						<div class="result-breakdown__row">
 							<span>${item.name || `Möbelstück ${index + 1}`}</span>
 							<strong>${formatEuro(item.price)}</strong>
+						</div>
+					`).join('')}
+					${travelRows.map(([label, value]) => `
+						<div class="result-breakdown__row">
+							<span>${label}</span>
+							<strong>${formatEuro(value)}</strong>
 						</div>
 					`).join('')}
 				</div>
@@ -154,6 +174,7 @@ function getServiceResultTemplate(data) {
 	const prices = data?.prices || {};
 	const totalPrice = prices.totalPrice || 0;
 	const items = Array.isArray(prices.items) ? prices.items : [];
+	const travelRows = getCompanyTravelRows(prices);
 
 	return `
 		<div id="result-display" class="result-display">
@@ -171,6 +192,12 @@ function getServiceResultTemplate(data) {
 						<div class="result-breakdown__row">
 							<span>${item.name || 'Position'}</span>
 							<strong>${formatEuro(item.price)}</strong>
+						</div>
+					`).join('')}
+					${travelRows.map(([label, value]) => `
+						<div class="result-breakdown__row">
+							<span>${label}</span>
+							<strong>${formatEuro(value)}</strong>
 						</div>
 					`).join('')}
 				</div>

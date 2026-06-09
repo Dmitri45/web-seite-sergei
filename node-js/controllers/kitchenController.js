@@ -3,7 +3,7 @@ const {
 	calculateTotalForUsedKitchen,
 	calculateKitchenDisassembly
 } = require('../calculators/kitchenCalculator');
-const { getRouteMatrixAndCalculatePrice } = require('../calculators/transportCalculator');
+const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
 /**
  * Handles kitchen price calculation (assembly and transport).
@@ -18,6 +18,11 @@ async function calculateKitchen(req, res) {
 		const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
 		const isKitchenDismantlingService = serviceLabel === 'küchendemontage';
 		const isKitchenTransportService = serviceLabel === 'küchentransport';
+		const includesCompanyTravel = [
+			'küchenmontage',
+			'küchenanpassung',
+			'küchentransport'
+		].includes(serviceLabel);
 		const hasDestinationAssembly = formData.kitchenAssembleAtDestination === 'yes';
 		const condition = formData.kitchenCondition || formData.condition;
 		const kitchenPrice = (isKitchenDismantlingService && !hasDestinationAssembly) || (isKitchenTransportService && !hasDestinationAssembly)
@@ -36,22 +41,29 @@ async function calculateKitchen(req, res) {
 			disassemblyPrice = calculateKitchenDisassembly(formData).price;
 		}
 
-		let transportPrice = 0;
-		if (formData.transportFrom && formData.transportTo) {
-			try {
-				transportPrice = await getRouteMatrixAndCalculatePrice(formData);
-			} catch (e) {
-				transportPrice = 0;
-			}
+		let routeCosts = {
+			arrivalPrice: 0,
+			departurePrice: 0,
+			travelPrice: 0,
+			transportPrice: 0
+		};
+		if (formData.einsatzort || (formData.transportFrom && formData.transportTo)) {
+			routeCosts = await getRouteCostBreakdown(formData, {
+				includeCompanyTravel: includesCompanyTravel,
+				includeTransport: Boolean(formData.transportFrom && formData.transportTo)
+			});
 		}
 
-		const totalPrice = kitchenPrice + disassemblyPrice + transportPrice;
+		const totalPrice = kitchenPrice + disassemblyPrice + routeCosts.transportPrice + routeCosts.travelPrice;
 		const result = {
 			...formData,
 			prices: {
 				assemblyPrice: kitchenPrice,
 				disassemblyPrice,
-				transportPrice,
+				arrivalPrice: routeCosts.arrivalPrice,
+				departurePrice: routeCosts.departurePrice,
+				travelPrice: routeCosts.travelPrice,
+				transportPrice: routeCosts.transportPrice,
 				totalPrice
 			}
 		};

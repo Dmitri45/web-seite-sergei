@@ -25,6 +25,7 @@ const BASE_COORDS = [
     Number(process.env.COMPANY_LON) || 6.779844555473214,
     Number(process.env.COMPANY_LAT) || 51.56523808298011
 ];
+const PRICE_PER_KM = 2.1;
 
 /**
  * Normalizes an address point into OpenRouteService coordinates.
@@ -74,9 +75,18 @@ function calculateTransportPrice(distances) {
     let total = 0;
     for (let i = 0; i < distances.length - 1; i++) {
         const segment = distances[i][i + 1];
-        total += segment * 2.1;
+        total += segment * PRICE_PER_KM;
     }
     return total;
+}
+
+/**
+ * Converts a route distance into a rounded price.
+ * @param {number} distanceKm - Route distance in kilometers.
+ * @returns {number} Rounded route price.
+ */
+function calculateDistancePrice(distanceKm) {
+    return Number((Number(distanceKm || 0) * PRICE_PER_KM).toFixed(2));
 }
 
 /**
@@ -167,8 +177,77 @@ async function getRouteMatrixAndCalculatePrice(object) {
     return Number(total.toFixed(2)); 
 }
 
+/**
+ * Calculates company travel and optional customer transport with one ORS matrix request.
+ * For a regular service, company travel uses the Einsatzort in both directions.
+ * For a transport service, arrival ends at the first address and departure starts at the last address.
+ * @param {Object} object - Calculation payload with Einsatzort and/or transport points.
+ * @param {Object} [options={}] - Route calculation options.
+ * @param {boolean} [options.includeCompanyTravel=true] - Whether to price arrival and departure.
+ * @param {boolean} [options.includeTransport=true] - Whether to price the route between customer addresses.
+ * @returns {Promise<{arrivalPrice: number, departurePrice: number, travelPrice: number, transportPrice: number}>}
+ */
+async function getRouteCostBreakdown(object = {}, options = {}) {
+    const includeCompanyTravel = options.includeCompanyTravel !== false;
+    const includeTransport = options.includeTransport !== false;
+    const servicePoint = normalizeRoutePoint(object.einsatzort);
+    const transportPoints = getClientPoints(object);
+    const hasTransportEndpoints = transportPoints.length >= 2;
+
+    const locations = [BASE_COORDS];
+    let servicePointIndex = -1;
+    if (servicePoint) {
+        servicePointIndex = locations.push(servicePoint) - 1;
+    }
+
+    const transportStartIndex = locations.length;
+    locations.push(...transportPoints);
+
+    if (locations.length < 2) {
+        return {
+            arrivalPrice: 0,
+            departurePrice: 0,
+            travelPrice: 0,
+            transportPrice: 0
+        };
+    }
+
+    const distances = await fetchORSMatrixForLocations(locations);
+    const arrivalTargetIndex = servicePointIndex >= 0
+        ? servicePointIndex
+        : transportStartIndex;
+    const departureSourceIndex = servicePointIndex >= 0
+        ? servicePointIndex
+        : transportStartIndex + transportPoints.length - 1;
+
+    const arrivalPrice = includeCompanyTravel
+        ? calculateDistancePrice(distances[0][arrivalTargetIndex])
+        : 0;
+    const departurePrice = includeCompanyTravel
+        ? calculateDistancePrice(distances[departureSourceIndex][0])
+        : 0;
+    let transportPrice = 0;
+
+    if (includeTransport && hasTransportEndpoints) {
+        for (let index = 0; index < transportPoints.length - 1; index++) {
+            const fromIndex = transportStartIndex + index;
+            const toIndex = fromIndex + 1;
+            transportPrice += calculateDistancePrice(distances[fromIndex][toIndex]);
+        }
+        transportPrice = Number(transportPrice.toFixed(2));
+    }
+
+    return {
+        arrivalPrice,
+        departurePrice,
+        travelPrice: Number((arrivalPrice + departurePrice).toFixed(2)),
+        transportPrice
+    };
+}
+
 module.exports = {
 	getRouteMatrixAndCalculatePrice,
+	getRouteCostBreakdown,
 	getRouteDistanceFromBaseKm,
 	getRouteDistancesFromBaseKm
 };

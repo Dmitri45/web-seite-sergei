@@ -45,6 +45,7 @@ export function getCalculationEndpoint(data = {}) {
 export function buildLocalCalculationFallback(data = {}) {
 	const serviceLabel = String(data.serviceLabel || '').trim();
 	if (!TRADES_CALCULATION_SERVICE_LABELS.has(serviceLabel) && !GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) return null;
+	if (data.einsatzort || data.transportFrom || data.transportTo) return null;
 
 	const area = Number.parseFloat(String(data.areaTotal || '0').replace(',', '.')) || 0;
 	let totalPrice = 0;

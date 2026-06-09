@@ -3,6 +3,7 @@ const {
 	calculateWallPlasteringPrice,
 	calculateTrockenbauPrice
 } = require('../calculators/tradesCalculator');
+const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
 function resolveTradesMode(formData = {}) {
 	const rawMode = String(formData.mode || formData.tradesMode || '').trim().toLowerCase();
@@ -68,10 +69,25 @@ async function calculateTrades(req, res) {
 			itemName = `Trockenbau x ${area} m²`;
 		}
 
+		let routeCosts = {
+			arrivalPrice: 0,
+			departurePrice: 0,
+			travelPrice: 0
+		};
+		if (formData.einsatzort) {
+			routeCosts = await getRouteCostBreakdown(formData, {
+				includeCompanyTravel: true,
+				includeTransport: false
+			});
+		}
+
 		return res.json({
 			...formData,
 			prices: {
-				totalPrice: price,
+				arrivalPrice: routeCosts.arrivalPrice,
+				departurePrice: routeCosts.departurePrice,
+				travelPrice: routeCosts.travelPrice,
+				totalPrice: price + routeCosts.travelPrice,
 				items: [{
 					index: 0,
 					name: itemName,
