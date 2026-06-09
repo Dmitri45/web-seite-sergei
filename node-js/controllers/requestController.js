@@ -11,6 +11,13 @@ async function sendRequest(req, res) {
 			});
 		}
 
+		if (payload.requestType === 'offer' && payload.privacyPolicyAccepted !== true) {
+			return res.status(400).json({
+				ok: false,
+				error: 'Privacy policy confirmation is required'
+			});
+		}
+
 		const { result } = await sendRequestEmail(payload);
 
 		return res.json({

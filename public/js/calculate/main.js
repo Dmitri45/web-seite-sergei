@@ -733,6 +733,15 @@ function openOfferRequestForm(baseData) {
 	if (!form) return;
 	calcState.selectedOfferAddress = '';
 
+	const privacyCheckbox = form.querySelector('#offerPrivacyAccepted');
+	const submitButton = form.querySelector('button[type="submit"]');
+	const syncSubmitAvailability = () => {
+		if (submitButton) submitButton.disabled = !privacyCheckbox?.checked;
+	};
+
+	privacyCheckbox?.addEventListener('change', syncSubmitAvailability);
+	syncSubmitAvailability();
+
 	const offerAddressAutocomplete = createAddressAutocomplete('offerAddressAutocomplete');
 	offerAddressAutocomplete.on('select', (location) => {
 		calcState.selectedOfferAddress = location?.properties?.formatted || '';
@@ -740,6 +749,11 @@ function openOfferRequestForm(baseData) {
 
 	form.addEventListener('submit', async (event) => {
 		event.preventDefault();
+
+		if (!privacyCheckbox?.checked) {
+			privacyCheckbox?.reportValidity();
+			return;
+		}
 
 		const contact = collectOfferContactData(form);
 		if (!contact.address) {
@@ -752,6 +766,7 @@ function openOfferRequestForm(baseData) {
 			: { value: baseData };
 
 		resultObject.customer = contact;
+		resultObject.privacyPolicyAccepted = true;
 
 		if (resultObject === calcState.latestCalculationResult) {
 			calcState.latestCalculationResult = resultObject;

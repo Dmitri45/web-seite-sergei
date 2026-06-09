@@ -204,6 +204,56 @@ body.page-calculate .hero-subtitle {
     margin-right: auto;
 }
 
+.offer-request-form {
+    width: min(100%, 700px);
+    padding: 26px;
+}
+
+.offer-request-form .calc-grid {
+    gap: 16px;
+    margin-top: 14px;
+}
+
+.offer-request-form .field input {
+    height: 46px;
+}
+
+.privacy-confirmation {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.privacy-confirmation input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.privacy-confirmation a {
+    color: var(--primary);
+    font-weight: 600;
+    text-underline-offset: 2px;
+}
+
+.privacy-confirmation a:hover {
+    color: var(--accent);
+}
+
+.offer-request-form .btn-main:disabled {
+    background: #9aa6a1;
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
 .calc-card h2 {
     margin: 0 0 6px;
     font-size: 16px;

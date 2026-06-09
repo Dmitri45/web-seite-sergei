@@ -2313,7 +2313,7 @@ function getRequestSentTemplate(data = {}) {
 function getOfferRequestTemplate() {
 	return `
 		<div id="offer-request-block" class="result-display">
-			<form id="offerRequestForm" class="calc-card">
+			<form id="offerRequestForm" class="calc-card offer-request-form">
 				<h2>Angebot anfordern</h2>
 				<p>Bitte hinterlassen Sie Ihre Kontaktdaten für ein persönliches Angebot.</p>
 
@@ -2344,8 +2344,17 @@ function getOfferRequestTemplate() {
 					</div>
 				</div>
 
+				<label class="privacy-confirmation" for="offerPrivacyAccepted">
+					<input id="offerPrivacyAccepted" name="privacyPolicyAccepted" type="checkbox" required>
+					<span>
+						Ich habe die
+						<a href="datenschutzerklaerung.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>
+						zur Kenntnis genommen.
+					</span>
+				</label>
+
 				<div class="calc-actions">
-					<button class="btn-main" type="submit">Angebot anfordern</button>
+					<button class="btn-main" type="submit" disabled>Angebot anfordern</button>
 				</div>
 			</form>
 		</div>
