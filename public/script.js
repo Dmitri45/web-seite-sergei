@@ -71,10 +71,10 @@ function initMobileNavDialog() {
 		const navLogo = document.createElement('a');
 		navLogo.className = 'nav-logo';
 		navLogo.href = 'index.html';
-		navLogo.setAttribute('aria-label', 'S.K. SERVICE Startseite');
+		navLogo.setAttribute('aria-label', 'S.K SERVICE Startseite');
 		navLogo.innerHTML = `
-			<img class="logo_img" src="img/logo_no_background.png" alt="S.K. SERVICE Logo">
-			<span>S.K. SERVICE</span>
+			<img class="logo_img" src="img/logo_no_background.png" alt="S.K SERVICE Logo">
+			<span>S.K SERVICE</span>
 		`;
 		navWrap.appendChild(navLogo);
 	}
@@ -98,8 +98,8 @@ function initMobileNavDialog() {
 		dialog.innerHTML = `
 			<div class="mobile-nav-dialog__bar">
 				<a class="mobile-nav-dialog__logo" href="index.html">
-					<img class="logo_img" src="img/logo_no_background.png" alt="S.K. SERVICE Logo">
-					<span>S.K. SERVICE</span>
+					<img class="logo_img" src="img/logo_no_background.png" alt="S.K SERVICE Logo">
+					<span>S.K SERVICE</span>
 				</a>
 				<button class="mobile-nav-dialog__close" type="button" aria-label="Menü schließen">×</button>
 			</div>

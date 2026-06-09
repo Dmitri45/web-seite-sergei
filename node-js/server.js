@@ -39,5 +39,5 @@ app.get(/.*/, (req, res) => {
 });
 
 app.listen(PORT, HOST, () => {
-  console.log(`S.K. SERVICE server listening on http://${HOST}:${PORT}`);
+  console.log(`S.K SERVICE server listening on http://${HOST}:${PORT}`);
 });

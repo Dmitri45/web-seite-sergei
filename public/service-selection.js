@@ -175,7 +175,7 @@
         const heroTitle = document.querySelector('.hero-title');
         if (heroTitle && payload.label) {
             heroTitle.textContent = payload.label;
-            document.title = `${payload.label} – S.K. SERVICE`;
+            document.title = `${payload.label} – S.K SERVICE`;
         }
 
         const heroBg = document.querySelector('.hero-bg');

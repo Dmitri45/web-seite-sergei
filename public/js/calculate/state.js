@@ -90,5 +90,5 @@ export function applySelectedServiceData(serviceData) {
 			if (asideDetails.subitems[index]) item.textContent = asideDetails.subitems[index];
 		});
 	}
-	if (serviceData.label) document.title = `${serviceData.label} – S.K. SERVICE`;
+	if (serviceData.label) document.title = `${serviceData.label} – S.K SERVICE`;
 }

@@ -1,6 +1,6 @@
 const { BrevoClient } = require('@getbrevo/brevo');
 
-const DEFAULT_SENDER_NAME = 'S.K. SERVICE';
+const DEFAULT_SENDER_NAME = 'S.K SERVICE';
 const DEFAULT_SUBJECT = 'Neue Anfrage von der Website';
 
 function getRequiredEnv(name) {
