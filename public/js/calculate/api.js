@@ -144,16 +144,17 @@ export async function postCalculation(data) {
 /**
  * Checks whether the selected Einsatzort is inside the service radius.
  * @param {{address?: string, coordinates?: {lat: number, lon: number}}} einsatzort - Selected Geoapify address point.
+ * @param {string} serviceLabel - Selected service label used to resolve the allowed radius.
  * @returns {Promise<{allowed: boolean, distanceKm?: number, radiusKm?: number, message?: string}>} Service area check result.
  * @throws {Error} When the backend responds with a non-2xx status.
  */
-export async function postServiceAreaCheck(einsatzort) {
+export async function postServiceAreaCheck(einsatzort, serviceLabel = '') {
 	const response = await fetch(SERVICE_AREA_CHECK_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ einsatzort })
+		body: JSON.stringify({ einsatzort, serviceLabel })
 	});
 
 	const result = await response.json().catch(() => ({}));
@@ -168,16 +169,17 @@ export async function postServiceAreaCheck(einsatzort) {
 /**
  * Checks multiple transport addresses with one backend request.
  * @param {Array<{address?: string, role?: string, coordinates?: {lat: number, lon: number}}>} einsatzorte - Selected route endpoints.
+ * @param {string} serviceLabel - Selected service label used to resolve the allowed radius.
  * @returns {Promise<{allowed: boolean, results?: Array<Object>, message?: string}>} Service area check result.
  * @throws {Error} When the backend responds with a non-2xx status.
  */
-export async function postServiceAreaBatchCheck(einsatzorte) {
+export async function postServiceAreaBatchCheck(einsatzorte, serviceLabel = '') {
 	const response = await fetch(SERVICE_AREA_CHECK_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ einsatzorte })
+		body: JSON.stringify({ einsatzorte, serviceLabel })
 	});
 
 	const result = await response.json().catch(() => ({}));

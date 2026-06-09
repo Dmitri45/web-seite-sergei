@@ -107,7 +107,8 @@ async function validateServiceAreaBeforeContinue(formElement) {
 	if (!calcState.selectedServiceArea?.coordinates) return true;
 
 	try {
-		const result = await postServiceAreaCheck(calcState.selectedServiceArea);
+		const serviceLabel = getSelectedServiceData()?.label?.trim() || '';
+		const result = await postServiceAreaCheck(calcState.selectedServiceArea, serviceLabel);
 		if (result.allowed) return true;
 
 		markServiceAreaDenied(
@@ -161,10 +162,11 @@ async function validateTransportEndpointServiceArea({
 	}
 
 	try {
+		const serviceLabel = getSelectedServiceData()?.label?.trim() || '';
 		const result = await postServiceAreaBatchCheck([
 			{ ...fromPoint, role: 'from' },
 			{ ...toPoint, role: 'to' }
-		]);
+		], serviceLabel);
 		if (result.allowed) return true;
 
 		const failedFrom = result.results?.some(point => point.role === 'from' && point.allowed === false);
