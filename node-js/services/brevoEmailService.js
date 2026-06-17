@@ -91,13 +91,10 @@ function formatChoice(value) {
 }
 
 const FIELD_LABELS = {
-	requestType: 'Anfrage-Typ',
 	serviceLabel: 'Service',
-	mode: 'Berechnungsmodus',
 	date: 'Termin',
 	timeWindow: 'Zeitfenster',
 	address: 'Besichtigungsort',
-	privacyPolicyAccepted: 'Datenschutzerklärung zur Kenntnis genommen',
 	kitchenCondition: 'Küchenzustand',
 	condition: 'Küchenzustand',
 	kitchenType: 'Küchentyp',
@@ -167,6 +164,11 @@ const FIELD_LABELS = {
 };
 
 const SKIPPED_DETAIL_KEYS = new Set([
+	'requestType',
+	'submittedAt',
+	'source',
+	'mode',
+	'privacyPolicyAccepted',
 	'customer',
 	'prices',
 	'moebelstuecke',
@@ -251,11 +253,9 @@ function buildDetailsHtml(payload = {}) {
 	const renderedKeys = new Set();
 	const priorityKeys = [
 		'serviceLabel',
-		'requestType',
 		'date',
 		'timeWindow',
 		'address',
-		'privacyPolicyAccepted',
 		'kitchenCondition',
 		'condition',
 		'kitchenType',
@@ -340,8 +340,7 @@ function buildTemplateParams(payload = {}) {
 			detailsHtml: buildDetailsHtml(payload),
 			furnitureHtml: buildFurnitureHtml(payload),
 			notesHtml: sectionText(payload.notes),
-			pricesHtml: payload.prices ? buildPricesHtml(payload.prices) : '',
-			submittedAt: payload.submittedAt || new Date().toISOString()
+			pricesHtml: payload.prices ? buildPricesHtml(payload.prices) : ''
 		}
 	};
 }
