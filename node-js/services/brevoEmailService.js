@@ -44,7 +44,8 @@ function formatEuro(value) {
 
 function formatValue(value) {
 	if (value === null || value === undefined || value === '') return '';
-	if (typeof value === 'object') return escapeHtml(JSON.stringify(value));
+	if (typeof value === 'boolean') return value ? 'Ja' : 'Nein';
+	if (typeof value === 'object') return escapeHtml(JSON.stringify(value, null, 2));
 	return escapeHtml(value);
 }
 
@@ -57,6 +58,166 @@ function row(label, value) {
 function sectionText(value) {
 	if (!value) return '';
 	return `<div style="background:#fff;padding:12px;border-radius:8px;white-space:pre-wrap;">${escapeHtml(value)}</div>`;
+}
+
+function formatChoice(value) {
+	const choices = {
+		yes: 'Ja',
+		no: 'Nein',
+		with: 'Ja',
+		without: 'Nein',
+		true: 'Ja',
+		false: 'Nein',
+		morning: 'Vormittag',
+		afternoon: 'Nachmittag',
+		evening: 'Abend',
+		new: 'Neu',
+		used: 'Bestehend / gebraucht',
+		dismantle: 'Abbau',
+		assemble: 'Aufbau',
+		both: 'Abbau und Aufbau',
+		none: 'Nicht erforderlich',
+		q1q2: 'Q1 / Q2',
+		q3: 'Q3',
+		q4: 'Q4',
+		'zeile': 'I-Form',
+		'l-form': 'L-Form',
+		'u-form': 'U-Form',
+		'grobeschicht-frei-hand': 'Grobeschicht frei Hand, nicht lotgerecht',
+		'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht'
+	};
+	const normalized = String(value ?? '').trim();
+	return choices[normalized] || value;
+}
+
+const FIELD_LABELS = {
+	requestType: 'Anfrage-Typ',
+	serviceLabel: 'Service',
+	mode: 'Berechnungsmodus',
+	date: 'Termin',
+	timeWindow: 'Zeitfenster',
+	address: 'Besichtigungsort',
+	privacyPolicyAccepted: 'Datenschutzerklärung zur Kenntnis genommen',
+	kitchenCondition: 'Küchenzustand',
+	condition: 'Küchenzustand',
+	kitchenType: 'Küchentyp',
+	upperCabinets: 'Anzahl Oberschränke',
+	lowerCabinets: 'Anzahl Unterschränke',
+	smallCabinets: 'Kleine Schränke',
+	largeCabinets: 'Große Schränke',
+	drawers: 'Schubladen',
+	assembly: 'Aufbau erforderlich',
+	dismantling: 'Abbau erforderlich',
+	abbau: 'Abbau erforderlich',
+	kitchenNeedsDismantling: 'Küche vor Transport abbauen',
+	kitchenAssembleAtDestination: 'Aufbau am neuen Ort',
+	worktopAdjust: 'Arbeitsplatte zuschneiden/anpassen',
+	worktopMaterial: 'Arbeitsplatten-Material',
+	worktopPickup: 'Arbeitsplatte vorhanden/Abholung',
+	transportation: 'Transport',
+	transportFromAddress: 'Transport von',
+	transportToAddress: 'Transport nach',
+	distanceToEntrance: 'Entfernung zum Eingang',
+	helpersCount: 'Helfer',
+	workHours: 'Stunden',
+	additionalNotes: 'Zusätzliche Hinweise',
+	areaTotal: 'Fläche',
+	length: 'Länge',
+	width: 'Breite',
+	height: 'Höhe',
+	currentHeight: 'Aktuelle Höhe',
+	targetHeight: 'Zielhöhe',
+	currentWidth: 'Aktuelle Breite',
+	targetWidth: 'Zielbreite',
+	currentLength: 'Aktuelle Länge',
+	currentShapeMode: 'Aktuelle Form-Erfassung',
+	currentShapeType: 'Aktuelle Form',
+	targetShapeMode: 'Zielform-Erfassung',
+	targetShapeType: 'Zielform',
+	qualityLevel: 'Qualitätsstufe',
+	finePlasterQualityLevel: 'Qualitätsstufe Feinputz',
+	plasteringType: 'Ausführungsart',
+	addonPlasteringType: 'Ausführungsart Wandverputz',
+	includeFinePlaster: 'Feinputz zusätzlich',
+	includeWallPlastering: 'Wandverputz zusätzlich',
+	withSanding: 'Schleifen',
+	withPressureWashing: 'Hochdruckreinigung',
+	roofCoating: 'Dachbeschichtung',
+	withGroundPreparation: 'Bodenvorbereitung',
+	groundType: 'Untergrund',
+	distanceToGarden: 'Entfernung zum Garten',
+	withDisposal: 'Entsorgung',
+	hedgeHeight: 'Heckenhöhe',
+	hedgeLength: 'Heckenlänge',
+	hedgeWidth: 'Heckenbreite',
+	rootDiameter: 'Wurzeldurchmesser',
+	treeDiameter: 'Baumdurchmesser',
+	withRootRemoval: 'Wurzelentfernung',
+	estimatedVolume: 'Geschätztes Volumen',
+	currentGroundType: 'Aktueller Untergrund',
+	fenceElementsCount: 'Zaunelemente',
+	withKerbstone: 'Kantenstein / Bordstein',
+	kerbstoneLengthM: 'Kantenstein Länge',
+	closedSides: 'Geschlossene Seiten',
+	workDescription: 'Arbeitsbeschreibung',
+	branchThickness: 'Astdicke',
+	branchLength: 'Astlänge',
+	branchCount: 'Anzahl Äste',
+	notes: 'Notizen'
+};
+
+const SKIPPED_DETAIL_KEYS = new Set([
+	'customer',
+	'prices',
+	'moebelstuecke',
+	'transportFrom',
+	'transportVia',
+	'transportTo',
+	'einsatzort'
+]);
+
+function fieldLabel(key) {
+	if (FIELD_LABELS[key]) return FIELD_LABELS[key];
+	const indexedMatch = String(key || '').match(/^(transportItem|furnitureItem)([A-Za-z]+)_(\d+)$/);
+	if (indexedMatch) {
+		const [, group, field, rawIndex] = indexedMatch;
+		const groupLabel = group === 'transportItem' ? 'Transportposition' : 'Möbelstück';
+		const index = Number.parseInt(rawIndex, 10) + 1;
+		const fieldLabels = {
+			Name: 'Name',
+			Length: 'Länge',
+			Width: 'Breite',
+			Height: 'Höhe',
+			Drawers: 'Schubladen',
+			Pullouts: 'Ausziehboden',
+			Lighting: 'Beleuchtung',
+			AssemblyNeed: 'Ab-/Aufbau'
+		};
+		return `${groupLabel} ${index}: ${fieldLabels[field] || field}`;
+	}
+	return String(key || '')
+		.replace(/_/g, ' ')
+		.replace(/([a-z])([A-Z])/g, '$1 $2')
+		.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function formatFieldValue(key, value) {
+	if (value === null || value === undefined || value === '') return '';
+	if (key === 'areaTotal') return `${value} m²`;
+	if (key === 'length' || key === 'width' || key === 'height') return `${value} m`;
+	if (key.endsWith('Height') || key.endsWith('Width') || key.endsWith('Length')) return `${value} m`;
+	if (key === 'distanceToGarden' || key === 'distanceToEntrance') return `${value} m`;
+	if (key === 'kerbstoneLengthM') return `${value} m`;
+	if (typeof value === 'object') {
+		if (value.address) return value.address;
+		return JSON.stringify(value, null, 2);
+	}
+	return formatChoice(value);
+}
+
+function detailRow(key, value, renderedKeys) {
+	renderedKeys.add(key);
+	return row(fieldLabel(key), formatFieldValue(key, value));
 }
 
 function buildCustomerHtml(customer = {}) {
@@ -87,31 +248,50 @@ function buildTransportHtml(payload = {}) {
 }
 
 function buildDetailsHtml(payload = {}) {
-	const rows = [
-		row('Service', payload.serviceLabel),
-		row('Anfrage-Typ', payload.requestType),
-		row('Termin', payload.date),
-		row('Zeitfenster', payload.timeWindow),
-		row('Besichtigungsort', payload.address),
-		row('Küche vor Transport abbauen', payload.kitchenNeedsDismantling),
-		row('Aufbau am neuen Ort', payload.kitchenAssembleAtDestination),
-		row('Fläche', payload.areaTotal ? `${payload.areaTotal} m²` : ''),
-		row('Länge', payload.length ? `${payload.length} m` : ''),
-		row('Breite', payload.width ? `${payload.width} m` : ''),
-		row('Berechnete Fläche', !payload.areaTotal && payload.length && payload.width ? `${Number(payload.length) * Number(payload.width)} m²` : ''),
-		row('Qualitätsstufe', payload.qualityLevel),
-		row('Ausführungsart', payload.plasteringType),
-		row('Helfer', payload.helpersCount),
-		row('Stunden', payload.workHours),
-		row('Transport von', payload.transportFromAddress),
-		row('Transport nach', payload.transportToAddress),
-		row('Zaunelemente', payload.fenceElementsCount),
-		row('Kantenstein / Bordstein', payload.withKerbstone),
-		row('Kantenstein Länge', payload.kerbstoneLengthM ? `${payload.kerbstoneLengthM} m` : '')
+	const renderedKeys = new Set();
+	const priorityKeys = [
+		'serviceLabel',
+		'requestType',
+		'date',
+		'timeWindow',
+		'address',
+		'privacyPolicyAccepted',
+		'kitchenCondition',
+		'condition',
+		'kitchenType',
+		'upperCabinets',
+		'lowerCabinets',
+		'kitchenNeedsDismantling',
+		'kitchenAssembleAtDestination',
+		'worktopAdjust',
+		'worktopPickup',
+		'transportation',
+		'areaTotal',
+		'length',
+		'width',
+		'height',
+		'qualityLevel',
+		'plasteringType',
+		'helpersCount',
+		'workHours',
+		'fenceElementsCount',
+		'withKerbstone',
+		'kerbstoneLengthM'
 	];
+
+	const rows = priorityKeys.map(key => detailRow(key, payload[key], renderedKeys));
+
+	if (!payload.areaTotal && payload.length && payload.width) {
+		rows.push(row('Berechnete Fläche', `${Number(payload.length) * Number(payload.width)} m²`));
+	}
 
 	const transportHtml = buildTransportHtml(payload);
 	if (transportHtml) rows.push(transportHtml);
+
+	Object.entries(payload).forEach(([key, value]) => {
+		if (renderedKeys.has(key) || SKIPPED_DETAIL_KEYS.has(key)) return;
+		rows.push(detailRow(key, value, renderedKeys));
+	});
 
 	return rows.join('');
 }
