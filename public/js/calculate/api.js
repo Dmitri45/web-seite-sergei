@@ -194,7 +194,7 @@ export async function postCalculation(data) {
 
 /**
  * Checks whether the selected Einsatzort is inside the service radius.
- * @param {{address?: string, coordinates?: {lat: number, lon: number}}} einsatzort - Selected Geoapify address point.
+ * @param {{address?: string, coordinates?: {lat: number, lon: number}}} einsatzort - Selected address point.
  * @param {string} serviceLabel - Selected service label used to resolve the allowed radius.
  * @returns {Promise<{allowed: boolean, distanceKm?: number, radiusKm?: number, message?: string}>} Service area check result.
  * @throws {Error} When the backend responds with a non-2xx status.

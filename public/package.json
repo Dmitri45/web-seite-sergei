@@ -1,5 +1,3 @@
 {
-  "dependencies": {
-    "@geoapify/geocoder-autocomplete": "^3.0.1"
-  }
+  "dependencies": {}
 }

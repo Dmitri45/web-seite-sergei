@@ -465,17 +465,8 @@ function mapLocationToTransportPoint(location) {
 }
 
 function createAddressAutocomplete(elementId) {
-	return new autocomplete.GeocoderAutocomplete(
-		document.getElementById(elementId),
-		'c9acb6a7c41d4573814c3954fd7a232c',
-		{
-			lang: 'de',
-			filter: { countrycode: ['de'] },
-			limit: 5,
-			debounceDelay: 500,
-			addDetails: false
-		}
-	);
+	console.warn('Legacy autocomplete is disabled. Use js/calculate/autocomplete.js instead.', elementId);
+	return null;
 }
 
 function init() {

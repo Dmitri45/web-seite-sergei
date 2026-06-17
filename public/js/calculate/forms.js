@@ -93,7 +93,7 @@ export function initServiceAreaField(formElement) {
 }
 
 /**
- * Validates that the Einsatzort was selected from the Geoapify dropdown.
+ * Validates that the Einsatzort was selected from the address suggestions.
  * @param {HTMLFormElement|HTMLElement|null} formElement - Active service form.
  * @returns {boolean} True when service area is not required or a valid point is selected.
  */

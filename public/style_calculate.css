@@ -917,6 +917,64 @@ body.page-calculate .hero-subtitle {
 	position: relative;
 }
 
+.address-autocomplete {
+    position: relative;
+}
+
+.address-autocomplete__dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 40;
+    overflow: hidden;
+    border: 1px solid rgba(15, 61, 46, 0.14);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 16px 34px rgba(15, 61, 46, 0.16);
+}
+
+.address-autocomplete__option {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid rgba(15, 61, 46, 0.08);
+    background: #ffffff;
+    color: var(--text);
+    padding: 12px 14px;
+    text-align: left;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.45;
+    cursor: pointer;
+}
+
+.address-autocomplete__option:last-child {
+    border-bottom: 0;
+}
+
+.address-autocomplete__option:hover,
+.address-autocomplete__option.is-active {
+    background: rgba(15, 61, 46, 0.06);
+    color: var(--primary);
+}
+
+.address-autocomplete__empty {
+    padding: 12px 14px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.address-autocomplete__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
 .calc-hint {
     display: grid;
     gap: 10px;

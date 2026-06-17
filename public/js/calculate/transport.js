@@ -123,7 +123,7 @@ export function setTransportationVisibility(survey, isTransportNeeded) {
 
 /**
  * Stores the selected start location in shared state.
- * @param {Object} location - Geoapify location object.
+ * @param {Object} location - Selected address suggestion.
  * @param {Object} state - Shared calculator state.
  * @returns {void}
  */
@@ -136,7 +136,7 @@ export function handleFromLocationSelect(location, state) {
 
 /**
  * Stores the selected destination location in shared state.
- * @param {Object} location - Geoapify location object.
+ * @param {Object} location - Selected address suggestion.
  * @param {Object} state - Shared calculator state.
  * @returns {void}
  */
@@ -150,7 +150,7 @@ export function handleToLocationSelect(location, state) {
  * Creates a handler that stores an intermediate location at a fixed index.
  * @param {number} index - Intermediate address index.
  * @param {Object} state - Shared calculator state.
- * @returns {Function} Geoapify select handler.
+ * @returns {Function} Address suggestion select handler.
  */
 export function createIntermediateLocationHandler(index, state) {
 	return (location) => {

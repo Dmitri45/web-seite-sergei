@@ -7,6 +7,7 @@ const tradesController = require('../controllers/tradesController');
 const requestController = require('../controllers/requestController');
 const portfolioController = require('../controllers/portfolioController');
 const serviceAreaController = require('../controllers/serviceAreaController');
+const geocodeController = require('../controllers/geocodeController');
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.post('/request/smtp-test', requestController.sendSmtpTest);
 
 router.get('/portfolio', portfolioController.listPortfolio);
 router.post('/service-area/check', serviceAreaController.checkServiceArea);
+router.get('/geocode/autocomplete', geocodeController.autocomplete);
 
 module.exports = router;
