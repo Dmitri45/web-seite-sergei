@@ -25,7 +25,7 @@ const BASE_COORDS = [
     Number(process.env.COMPANY_LON) || 6.779844555473214,
     Number(process.env.COMPANY_LAT) || 51.56523808298011
 ];
-const PRICE_PER_KM = 2.1;
+const PRICE_PER_KM = 1.8;
 
 /**
  * Normalizes an address point into OpenRouteService coordinates.

@@ -12,7 +12,7 @@ function formatEuro(value) {
 	return `${amount.toLocaleString('de-DE', {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2
-	})} €`;
+	})} € inkl. MwSt.`;
 }
 
 /**
@@ -2263,7 +2263,7 @@ function getResultTemplate(price) {
 		<div id="result-display" class="result-display">
 			<div class="result-card">
 				<h2>Berechneter Preis</h2>
-				<div class="price-display">${price} €</div>
+				<div class="price-display">${price} € inkl. MwSt.</div>
 				<button class="btn-main" type="button" data-offer-request-result="true">Angebot anfordern</button>
 				<button class="btn-secondary" onclick="location.reload()">Neue Berechnung</button>
 			</div>

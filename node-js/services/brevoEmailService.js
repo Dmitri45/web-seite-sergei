@@ -39,7 +39,7 @@ function formatEuro(value) {
 	return `${amount.toLocaleString('de-DE', {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2
-	})} €`;
+	})} € inkl. MwSt.`;
 }
 
 function formatValue(value) {
