@@ -59,7 +59,7 @@ function initServicesCategoryButtons() {
 }
 
 /**
- * Ensures every page has the mobile nav logo, hamburger button, and fullscreen menu.
+ * Ensures every page has the mobile nav logo, hamburger button, and compact menu.
  * @returns {void}
  */
 function initMobileNavDialog() {
@@ -96,13 +96,6 @@ function initMobileNavDialog() {
 		dialog.id = 'mobileNavDialog';
 		dialog.setAttribute('aria-hidden', 'true');
 		dialog.innerHTML = `
-			<div class="mobile-nav-dialog__bar">
-				<a class="mobile-nav-dialog__logo" href="index.html">
-					<img class="logo_img" src="img/logo_no_background.png" alt="S.K SERVICE Logo">
-					<span>S.K SERVICE</span>
-				</a>
-				<button class="mobile-nav-dialog__close" type="button" aria-label="Menü schließen">×</button>
-			</div>
 			<nav class="mobile-nav-dialog__links" aria-label="Mobile Navigation">
 				${MOBILE_NAV_LINKS.map(link => `<a href="${link.href}">${link.label}</a>`).join('')}
 			</nav>
@@ -112,20 +105,26 @@ function initMobileNavDialog() {
 
 	const toggleButton = navWrap.querySelector('.mobile-menu-toggle');
 	const dialog = document.getElementById('mobileNavDialog');
-	const closeButton = dialog.querySelector('.mobile-nav-dialog__close');
 
 	const closeDialog = () => {
 		dialog.classList.remove('is-open');
 		dialog.setAttribute('aria-hidden', 'true');
 		toggleButton.setAttribute('aria-expanded', 'false');
+		toggleButton.setAttribute('aria-label', 'Menü öffnen');
+		toggleButton.classList.remove('is-open');
 		document.documentElement.classList.remove('has-mobile-nav-open');
 		document.body.classList.remove('has-mobile-nav-open');
 	};
 
 	const openDialog = () => {
+		const toggleRect = toggleButton.getBoundingClientRect();
+		const top = Math.max(12, Math.round(toggleRect.bottom + 10));
+		dialog.style.setProperty('--mobile-menu-top', `${top}px`);
 		dialog.classList.add('is-open');
 		dialog.setAttribute('aria-hidden', 'false');
 		toggleButton.setAttribute('aria-expanded', 'true');
+		toggleButton.setAttribute('aria-label', 'Menü schließen');
+		toggleButton.classList.add('is-open');
 		document.documentElement.classList.add('has-mobile-nav-open');
 		document.body.classList.add('has-mobile-nav-open');
 	};
@@ -138,12 +137,16 @@ function initMobileNavDialog() {
 		}
 	});
 
-	closeButton.addEventListener('click', closeDialog);
 	dialog.querySelectorAll('a').forEach(link => {
 		link.addEventListener('click', closeDialog);
 	});
 	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Escape') closeDialog();
+	});
+	document.addEventListener('click', (event) => {
+		if (!dialog.classList.contains('is-open')) return;
+		if (dialog.contains(event.target) || toggleButton.contains(event.target)) return;
+		closeDialog();
 	});
 }
 
