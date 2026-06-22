@@ -176,19 +176,28 @@ function initStickyNavbar() {
 	const header = document.querySelector('header');
 	if (!navbar || !header) return;
 	const mobileQuery = window.matchMedia('(max-width: 770px)');
-	let stickyStart = navbar.getBoundingClientRect().top + window.scrollY;
+	const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+	const defaultThemeColor = '#ffffff';
+	const stickyThemeColor = '#0f3d2e';
+	let stickyStart = header.offsetHeight;
+
+	const updateThemeColor = (shouldStick) => {
+		if (!themeColorMeta) return;
+		themeColorMeta.setAttribute('content', shouldStick ? stickyThemeColor : defaultThemeColor);
+	};
 
 	const updateStickyState = () => {
 		const shouldStick = mobileQuery.matches && window.scrollY >= stickyStart;
 		navbar.classList.toggle('is-sticky', shouldStick);
 		document.body.classList.toggle('has-sticky-navbar', shouldStick);
 		document.body.style.setProperty('--navbar-sticky-offset', `${navbar.offsetHeight}px`);
+		updateThemeColor(shouldStick);
 	};
 
 	updateStickyState();
 	window.addEventListener('scroll', updateStickyState, { passive: true });
 	window.addEventListener('resize', () => {
-		stickyStart = navbar.getBoundingClientRect().top + window.scrollY;
+		stickyStart = header.offsetHeight;
 		updateStickyState();
 	});
 	mobileQuery.addEventListener('change', updateStickyState);
