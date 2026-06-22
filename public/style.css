@@ -548,7 +548,10 @@ header {
     }
 
 html.has-mobile-nav-open,
-body.has-mobile-nav-open,
+body.has-mobile-nav-open {
+    overflow: hidden;
+}
+
 html.has-portfolio-open,
 body.has-portfolio-open {
     overflow: hidden;

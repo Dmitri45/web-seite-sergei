@@ -106,14 +106,30 @@ function initMobileNavDialog() {
 	const toggleButton = navWrap.querySelector('.mobile-menu-toggle');
 	const dialog = document.getElementById('mobileNavDialog');
 
+	const lockPageScroll = () => {
+		document.documentElement.classList.add('has-mobile-nav-open');
+		document.body.classList.add('has-mobile-nav-open');
+	};
+
+	const unlockPageScroll = () => {
+		document.documentElement.classList.remove('has-mobile-nav-open');
+		document.body.classList.remove('has-mobile-nav-open');
+	};
+
+	const preventPageScroll = (event) => {
+		if (!dialog.classList.contains('is-open')) return;
+		if (dialog.contains(event.target)) return;
+		event.preventDefault();
+	};
+
 	const closeDialog = () => {
+		if (!dialog.classList.contains('is-open')) return;
 		dialog.classList.remove('is-open');
 		dialog.setAttribute('aria-hidden', 'true');
 		toggleButton.setAttribute('aria-expanded', 'false');
 		toggleButton.setAttribute('aria-label', 'Menü öffnen');
 		toggleButton.classList.remove('is-open');
-		document.documentElement.classList.remove('has-mobile-nav-open');
-		document.body.classList.remove('has-mobile-nav-open');
+		unlockPageScroll();
 	};
 
 	const openDialog = () => {
@@ -125,8 +141,7 @@ function initMobileNavDialog() {
 		toggleButton.setAttribute('aria-expanded', 'true');
 		toggleButton.setAttribute('aria-label', 'Menü schließen');
 		toggleButton.classList.add('is-open');
-		document.documentElement.classList.add('has-mobile-nav-open');
-		document.body.classList.add('has-mobile-nav-open');
+		lockPageScroll();
 	};
 
 	toggleButton.addEventListener('click', () => {
@@ -148,6 +163,8 @@ function initMobileNavDialog() {
 		if (dialog.contains(event.target) || toggleButton.contains(event.target)) return;
 		closeDialog();
 	});
+	document.addEventListener('wheel', preventPageScroll, { passive: false });
+	document.addEventListener('touchmove', preventPageScroll, { passive: false });
 }
 
 /**
