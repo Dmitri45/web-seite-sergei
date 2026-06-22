@@ -9,6 +9,10 @@ body {
     overflow-x: clip;
 }
 
+html {
+    background-color: #f6f8f7;
+}
+
 h1,
 h2,
 h3,

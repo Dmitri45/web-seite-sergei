@@ -267,9 +267,13 @@ body.page-calculate .hero-subtitle {
 
 .calc-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 14px;
     margin-top: 8px;
+}
+
+.field {
+    min-width: 0;
 }
 
 .field label {
@@ -383,6 +387,8 @@ body.page-calculate .hero-subtitle {
 .field select,
 .field textarea {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -390,6 +396,19 @@ body.page-calculate .hero-subtitle {
     background: #fff;
     font-size: 13px;
     outline: none;
+}
+
+.field input[type="date"] {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.field input[type="date"]::-webkit-date-and-time-value {
+    min-height: 1.2em;
+    text-align: left;
 }
 
 .field input,
