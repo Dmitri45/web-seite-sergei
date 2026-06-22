@@ -2415,6 +2415,11 @@ body.has-portfolio-open {
     text-wrap: balance;
 }
 
+.legal-header__title-short,
+.legal-header__subtitle {
+    display: none;
+}
+
 .legal-content {
     padding: clamp(36px, 6vw, 72px) 0;
 }
@@ -2474,6 +2479,30 @@ body.has-portfolio-open {
 
     .legal-header::before {
         background: rgba(8, 31, 23, 0.7);
+    }
+
+    .legal-header h1.legal-header__title--compact {
+        max-width: 320px;
+        font-size: clamp(28px, 8vw, 34px);
+        line-height: 1;
+    }
+
+    .legal-header__title-full {
+        display: none;
+    }
+
+    .legal-header__title-short,
+    .legal-header__subtitle {
+        display: block;
+    }
+
+    .legal-header__subtitle {
+        max-width: 300px;
+        margin: 8px 0 0;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: clamp(15px, 4vw, 17px);
+        font-weight: 600;
+        line-height: 1.25;
     }
 
     .footer-inner {
