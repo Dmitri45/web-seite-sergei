@@ -2716,8 +2716,45 @@ body.has-portfolio-open {
         margin-top: 0;
     }
 
+    .references-grid {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 2px 0 12px;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .references-side {
-        grid-template-columns: 1fr;
+        display: contents;
+    }
+
+    .reference-card {
+        flex: 0 0 100%;
+        width: 100%;
+        min-height: clamp(230px, 64vw, 300px);
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+
+    .reference-card-large,
+    .reference-card-small {
+        min-height: clamp(230px, 64vw, 300px);
+    }
+
+    .reference-card img {
+        height: 100%;
+        aspect-ratio: 4 / 3;
+    }
+
+    .references-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .references-grid {
+        scrollbar-width: none;
     }
 
     .step-item {
@@ -2976,9 +3013,11 @@ body.has-portfolio-open {
         margin-bottom: var(--space-lg);
     }
 
-    .references-grid,
-    .references-side,
     .services-list {
+        gap: var(--space-md);
+    }
+
+    .references-grid {
         gap: var(--space-md);
     }
 
