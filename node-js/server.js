@@ -10,6 +10,17 @@ const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const PROJECTS_DIR = path.join(__dirname, '..', 'projects');
+const CLEAN_PAGE_ROUTES = new Map([
+  ['/', 'index.html'],
+  ['/calculate', 'calculate.html'],
+  ['/kuechenservice', 'kuechenservice.html'],
+  ['/moebelservice', 'moebelservice.html'],
+  ['/handwerk', 'handwerk.html'],
+  ['/gartenservice', 'gartenservice.html'],
+  ['/impressum', 'impressum.html'],
+  ['/datenschutzerklaerung', 'datenschutzerklaerung.html'],
+  ['/agb', 'agb.html']
+]);
 
 app.use((req, res, next) => {
   const allowedOrigin = process.env.CORS_ORIGIN || '*';
@@ -28,6 +39,11 @@ app.get(/\/.*\.html$/, (req, res) => {
     .replace(/\.html(?=$|\?)/, '');
 
   res.redirect(301, cleanUrl);
+});
+
+app.get([...CLEAN_PAGE_ROUTES.keys()], (req, res) => {
+  const fileName = CLEAN_PAGE_ROUTES.get(req.path);
+  res.sendFile(path.join(PUBLIC_DIR, fileName));
 });
 
 app.use('/projects', express.static(PROJECTS_DIR, {
