@@ -2348,7 +2348,7 @@ function getOfferRequestTemplate() {
 					<input id="offerPrivacyAccepted" name="privacyPolicyAccepted" type="checkbox" required>
 					<span>
 						Ich habe die
-						<a href="datenschutzerklaerung.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>
+						<a href="/datenschutzerklaerung" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>
 						zur Kenntnis genommen.
 					</span>
 				</label>
@@ -2417,65 +2417,65 @@ const SERVICE_CATEGORY_META = {
         title: 'Küchenservice',
         description: 'Abbau, Aufbau, Anpassung und Transport Ihrer Küche — sauber, termingerecht und aus einer Hand.',
         image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
-        allHref: 'calculate.html'
+        allHref: '/calculate'
     },
     furniture: {
         title: 'Möbelservice',
         description: 'Montage, Demontage, Transport und Entsorgung von Möbeln für Wohnung, Haus und Büro.',
         image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
-        allHref: 'calculate.html'
+        allHref: '/calculate'
     },
     trades: {
         title: 'Handwerker',
         description: 'Zuverlässige Hilfe bei Montage-, Reparatur- und Ausbauarbeiten für innen und außen.',
         image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
-        allHref: 'calculate.html'
+        allHref: '/calculate'
     },
     garden: {
         title: 'Gartenservice',
         description: 'Pflege, Rückschnitt, Pflasterarbeiten und saisonale Gartenprojekte aus einer Hand.',
         image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
-        allHref: 'calculate.html'
+        allHref: '/calculate'
     }
 };
 
 const SERVICES_BY_CATEGORY = {
     kitchen: [
-        { label: 'Küchentransport', href: 'calculate.html', img: 'img/services/kuechenservice/kuechetransport.png', desc: 'Transport optional mit Abbau & Aufbau' },
-        { label: 'Küchenmontage', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenaufbau.png', desc: 'Montage inkl. Ausrichtung' },
-        { label: 'Küchenanpassung', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanpassung.png', desc: 'Ausschnitte, Anschlüsse & Feinschliff' },
-        { label: 'Küchendemontage', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
-        { label: 'Küchenanfertigung', href: 'calculate.html', img: 'img/services/kuechenservice/kuechenanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
+        { label: 'Küchentransport', href: '/calculate', img: 'img/services/kuechenservice/kuechetransport.png', desc: 'Transport optional mit Abbau & Aufbau' },
+        { label: 'Küchenmontage', href: '/calculate', img: 'img/services/kuechenservice/kuechenaufbau.png', desc: 'Montage inkl. Ausrichtung' },
+        { label: 'Küchenanpassung', href: '/calculate', img: 'img/services/kuechenservice/kuechenanpassung.png', desc: 'Ausschnitte, Anschlüsse & Feinschliff' },
+        { label: 'Küchendemontage', href: '/calculate', img: 'img/services/kuechenservice/kuechenabbau.png', desc: 'Fachgerechter Rückbau vor Ort' },
+        { label: 'Küchenanfertigung', href: '/calculate', img: 'img/services/kuechenservice/kuechenanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
     ],
     furniture: [
-        { label: 'Möbelmontage', href: 'calculate.html', img: 'img/services/moebelservice/moebelaufbauen.png', desc: 'Schränke, Betten und Regale' },
-        { label: 'Möbelentsorgung', href: 'calculate.html', img: 'img/services/moebelservice/moebelentsorgen.png', desc: 'Abholung inkl. fachgerechter Entsorgung' },
-        { label: 'Umzugshilfe', href: 'calculate.html', img: 'img/services/moebelservice/umzugshelfer.png', desc: 'Tragen, Laden und Positionieren' },
-        { label: 'Kleintransporte', href: 'calculate.html', img: 'img/services/moebelservice/kleintransporte.png', desc: 'Flexible Transporte nach Bedarf' },
-        { label: 'Möbelanfertigung', href: 'calculate.html', img: 'img/services/moebelservice/moebelanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
+        { label: 'Möbelmontage', href: '/calculate', img: 'img/services/moebelservice/moebelaufbauen.png', desc: 'Schränke, Betten und Regale' },
+        { label: 'Möbelentsorgung', href: '/calculate', img: 'img/services/moebelservice/moebelentsorgen.png', desc: 'Abholung inkl. fachgerechter Entsorgung' },
+        { label: 'Umzugshilfe', href: '/calculate', img: 'img/services/moebelservice/umzugshelfer.png', desc: 'Tragen, Laden und Positionieren' },
+        { label: 'Kleintransporte', href: '/calculate', img: 'img/services/moebelservice/kleintransporte.png', desc: 'Flexible Transporte nach Bedarf' },
+        { label: 'Möbelanfertigung', href: '/calculate', img: 'img/services/moebelservice/moebelanfertigung.png', desc: 'Beliebige Maße und Größen nach Wunsch' }
     ],
     trades: [
-        { label: 'Feinputz / Fertigbeschichtung', href: 'calculate.html', img: 'img/services/handwerker/feinputz.png', desc: 'Saubere Endschicht in passender Qualitätsstufe' },
-        { label: 'Wandverputz', href: 'calculate.html', img: 'img/services/handwerker/waendeverputzen.png', desc: 'Grobeschicht oder lotgerechte Ausführung' },
-        { label: 'Trockenbau', href: 'calculate.html', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' },
-        { label: 'Fugenreinigung', href: 'calculate.html', img: 'img/services/handwerker/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
+        { label: 'Feinputz / Fertigbeschichtung', href: '/calculate', img: 'img/services/handwerker/feinputz.png', desc: 'Saubere Endschicht in passender Qualitätsstufe' },
+        { label: 'Wandverputz', href: '/calculate', img: 'img/services/handwerker/waendeverputzen.png', desc: 'Grobeschicht oder lotgerechte Ausführung' },
+        { label: 'Trockenbau', href: '/calculate', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' },
+        { label: 'Fugenreinigung', href: '/calculate', img: 'img/services/handwerker/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
     ],
     garden: [
-        { label: 'Heckenschnitt', href: 'calculate.html', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
-        { label: 'Rasenmähen', href: 'calculate.html', img: 'img/services/gartenservice/rasenmaehen.png', desc: 'Regelmäßiger Schnitt & Pflege' },
-        { label: 'Rollrasenverlegung', href: 'calculate.html', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen ohne Bodenvorbereitung' },
-        { label: 'Wurzelentfernung', href: 'calculate.html', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
-        { label: 'Pflasterarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
-        { label: 'Zaunmontage', href: 'calculate.html', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
-        { label: 'Minibaggerarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
-        { label: 'Gartenhausmontage', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Aufbau inkl. Bodenvorbereitung optional' },
-        { label: 'Gartenhaus-Renovierung', href: 'calculate.html', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Vorbereitung und Schutzanstrich im Gartenbereich' },
-        { label: 'Heckenentfernung', href: 'calculate.html', img: 'img/services/gartenservice/heckenentfernen.png', desc: 'Rückbau inkl. Schnittgut' },
-        { label: 'Baumfällung (kleine Bäume)', href: 'calculate.html', img: 'img/services/gartenservice/kleinebaeumefaellen.png', desc: 'Sicher und sauber durchgeführt' },
-        { label: 'Strauchschnitt', href: 'calculate.html', img: 'img/services/gartenservice/straeucherschneiden.png', desc: 'Pflegeschnitt nach Saison' },
-        { label: 'Grünschnittentsorgung', href: 'calculate.html', img: 'img/services/gartenservice/entsorgungvongruenschnitt.png', desc: 'Abtransport und Entsorgung' },
-        { label: 'Überdachungsmontage', href: 'calculate.html', img: 'img/services/gartenservice/ueberdachung.png', desc: 'Montage für Terrasse und Garten' },
-        { label: 'Holzhäckselarbeiten', href: 'calculate.html', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' }
+        { label: 'Heckenschnitt', href: '/calculate', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
+        { label: 'Rasenmähen', href: '/calculate', img: 'img/services/gartenservice/rasenmaehen.png', desc: 'Regelmäßiger Schnitt & Pflege' },
+        { label: 'Rollrasenverlegung', href: '/calculate', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen ohne Bodenvorbereitung' },
+        { label: 'Wurzelentfernung', href: '/calculate', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
+        { label: 'Pflasterarbeiten', href: '/calculate', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
+        { label: 'Zaunmontage', href: '/calculate', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
+        { label: 'Minibaggerarbeiten', href: '/calculate', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
+        { label: 'Gartenhausmontage', href: '/calculate', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Aufbau inkl. Bodenvorbereitung optional' },
+        { label: 'Gartenhaus-Renovierung', href: '/calculate', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Vorbereitung und Schutzanstrich im Gartenbereich' },
+        { label: 'Heckenentfernung', href: '/calculate', img: 'img/services/gartenservice/heckenentfernen.png', desc: 'Rückbau inkl. Schnittgut' },
+        { label: 'Baumfällung (kleine Bäume)', href: '/calculate', img: 'img/services/gartenservice/kleinebaeumefaellen.png', desc: 'Sicher und sauber durchgeführt' },
+        { label: 'Strauchschnitt', href: '/calculate', img: 'img/services/gartenservice/straeucherschneiden.png', desc: 'Pflegeschnitt nach Saison' },
+        { label: 'Grünschnittentsorgung', href: '/calculate', img: 'img/services/gartenservice/entsorgungvongruenschnitt.png', desc: 'Abtransport und Entsorgung' },
+        { label: 'Überdachungsmontage', href: '/calculate', img: 'img/services/gartenservice/ueberdachung.png', desc: 'Montage für Terrasse und Garten' },
+        { label: 'Holzhäckselarbeiten', href: '/calculate', img: 'img/services/gartenservice/holzhaecksler.png', desc: 'Zerkleinern von Astwerk' }
     ]
 };
 

@@ -22,6 +22,14 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.get(/\/.*\.html$/, (req, res) => {
+  const cleanUrl = req.originalUrl
+    .replace(/\/index\.html(?=$|\?)/, '/')
+    .replace(/\.html(?=$|\?)/, '');
+
+  res.redirect(301, cleanUrl);
+});
+
 app.use('/projects', express.static(PROJECTS_DIR, {
   etag: true,
   maxAge: '7d'
@@ -29,7 +37,8 @@ app.use('/projects', express.static(PROJECTS_DIR, {
 
 app.use(express.static(PUBLIC_DIR, {
   etag: true,
-  maxAge: '1h'
+  maxAge: '1h',
+  extensions: ['html']
 }));
 
 app.use('/api', routes);

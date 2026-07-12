@@ -14,10 +14,10 @@ const CATEGORY_KEY_MAP = {
 };
 
 const MOBILE_NAV_LINKS = [
-	{ href: 'kuechenservice.html', label: 'Küchenservice' },
-	{ href: 'moebelservice.html', label: 'Möbelservice' },
-	{ href: 'handwerk.html', label: 'Handwerk' },
-	{ href: 'gartenservice.html', label: 'Gartenservice' }
+	{ href: '/kuechenservice', label: 'Küchenservice' },
+	{ href: '/moebelservice', label: 'Möbelservice' },
+	{ href: '/handwerk', label: 'Handwerk' },
+	{ href: '/gartenservice', label: 'Gartenservice' }
 ];
 
 /**
@@ -70,7 +70,7 @@ function initMobileNavDialog() {
 	if (!navWrap.querySelector('.nav-logo')) {
 		const navLogo = document.createElement('a');
 		navLogo.className = 'nav-logo';
-		navLogo.href = 'index.html';
+		navLogo.href = '/';
 		navLogo.setAttribute('aria-label', 'S.K SERVICE Startseite');
 		navLogo.innerHTML = `
 			<img class="logo_img" src="img/logo_no_background.png" alt="S.K SERVICE Logo">

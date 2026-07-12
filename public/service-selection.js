@@ -120,12 +120,12 @@
 
     /**
      * Registers click listener and stores selected card data
-     * before navigation to calculate.html.
+     * before navigation to /calculate.
      * @returns {void}
      */
 	function bindServiceCardSelection() {
 		document.addEventListener('click', (event) => {
-			const card = event.target.closest('a.service-card[href*="calculate.html"]');
+			const card = event.target.closest('a.service-card[href*="/calculate"]');
 			if (!card) return;
 			saveServiceSelection(card);
 		});
@@ -136,7 +136,7 @@
 	 * @returns {void}
 	 */
 	function applyServiceCardHoverClasses() {
-		document.querySelectorAll('a.service-card[href*="calculate.html"]').forEach((card) => {
+		document.querySelectorAll('a.service-card[href*="/calculate"]').forEach((card) => {
 			if (card.classList.contains('service-card--appointment')) return;
 
 			const label = extractLabelFromCard(card);
