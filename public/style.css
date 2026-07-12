@@ -675,8 +675,8 @@ body.page-kitchen,
 body.page-furniture,
 body.page-trades,
 body.page-garden {
-    --hero-height: 460px;
-    --hero-height-mobile: 420px;
+    --hero-height: 430px;
+    --hero-height-mobile: 390px;
 }
 
 body.page-calculate {
@@ -793,12 +793,6 @@ body.page-calculate {
     box-shadow: 0 0 0 4px rgba(93, 202, 165, 0.16);
 }
 
-.hero-actions {
-    display: flex;
-    gap: 18px;
-    margin-bottom: 0;
-}
-
 .btn-main {
     background: var(--primary);
     color: #ffffff;
@@ -871,12 +865,6 @@ body.page-calculate {
     font-weight: 500;
     letter-spacing: 0;
 }
-
-body.page-home .hero-actions .btn-main {
-    font-size: 17.5px;
-    padding: 17px 39px;
-}
-
 
 /* =========================
    SECTION KICKER
@@ -2083,7 +2071,6 @@ body.has-portfolio-open {
         max-width: calc(100vw - 40px);
     }
 
-    .hero-actions,
     .hero-trust-stars {
         flex-wrap: wrap;
     }
@@ -2841,7 +2828,7 @@ body.has-portfolio-open {
     .hero,
     .hero-bg,
     .hero-inner {
-        min-height: clamp(430px, 86vw, 520px);
+        min-height: clamp(400px, 80vw, 485px);
     }
 
     .hero-inner {
@@ -2900,10 +2887,6 @@ body.has-portfolio-open {
         margin-bottom: var(--space-md);
     }
 
-    .hero-actions {
-        gap: var(--space-sm);
-    }
-
     .hero-trust {
         margin-top: var(--space-lg);
         padding-top: var(--space-sm);
@@ -2927,11 +2910,6 @@ body.has-portfolio-open {
         font-size: var(--text-button);
         line-height: 1.25;
         padding: clamp(13px, 2.4vw, 15px) clamp(22px, 4vw, 28px);
-    }
-
-    body.page-home .hero-actions .btn-main {
-        font-size: clamp(13.5px, 2.05vw, 14.5px);
-        padding: clamp(11px, 2.1vw, 13px) clamp(18px, 3.4vw, 24px);
     }
 
     .how-it-works {
@@ -3371,7 +3349,7 @@ body.has-portfolio-open {
     .hero,
     .hero-bg,
     .hero-inner {
-        min-height: clamp(400px, 108vw, 470px);
+        min-height: clamp(375px, 100vw, 435px);
     }
 
     .hero-title {
@@ -3462,7 +3440,7 @@ body.has-portfolio-open {
     .hero,
     .hero-bg,
     .hero-inner {
-        min-height: clamp(405px, 128vw, 460px);
+        min-height: clamp(380px, 118vw, 430px);
     }
 
     .hero-title {

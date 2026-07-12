@@ -203,28 +203,10 @@ function initStickyNavbar() {
 	mobileQuery.addEventListener('change', updateStickyState);
 }
 
-/**
- * Scrolls the home hero CTA to the services section.
- * @returns {void}
- */
-function initHeroServicesScroll() {
-	const ctaButton = document.querySelector('[data-scroll-to-services]');
-	const servicesSection = document.getElementById('services');
-	if (!ctaButton || !servicesSection) return;
-
-	ctaButton.addEventListener('click', () => {
-		servicesSection.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start'
-		});
-	});
-}
-
 function initPageScripts() {
 	initServicesCategoryButtons();
 	initMobileNavDialog();
 	initStickyNavbar();
-	initHeroServicesScroll();
 }
 
 if (document.readyState === 'loading') {
