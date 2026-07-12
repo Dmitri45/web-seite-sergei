@@ -17,6 +17,8 @@ const CLEAN_PAGE_ROUTES = new Map([
   ['/moebelservice', 'moebelservice.html'],
   ['/handwerk', 'handwerk.html'],
   ['/gartenservice', 'gartenservice.html'],
+  ['/preis-berechnen', 'preis-berechnen.html'],
+  ['/angebot-anfordern', 'angebot-anfordern.html'],
   ['/impressum', 'impressum.html'],
   ['/datenschutzerklaerung', 'datenschutzerklaerung.html'],
   ['/agb', 'agb.html']
