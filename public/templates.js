@@ -2426,7 +2426,7 @@ const SERVICE_CATEGORY_META = {
         allHref: '/calculate'
     },
     trades: {
-        title: 'Handwerker',
+        title: 'Handwerk',
         description: 'Zuverlässige Hilfe bei Montage-, Reparatur- und Ausbauarbeiten für innen und außen.',
         image: 'img/Gemini_Generated_Image_h4nkhh4nkhh4nkhh.png',
         allHref: '/calculate'

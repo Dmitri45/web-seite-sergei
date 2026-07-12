@@ -52,10 +52,8 @@
 			<section class="service-overview-group" aria-labelledby="service-overview-${categoryKey}">
 				<div class="service-overview-group__head">
 					<div>
-						<div class="section-kicker">${category.title}</div>
 						<h3 id="service-overview-${categoryKey}">${category.title}</h3>
 					</div>
-					<span>${services.length} Leistungen</span>
 				</div>
 				<div class="services-list">
 					${services.map(getServiceCardTemplate).join('')}
