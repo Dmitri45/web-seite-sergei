@@ -446,6 +446,43 @@ function renderHomeReferenceCards(data) {
 			`).join('')}
 		</div>
 	`;
+	initHomeReferencesSwipeHint();
+}
+
+function initHomeReferencesSwipeHint() {
+	const grid = document.querySelector('.references-grid');
+	const dotsContainer = document.querySelector('.references-swipe-hint__dots');
+	if (!grid || !dotsContainer) return;
+
+	const cards = Array.from(grid.querySelectorAll('.reference-card'));
+	if (!cards.length) return;
+
+	if (typeof grid.referencesSwipeCleanup === 'function') {
+		grid.referencesSwipeCleanup();
+	}
+
+	dotsContainer.innerHTML = cards.map((_, index) => `<span${index === 0 ? ' class="is-active"' : ''}></span>`).join('');
+	const dots = Array.from(dotsContainer.querySelectorAll('span'));
+
+	const updateActiveDot = () => {
+		const gridRect = grid.getBoundingClientRect();
+		const activeIndex = cards.reduce((closestIndex, card, index) => {
+			const cardDistance = Math.abs(card.getBoundingClientRect().left - gridRect.left);
+			const closestDistance = Math.abs(cards[closestIndex].getBoundingClientRect().left - gridRect.left);
+			return cardDistance < closestDistance ? index : closestIndex;
+		}, 0);
+
+		dots.forEach((dot, index) => dot.classList.toggle('is-active', index === activeIndex));
+	};
+
+	const handleScroll = () => window.requestAnimationFrame(updateActiveDot);
+	grid.addEventListener('scroll', handleScroll, { passive: true });
+	window.addEventListener('resize', updateActiveDot);
+	grid.referencesSwipeCleanup = () => {
+		grid.removeEventListener('scroll', handleScroll);
+		window.removeEventListener('resize', updateActiveDot);
+	};
+	updateActiveDot();
 }
 
 function bindHomePortfolioTriggers() {
@@ -470,6 +507,7 @@ function initPortfolioGallery() {
 	if (!document.querySelector('.references')) return;
 	createPortfolioDialog();
 	bindHomePortfolioTriggers();
+	initHomeReferencesSwipeHint();
 	fetchPortfolio().then(data => {
 		if (data) renderHomeReferenceCards(data);
 	});
