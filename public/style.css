@@ -975,13 +975,16 @@ body.page-calculate {
 }
 
 .page-service-overview {
-    --hero-image: url('img/calculate_hero.png');
     --hero-height: 430px;
     --hero-height-mobile: 390px;
 }
 
+.page-price-overview {
+    --hero-image: url('img/preis-berechnen.png');
+}
+
 .page-offer-overview {
-    --hero-image: url('img/hero.png');
+    --hero-image: url('img/angebot-anfordern.png');
 }
 
 .service-overview {
