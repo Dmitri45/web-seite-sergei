@@ -1256,25 +1256,61 @@ body.page-calculate .hero-subtitle {
     }
 
     .calc-placeholder__content {
-        padding: var(--space-lg);
+        padding: 12px;
     }
 
-    .calc-placeholder__box h3,
-    .calc-placeholder__box h4 {
-        font-size: var(--text-h2);
-        line-height: var(--line-heading);
-        margin-bottom: var(--space-md);
+    .calc-placeholder__box {
+        display: grid;
+        grid-template-columns: clamp(86px, 26vw, 112px) minmax(0, 1fr);
+        min-height: 0;
+        border-radius: 14px;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+    }
+
+    .calc-placeholder__image {
+        width: 100%;
+        height: 100%;
+        min-height: 118px;
+        border-bottom: 0;
+        border-right: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .calc-placeholder__box h3 {
+        font-size: clamp(16px, 4.4vw, 19px);
+        line-height: 1.16;
+        margin-bottom: 8px;
     }
 
     .calc-placeholder__list,
     .calc-placeholder__sublist {
-        gap: var(--space-sm);
+        gap: 4px;
     }
 
     .calc-placeholder__list li,
     .calc-placeholder__sublist li {
-        font-size: var(--text-body);
-        line-height: var(--line-body);
+        font-size: clamp(12.5px, 3.4vw, 13.5px);
+        line-height: 1.35;
+        padding-left: 20px;
+    }
+
+    .calc-placeholder__list li:nth-child(n+2),
+    .calc-placeholder__box hr,
+    .calc-placeholder__box h3:not(#selectedServiceAsideTitle),
+    .calc-placeholder__sublist {
+        display: none;
+    }
+
+    .calc-placeholder__cta-wrap {
+        margin-top: 10px;
+        padding: 0;
+    }
+
+    .calc-placeholder__cta {
+        min-height: 36px;
+        padding: 9px 14px;
+        border-radius: 9px;
+        font-size: clamp(12.5px, 3.4vw, 13.5px);
+        line-height: 1.2;
     }
 
     .price-display,
