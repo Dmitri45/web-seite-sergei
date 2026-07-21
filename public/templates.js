@@ -1956,12 +1956,6 @@ function getAssemblySurvey() {
 					</button>
 				</div>
 
-				<div id="assemblyFields" style="display: none; margin-top: 20px;">
-					<p style="color: var(--muted); font-size: 13px; margin-top: 0;">
-						Die Anzahl der Schränke wird im nächsten Schritt nur einmal abgefragt.
-					</p>
-				</div>
-
 				<button id="btn-main" class="btn-main" style="display: none; margin-top: 20px;">Weiter</button>
 			</div>
 		</div>

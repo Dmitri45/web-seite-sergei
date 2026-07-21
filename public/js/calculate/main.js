@@ -466,18 +466,12 @@ function renderAssemblySurvey() {
 }
 
 /**
- * Shows or hides assembly quantity fields.
+ * Shows the assembly survey continue button after a yes/no choice.
  * @param {HTMLElement} survey - Assembly survey element.
- * @param {boolean} isAssemblyNeeded - Whether assembly is selected.
  * @returns {void}
  */
-function setAssemblyVisibility(survey, isAssemblyNeeded) {
-	const assemblyFields = survey.querySelector('#assemblyFields');
+function showAssemblyContinueButton(survey) {
 	const assemblyContinueBtn = survey.querySelector('#btn-main');
-
-	if (assemblyFields) {
-		assemblyFields.style.display = isAssemblyNeeded ? 'block' : 'none';
-	}
 
 	if (assemblyContinueBtn) {
 		assemblyContinueBtn.style.display = 'block';
@@ -498,7 +492,7 @@ function bindAssemblyChoiceHandlers(survey) {
 			btn.classList.add('active');
 			calcState.selectedAssembly = btn.dataset.value;
 
-			setAssemblyVisibility(survey, calcState.selectedAssembly === 'yes');
+			showAssemblyContinueButton(survey);
 		});
 	});
 }

@@ -103,6 +103,9 @@ const FIELD_LABELS = {
 	cabinetAssemblyBaseCabinets: 'Unterschränke bis 80 cm',
 	cabinetAssemblyTallCabinets: 'Große Schränke über 80 cm',
 	cabinetAssemblyUpperCabinets: 'Oberschränke zum Zusammenbauen',
+	cabinetassemblybasecabinets: 'Unterschränke bis 80 cm',
+	cabinetassemblytallcabinets: 'Große Schränke über 80 cm',
+	cabinetassemblyuppercabinets: 'Oberschränke zum Zusammenbauen',
 	assembly: 'Aufbau erforderlich',
 	dismantling: 'Abbau erforderlich',
 	abbau: 'Abbau erforderlich',
@@ -178,8 +181,19 @@ const SKIPPED_DETAIL_KEYS = new Set([
 	'einsatzort'
 ]);
 
+const ALIAS_DETAIL_KEYS = new Set([
+	'condition',
+	'worktopMaterial'
+]);
+
+function normalizeDetailKey(key) {
+	return String(key || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
+
 function fieldLabel(key) {
 	if (FIELD_LABELS[key]) return FIELD_LABELS[key];
+	const normalizedKey = normalizeDetailKey(key);
+	if (FIELD_LABELS[normalizedKey]) return FIELD_LABELS[normalizedKey];
 	const indexedMatch = String(key || '').match(/^(transportItem|furnitureItem)([A-Za-z]+)_(\d+)$/);
 	if (indexedMatch) {
 		const [, group, field, rawIndex] = indexedMatch;
@@ -218,8 +232,14 @@ function formatFieldValue(key, value) {
 }
 
 function detailRow(key, value, renderedKeys) {
+	const formattedValue = formatFieldValue(key, value);
+	if (!formattedValue) return '';
+
 	renderedKeys.add(key);
-	return row(fieldLabel(key), formatFieldValue(key, value));
+	renderedKeys.add(normalizeDetailKey(key));
+	const label = fieldLabel(key);
+	renderedKeys.add(label);
+	return row(label, formattedValue);
 }
 
 function buildCustomerHtml(customer = {}) {
@@ -257,7 +277,6 @@ function buildDetailsHtml(payload = {}) {
 		'timeWindow',
 		'address',
 		'kitchenCondition',
-		'condition',
 		'kitchenType',
 		'upperCabinets',
 		'lowerCabinets',
@@ -292,7 +311,17 @@ function buildDetailsHtml(payload = {}) {
 	if (transportHtml) rows.push(transportHtml);
 
 	Object.entries(payload).forEach(([key, value]) => {
-		if (renderedKeys.has(key) || SKIPPED_DETAIL_KEYS.has(key)) return;
+		const isDuplicateAlias =
+			(key === 'condition' && payload.kitchenCondition) ||
+			(key === 'worktopMaterial' && payload.worktopAdjust);
+
+		if (
+			renderedKeys.has(key) ||
+			renderedKeys.has(normalizeDetailKey(key)) ||
+			renderedKeys.has(fieldLabel(key)) ||
+			(ALIAS_DETAIL_KEYS.has(key) && isDuplicateAlias) ||
+			SKIPPED_DETAIL_KEYS.has(key)
+		) return;
 		rows.push(detailRow(key, value, renderedKeys));
 	});
 
