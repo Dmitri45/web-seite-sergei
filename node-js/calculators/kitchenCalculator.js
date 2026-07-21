@@ -5,9 +5,11 @@
  * @property {"yes"|"no"} [worktopPickup]
  * @property {"yes"|"no"} [worktopAdjust]
  * @property {"l-form"|"zeile"|"u-form"|string} [kitchenType]
- * @property {string|number} [smallCabinets]
- * @property {string|number} [largeCabinets]
- * @property {string|number} [drawers]
+ * @property {string|number} [upperCabinets]
+ * @property {string|number} [lowerCabinets]
+ * @property {string|number} [cabinetAssemblyBaseCabinets]
+ * @property {string|number} [cabinetAssemblyTallCabinets]
+ * @property {string|number} [cabinetAssemblyUpperCabinets]
  */
 
 /**
@@ -15,6 +17,49 @@
  * @property {number} price
  */
 
+const KITCHEN_LAYOUT_PRICES = {
+  zeile: {
+    baseboard: 40,
+    endStrip: 25,
+    worktop: 130
+  },
+  'i-form': {
+    baseboard: 40,
+    endStrip: 25,
+    worktop: 130
+  },
+  'l-form': {
+    baseboard: 80,
+    endStrip: 50,
+    worktop: 210
+  },
+  'u-form': {
+    baseboard: 120,
+    endStrip: 75,
+    worktop: 290
+  }
+};
+
+function toNumber(value) {
+  const number = Number.parseFloat(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function getKitchenLayoutPrices(kitchenType) {
+  const normalizedType = String(kitchenType || '').trim().toLowerCase();
+  return KITCHEN_LAYOUT_PRICES[normalizedType] || KITCHEN_LAYOUT_PRICES.zeile;
+}
+
+function getUpperCabinetCount(data) {
+  return toNumber(data.upperCabinets || data.cabinetAssemblyUpperCabinets);
+}
+
+function getLowerCabinetCount(data) {
+  const explicitLowerCabinets = toNumber(data.lowerCabinets);
+  if (explicitLowerCabinets > 0) return explicitLowerCabinets;
+
+  return toNumber(data.cabinetAssemblyBaseCabinets) + toNumber(data.cabinetAssemblyTallCabinets);
+}
 
 
 /**
@@ -54,16 +99,18 @@ function calculateTotalForNewKitchen(data) {
  * @returns {number} Base subtotal.
  */
 function calculateKitchenBaseAndWorktop(data) {
-  let total = 0;
+  const layoutPrices = getKitchenLayoutPrices(data.kitchenType);
+  const upperCabinets = getUpperCabinetCount(data);
+  const lowerCabinets = getLowerCabinetCount(data);
 
-  total += 390;
+  let total = upperCabinets * 35;
+  total += lowerCabinets * 25;
+  total += layoutPrices.baseboard;
+  total += layoutPrices.endStrip;
+  total += layoutPrices.worktop;
 
   if (data.worktopPickup === "yes") {
     total += 60;
-  }
-
-  if (data.worktopAdjust === "yes") {
-    total += data.kitchenType === "l-form" ? 190 : 95;
   }
 
   return total;
@@ -76,21 +123,9 @@ function calculateKitchenBaseAndWorktop(data) {
  * @returns {number} Assembly subtotal.
  */
 function calculateCabinetAssembly(data) {
-  let total = 0;
-
-  if (data.smallCabinets) {
-    total += parseInt(data.smallCabinets, 10) * 10;
-  }
-
-  if (data.largeCabinets) {
-    total += parseInt(data.largeCabinets, 10) * 15;
-  }
-
-  if (data.drawers) {
-    total += parseInt(data.drawers, 10) * 6;
-  }
-
-  return total;
+  return toNumber(data.cabinetAssemblyBaseCabinets) * 60
+    + toNumber(data.cabinetAssemblyTallCabinets) * 95
+    + toNumber(data.cabinetAssemblyUpperCabinets) * 40;
 }
 
 /**

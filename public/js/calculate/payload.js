@@ -21,9 +21,9 @@ export function addAssemblyDataIfNeeded(data, state) {
 	if (state.selectedAssembly === 'yes') {
 		const assemblySurvey = document.getElementById('assemblySurvey');
 		if (assemblySurvey) {
-			data.smallCabinets = assemblySurvey.querySelector('#smallCabinets')?.value || '0';
-			data.largeCabinets = assemblySurvey.querySelector('#largeCabinets')?.value || '0';
-			data.drawers = assemblySurvey.querySelector('#drawers')?.value || '0';
+			data.cabinetAssemblyBaseCabinets = data.cabinetAssemblyBaseCabinets || '0';
+			data.cabinetAssemblyTallCabinets = data.cabinetAssemblyTallCabinets || '0';
+			data.cabinetAssemblyUpperCabinets = data.cabinetAssemblyUpperCabinets || '0';
 		}
 	}
 }

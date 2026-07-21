@@ -223,13 +223,18 @@ function getNewKitchenForm() {
 				</div>
 
 				<div class="field">
-					<label for="upperCabinets">Anzahl der Oberschränke</label>
-					<input id="upperCabinets" name="upperCabinets" type="number" min="0" placeholder="z.B. 4">
+					<label for="cabinetAssemblyUpperCabinets">Anzahl der Oberschränke</label>
+					<input id="cabinetAssemblyUpperCabinets" name="cabinetAssemblyUpperCabinets" type="number" min="0" placeholder="z.B. 4">
 				</div>
 
 				<div class="field">
-					<label for="lowerCabinets">Anzahl der Unterschränke</label>
-					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
+					<label for="cabinetAssemblyBaseCabinets">Unterschränke bis 80 cm Höhe</label>
+					<input id="cabinetAssemblyBaseCabinets" name="cabinetAssemblyBaseCabinets" type="number" min="0" placeholder="z.B. 5">
+				</div>
+
+				<div class="field">
+					<label for="cabinetAssemblyTallCabinets">Große Schränke über 80 cm Höhe</label>
+					<input id="cabinetAssemblyTallCabinets" name="cabinetAssemblyTallCabinets" type="number" min="0" placeholder="z.B. 1">
 				</div>
 
 				<div class="field">
@@ -1953,22 +1958,8 @@ function getAssemblySurvey() {
 
 				<div id="assemblyFields" style="display: none; margin-top: 20px;">
 					<p style="color: var(--muted); font-size: 13px; margin-top: 0;">
-						<strong>Kleine Schränke :</strong> 30-40cm breite Schränke<br>
-						<strong>Große Schränke :</strong> 60-90cm breite Schränke
+						Die Anzahl der Schränke wird im nächsten Schritt nur einmal abgefragt.
 					</p>
-					
-					<div class="field">
-						<label for="smallCabinets">Anzahl kleine Schränke</label>
-						<input id="smallCabinets" name="smallCabinets" type="number" min="0" placeholder="z.B. 2">
-					</div>
-					<div class="field">
-						<label for="largeCabinets">Anzahl große Schränke</label>
-						<input id="largeCabinets" name="largeCabinets" type="number" min="0" placeholder="z.B. 3">
-					</div>
-                    <div class="field">
-					<label for="drawers">Anzahl der Schubladen</label>
-					<input id="drawers" name="drawers" type="number" min="0" placeholder="z.B. 6">
-				</div>
 				</div>
 
 				<button id="btn-main" class="btn-main" style="display: none; margin-top: 20px;">Weiter</button>
