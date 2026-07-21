@@ -228,12 +228,18 @@ function getNewKitchenForm() {
 				</div>
 
 				<div class="field">
-					<label for="cabinetAssemblyBaseCabinets">Unterschränke bis 80 cm Höhe</label>
+					<label for="cabinetAssemblyBaseCabinets">Anzahl der Unterschränke</label>
 					<input id="cabinetAssemblyBaseCabinets" name="cabinetAssemblyBaseCabinets" type="number" min="0" placeholder="z.B. 5">
 				</div>
 
 				<div class="field">
-					<label for="cabinetAssemblyTallCabinets">Große Schränke über 80 cm Höhe</label>
+					<label for="cabinetAssemblyTallCabinets" class="label-with-tooltip">
+						<span>Große Schränke</span>
+						<span class="help-tooltip">
+							<span class="help-tooltip__icon" aria-label="Hinweis">i</span>
+							<span class="help-tooltip__content">Schränke ab 80 cm Höhe.</span>
+						</span>
+					</label>
 					<input id="cabinetAssemblyTallCabinets" name="cabinetAssemblyTallCabinets" type="number" min="0" placeholder="z.B. 1">
 				</div>
 
