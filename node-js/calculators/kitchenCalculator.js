@@ -88,7 +88,7 @@ function calculateTotalForNewKitchen(data) {
     total += calculateCabinetAssembly(data);
   }
 
-  total += calculateKitchenBaseAndWorktop(data);
+  total += calculateKitchenBaseAndWorktop({ ...data, worktopAdjust: "yes" });
   return { price: total };
 }
 
@@ -107,7 +107,10 @@ function calculateKitchenBaseAndWorktop(data) {
   total += lowerCabinets * 25;
   total += layoutPrices.baseboard;
   total += layoutPrices.endStrip;
-  total += layoutPrices.worktop;
+
+  if (data.worktopAdjust === "yes") {
+    total += layoutPrices.worktop;
+  }
 
   if (data.worktopPickup === "yes") {
     total += 60;
