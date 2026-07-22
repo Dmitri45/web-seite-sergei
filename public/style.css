@@ -1614,6 +1614,14 @@ body.has-portfolio-open {
     align-items: start;
 }
 
+.faq--service-page {
+    padding-top: 0;
+}
+
+.faq-grid--single {
+    grid-template-columns: minmax(0, 1fr);
+}
+
 .faq-category {
     min-width: 0;
 }
@@ -2097,10 +2105,10 @@ body.has-portfolio-open {
     gap: 36px;
     align-items: start;
     padding: 34px;
-    border: 1px solid rgba(15, 61, 46, 0.08);
+    border: 1px solid rgba(15, 61, 46, 0.1);
     border-radius: 18px;
     background: #ffffff;
-    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.025);
 }
 
 .custom-request-copy h2 {
@@ -2210,12 +2218,14 @@ body.has-portfolio-open {
 .custom-request-actions .btn-main {
     min-width: 190px;
     border: 0;
+    box-shadow: 0 10px 20px rgba(15, 61, 46, 0.16);
 }
 
 .custom-request-actions .btn-main:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    opacity: 0.68;
     transform: none;
+    background: #8fa49b;
     box-shadow: none;
 }
 

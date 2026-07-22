@@ -382,8 +382,7 @@ function buildCustomRequestTemplateParams(payload = {}) {
 	const customer = payload.customer || {};
 	const detailsHtml = [
 		row('Anfragetyp', 'Sonstige Leistung auf Anfrage'),
-		row('Seite', payload.pageTitle),
-		row('Seiten-URL', payload.pageUrl)
+		row('Seite', payload.pageTitle)
 	].join('');
 
 	return {

@@ -80,8 +80,7 @@
 		return {
 			...data,
 			privacyPolicyAccepted: form.elements.privacyPolicyAccepted.checked,
-			pageTitle: document.title,
-			pageUrl: window.location.href
+			pageTitle: document.title
 		};
 	}
 
@@ -165,6 +164,11 @@
 			helpSection.replaceWith(section);
 		} else {
 			main?.appendChild(section);
+		}
+
+		const serviceFaq = document.querySelector('.faq--service-page');
+		if (serviceFaq && section.nextElementSibling !== serviceFaq) {
+			section.after(serviceFaq);
 		}
 
 		bindForm(section);

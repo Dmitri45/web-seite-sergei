@@ -9,7 +9,6 @@ function normalizeCustomRequestPayload(payload = {}) {
 		requestType: 'custom-request',
 		serviceLabel: 'Sonstige Anfrage',
 		pageTitle: String(payload.pageTitle || '').trim(),
-		pageUrl: String(payload.pageUrl || '').trim(),
 		customer: {
 			firstName: String(payload.firstName || '').trim(),
 			lastName: String(payload.lastName || '').trim(),
