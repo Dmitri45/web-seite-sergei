@@ -378,6 +378,33 @@ function buildTemplateParams(payload = {}) {
 	};
 }
 
+function buildCustomRequestTemplateParams(payload = {}) {
+	const customer = payload.customer || {};
+	const detailsHtml = [
+		row('Anfragetyp', 'Sonstige Leistung auf Anfrage'),
+		row('Seite', payload.pageTitle),
+		row('Seiten-URL', payload.pageUrl)
+	].join('');
+
+	return {
+		...payload,
+		serviceLabel: payload.serviceLabel || 'Sonstige Anfrage',
+		email: {
+			title: 'Neue Anfrage für eine sonstige Leistung',
+			subtitle: 'Nicht gefundene Leistung · Anfrage',
+			customerHtml: [
+				row('Name', `${customer.firstName || ''} ${customer.lastName || ''}`.trim()),
+				row('Telefon', customer.phone),
+				row('E-Mail', customer.email)
+			].join(''),
+			detailsHtml,
+			furnitureHtml: '',
+			notesHtml: sectionText(payload.message),
+			pricesHtml: ''
+		}
+	};
+}
+
 function buildEmailRequest(payload) {
 	const recipientEmail = getRequiredEnv('BREVO_RECIPIENT_EMAIL');
 	const senderEmail = process.env.BREVO_SENDER_EMAIL || recipientEmail;
@@ -404,6 +431,32 @@ function buildEmailRequest(payload) {
 	return emailRequest;
 }
 
+function buildCustomRequestEmailRequest(payload) {
+	const recipientEmail = getRequiredEnv('BREVO_RECIPIENT_EMAIL');
+	const senderEmail = process.env.BREVO_SENDER_EMAIL || recipientEmail;
+	const senderName = process.env.BREVO_SENDER_NAME || DEFAULT_SENDER_NAME;
+	const templateId = Number.parseInt(process.env.BREVO_TEMPLATE_ID || '', 10);
+	const params = buildCustomRequestTemplateParams(payload);
+
+	const emailRequest = {
+		sender: {
+			name: senderName,
+			email: senderEmail
+		},
+		to: [{ email: recipientEmail }],
+		params
+	};
+
+	if (Number.isInteger(templateId) && templateId > 0) {
+		emailRequest.templateId = templateId;
+		return emailRequest;
+	}
+
+	emailRequest.subject = 'Neue Anfrage für eine sonstige Leistung';
+	emailRequest.textContent = buildFallbackText(params);
+	return emailRequest;
+}
+
 async function sendRequestEmail(payload) {
 	const brevo = buildBrevoClient();
 	const emailRequest = buildEmailRequest(payload);
@@ -415,7 +468,20 @@ async function sendRequestEmail(payload) {
 	};
 }
 
+async function sendCustomRequestEmail(payload) {
+	const brevo = buildBrevoClient();
+	const emailRequest = buildCustomRequestEmailRequest(payload);
+	const result = await brevo.transactionalEmails.sendTransacEmail(emailRequest);
+
+	return {
+		result,
+		emailRequest
+	};
+}
+
 module.exports = {
 	sendRequestEmail,
+	sendCustomRequestEmail,
+	buildCustomRequestEmailRequest,
 	buildEmailRequest
 };

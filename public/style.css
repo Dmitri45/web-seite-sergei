@@ -2083,6 +2083,161 @@ body.has-portfolio-open {
 }
 
 /* =========================
+   CUSTOM REQUEST FORM
+   ========================= */
+
+.custom-request {
+    padding: 0 0 64px;
+    background: var(--bg-soft);
+}
+
+.custom-request-card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 36px;
+    align-items: start;
+    padding: 34px;
+    border: 1px solid rgba(15, 61, 46, 0.08);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+}
+
+.custom-request-copy h2 {
+    margin: 8px 0 12px;
+    max-width: 480px;
+}
+
+.custom-request-copy p {
+    margin: 0;
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.custom-request-form {
+    min-width: 0;
+}
+
+.custom-request-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.custom-request-field {
+    min-width: 0;
+}
+
+.custom-request-field--full {
+    grid-column: 1 / -1;
+}
+
+.custom-request-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.custom-request-field input,
+.custom-request-field textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--text);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.35;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-request-field input {
+    height: 44px;
+    padding: 0 13px;
+}
+
+.custom-request-field textarea {
+    resize: vertical;
+    min-height: 116px;
+    padding: 12px 13px;
+}
+
+.custom-request-field input:focus,
+.custom-request-field textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(15, 61, 46, 0.1);
+}
+
+.custom-request-privacy {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.custom-request-privacy input {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    accent-color: var(--primary);
+}
+
+.custom-request-privacy a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.custom-request-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.custom-request-actions .btn-main {
+    min-width: 190px;
+    border: 0;
+}
+
+.custom-request-actions .btn-main:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
+}
+
+.custom-request-status {
+    min-height: 20px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.custom-request-status--success {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.custom-request-status--error {
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+/* =========================
    SERVICES RESPONSIVE
    ========================= */
 
@@ -2340,6 +2495,61 @@ body.has-portfolio-open {
 
     .service-help-point {
         font-size: 15px;
+    }
+
+    .custom-request {
+        padding: 0 0 42px;
+    }
+
+    .custom-request-card {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 22px 18px;
+        border-radius: 16px;
+    }
+
+    .custom-request-copy h2 {
+        margin-bottom: 10px;
+        font-size: 24px !important;
+    }
+
+    .custom-request-copy p {
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    .custom-request-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .custom-request-field label,
+    .custom-request-privacy {
+        font-size: 12px;
+    }
+
+    .custom-request-field input {
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .custom-request-field textarea {
+        min-height: 104px;
+        font-size: 14px;
+    }
+
+    .custom-request-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .custom-request-actions .btn-main {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .custom-request-status {
+        font-size: 13px;
     }
 }
 

@@ -5,6 +5,7 @@ const furnitureController = require('../controllers/furnitureController');
 const gardenController = require('../controllers/gardenController');
 const tradesController = require('../controllers/tradesController');
 const requestController = require('../controllers/requestController');
+const customRequestController = require('../controllers/customRequestController');
 const portfolioController = require('../controllers/portfolioController');
 const serviceAreaController = require('../controllers/serviceAreaController');
 const geocodeController = require('../controllers/geocodeController');
@@ -24,6 +25,7 @@ router.post('/trades/calculate', tradesController.calculateTrades);
 
 router.post('/request/send', requestController.sendRequest);
 router.post('/request/smtp-test', requestController.sendSmtpTest);
+router.post('/custom-request/send', customRequestController.sendCustomRequest);
 
 router.get('/portfolio', portfolioController.listPortfolio);
 router.post('/service-area/check', serviceAreaController.checkServiceArea);
