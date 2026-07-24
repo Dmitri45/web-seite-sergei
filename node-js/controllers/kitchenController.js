@@ -5,6 +5,19 @@ const {
 } = require('../calculators/kitchenCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
+function toNumber(value) {
+	const number = Number.parseFloat(String(value || '0').replace(',', '.'));
+	return Number.isFinite(number) ? number : 0;
+}
+
+function calculateKitchenTransportLoadingPrice(formData = {}) {
+	const upperCabinets = toNumber(formData.upperCabinets);
+	const lowerCabinets = toNumber(formData.lowerCabinets);
+	const tallCabinets = toNumber(formData.kitchenTransportTallCabinets);
+
+	return upperCabinets * 6 + lowerCabinets * 6 + tallCabinets * 10;
+}
+
 /**
  * Handles kitchen price calculation (assembly and transport).
  *
@@ -58,9 +71,12 @@ async function calculateKitchen(req, res) {
 			});
 		}
 
+		const loadingPrice = isKitchenTransportService
+			? calculateKitchenTransportLoadingPrice(formData)
+			: 0;
 		let mergedAssemblyPrice = kitchenPrice;
 		let mergedDisassemblyPrice = disassemblyPrice;
-		let mergedTransportPrice = routeCosts.transportPrice;
+		let mergedTransportPrice = routeCosts.transportPrice + loadingPrice;
 		if (routeCosts.travelPrice > 0) {
 			if (mergedAssemblyPrice > 0) {
 				mergedAssemblyPrice += routeCosts.travelPrice;

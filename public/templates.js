@@ -419,6 +419,17 @@ function getKitchenTransportForm() {
 					<input id="lowerCabinets" name="lowerCabinets" type="number" min="0" placeholder="z.B. 6">
 				</div>
 
+				<div class="field">
+					<label for="kitchenTransportTallCabinets" class="label-with-tooltip">
+						<span>Große Schränke</span>
+						<span class="help-tooltip">
+							<span class="help-tooltip__icon" aria-label="Hinweis">i</span>
+							<span class="help-tooltip__content">Schränke ab 80 cm Höhe.</span>
+						</span>
+					</label>
+					<input id="kitchenTransportTallCabinets" name="kitchenTransportTallCabinets" type="number" min="0" placeholder="z.B. 1">
+				</div>
+
 				<div class="field field-full furniture-addon-group">
 					<label>Zusatzleistungen</label>
 					<div class="furniture-addon-list">
