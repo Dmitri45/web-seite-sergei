@@ -152,13 +152,24 @@ async function calculateTrades(req, res) {
 			});
 		}
 
+		let mergedServicePrice = servicePrice;
+		if (routeCosts.travelPrice > 0) {
+			if (items.length) {
+				items[0] = {
+					...items[0],
+					price: Number((items[0].price + routeCosts.travelPrice).toFixed(2))
+				};
+			}
+			mergedServicePrice += routeCosts.travelPrice;
+		}
+
 		return res.json({
 			...formData,
 			prices: {
 				arrivalPrice: routeCosts.arrivalPrice,
 				departurePrice: routeCosts.departurePrice,
-				travelPrice: routeCosts.travelPrice,
-				totalPrice: servicePrice + routeCosts.travelPrice,
+				travelPrice: 0,
+				totalPrice: mergedServicePrice,
 				items
 			}
 		});

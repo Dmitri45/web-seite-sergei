@@ -58,16 +58,29 @@ async function calculateKitchen(req, res) {
 			});
 		}
 
-		const totalPrice = kitchenPrice + disassemblyPrice + routeCosts.transportPrice + routeCosts.travelPrice;
+		let mergedAssemblyPrice = kitchenPrice;
+		let mergedDisassemblyPrice = disassemblyPrice;
+		let mergedTransportPrice = routeCosts.transportPrice;
+		if (routeCosts.travelPrice > 0) {
+			if (mergedAssemblyPrice > 0) {
+				mergedAssemblyPrice += routeCosts.travelPrice;
+			} else if (mergedDisassemblyPrice > 0) {
+				mergedDisassemblyPrice += routeCosts.travelPrice;
+			} else {
+				mergedTransportPrice += routeCosts.travelPrice;
+			}
+		}
+
+		const totalPrice = mergedAssemblyPrice + mergedDisassemblyPrice + mergedTransportPrice;
 		const result = {
 			...formData,
 			prices: {
-				assemblyPrice: kitchenPrice,
-				disassemblyPrice,
+				assemblyPrice: mergedAssemblyPrice,
+				disassemblyPrice: mergedDisassemblyPrice,
 				arrivalPrice: routeCosts.arrivalPrice,
 				departurePrice: routeCosts.departurePrice,
-				travelPrice: routeCosts.travelPrice,
-				transportPrice: routeCosts.transportPrice,
+				travelPrice: 0,
+				transportPrice: mergedTransportPrice,
 				totalPrice
 			}
 		};

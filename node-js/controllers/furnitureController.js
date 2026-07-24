@@ -94,13 +94,29 @@ async function calculateFurniture(req, res) {
 			});
 		}
 
+		if (routeCosts.travelPrice > 0) {
+			if (items.length) {
+				items[0] = {
+					...items[0],
+					price: Number((items[0].price + routeCosts.travelPrice).toFixed(2))
+				};
+			} else {
+				items.push({
+					index: 0,
+					name: formData.serviceLabel || 'Service',
+					price: routeCosts.travelPrice
+				});
+			}
+			price += routeCosts.travelPrice;
+		}
+
 		return res.json({
 			...formData,
 			prices: {
 				arrivalPrice: routeCosts.arrivalPrice,
 				departurePrice: routeCosts.departurePrice,
-				travelPrice: routeCosts.travelPrice,
-				totalPrice: price + routeCosts.travelPrice,
+				travelPrice: 0,
+				totalPrice: price,
 				items
 			}
 		});

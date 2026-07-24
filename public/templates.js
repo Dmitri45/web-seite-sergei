@@ -76,8 +76,7 @@ function getKitchenResultTemplate(data) {
 	const priceRows = [
 		['Montage / Aufbau', prices.assemblyPrice],
 		['Abbau', prices.disassemblyPrice],
-		['Transport', prices.transportPrice],
-		['Anfahrt / Abfahrt', prices.travelPrice]
+		['Transport', prices.transportPrice]
 	].filter(([, value]) => Number(value || 0) > 0);
 
 	return `
@@ -136,12 +135,6 @@ function getFurnitureResultTemplate(data) {
 							<strong>${formatEuro(item.price)}</strong>
 						</div>
 					`).join('')}
-					${Number(prices.travelPrice || 0) > 0 ? `
-						<div class="result-breakdown__row">
-							<span>Anfahrt / Abfahrt</span>
-							<strong>${formatEuro(prices.travelPrice)}</strong>
-						</div>
-					` : ''}
 				</div>
 
 				<p class="result-note">Der Preis ist eine erste Einschätzung. Das finale Angebot kann je nach Aufwand vor Ort abweichen.</p>
@@ -180,12 +173,6 @@ function getServiceResultTemplate(data) {
 							<strong>${formatEuro(item.price)}</strong>
 						</div>
 					`).join('')}
-					${Number(prices.travelPrice || 0) > 0 ? `
-						<div class="result-breakdown__row">
-							<span>Anfahrt / Abfahrt</span>
-							<strong>${formatEuro(prices.travelPrice)}</strong>
-						</div>
-					` : ''}
 				</div>
 
 				<p class="result-note">Der Preis ist eine erste Einschätzung. Das finale Angebot kann je nach Aufwand vor Ort abweichen.</p>

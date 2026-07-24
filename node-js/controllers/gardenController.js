@@ -77,6 +77,17 @@ async function calculateGarden(req, res) {
 		}
 
 		const items = buildFenceAssemblyItems(formData);
+		let mergedGardenPrice = gardenPrice;
+		if (routeCosts.travelPrice > 0) {
+			if (items.length) {
+				items[0] = {
+					...items[0],
+					price: Number((items[0].price + routeCosts.travelPrice).toFixed(2))
+				};
+			}
+			mergedGardenPrice += routeCosts.travelPrice;
+		}
+
 		if (routeCosts.transportPrice > 0) {
 			items.push({
 				index: items.length,
@@ -88,12 +99,12 @@ async function calculateGarden(req, res) {
 		return res.json({
 			...formData,
 			prices: {
-				gardenPrice,
+				gardenPrice: mergedGardenPrice,
 				arrivalPrice: routeCosts.arrivalPrice,
 				departurePrice: routeCosts.departurePrice,
-				travelPrice: routeCosts.travelPrice,
+				travelPrice: 0,
 				transportPrice: routeCosts.transportPrice,
-				totalPrice: gardenPrice + routeCosts.transportPrice + routeCosts.travelPrice,
+				totalPrice: mergedGardenPrice + routeCosts.transportPrice,
 				items
 			}
 		});
