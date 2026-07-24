@@ -8,13 +8,17 @@ const SERVICE_RADIUS_50_KM_LABELS = new Set([
 	'möbelentsorgung'
 ]);
 const SERVICE_RADIUS_120_KM_LABELS = new Set([
+	'küchentransport',
+	'kleintransporte',
+	'umzugshilfe',
 	'heckenschnitt',
 	'rasenmähen',
 	'rollrasenverlegung',
 	'strauchschnitt',
 	'baumfällung (kleine bäume)',
 	'heckenentfernung',
-	'grünschnittentsorgung'
+	'grünschnittentsorgung',
+	'zaunmontage'
 ]);
 const SERVICE_AREA_UNLIMITED_LABELS = new Set([
 	'küchenanfertigung',
