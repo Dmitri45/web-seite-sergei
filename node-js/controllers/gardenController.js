@@ -49,6 +49,11 @@ function buildFenceAssemblyItems(formData = {}) {
 	return items;
 }
 
+function calculateFenceTransportLoadingPrice(formData = {}) {
+	const elementsCount = Math.max(0, Math.floor(toNumber(formData.fenceElementsCount)));
+	return elementsCount * 10;
+}
+
 async function calculateGarden(req, res) {
 	try {
 		const formData = req.body || {};
@@ -88,11 +93,16 @@ async function calculateGarden(req, res) {
 			mergedGardenPrice += routeCosts.travelPrice;
 		}
 
-		if (routeCosts.transportPrice > 0) {
+		const transportLoadingPrice = routeCosts.transportPrice > 0
+			? calculateFenceTransportLoadingPrice(formData)
+			: 0;
+		const mergedTransportPrice = routeCosts.transportPrice + transportLoadingPrice;
+
+		if (mergedTransportPrice > 0) {
 			items.push({
 				index: items.length,
 				name: 'Transport',
-				price: routeCosts.transportPrice
+				price: mergedTransportPrice
 			});
 		}
 
@@ -103,8 +113,8 @@ async function calculateGarden(req, res) {
 				arrivalPrice: routeCosts.arrivalPrice,
 				departurePrice: routeCosts.departurePrice,
 				travelPrice: 0,
-				transportPrice: routeCosts.transportPrice,
-				totalPrice: mergedGardenPrice + routeCosts.transportPrice,
+				transportPrice: mergedTransportPrice,
+				totalPrice: mergedGardenPrice + mergedTransportPrice,
 				items
 			}
 		});
