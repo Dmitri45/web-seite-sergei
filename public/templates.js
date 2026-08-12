@@ -664,8 +664,61 @@ function getMovingHelpersEstimateForm() {
  * @returns {string} HTML template.
  */
 function getKitchenAdjustmentEstimateForm() {
-	// Gleiche Eingaben/Logik wie beim Küchenaufbau (Preiseinschätzung).
-	return getNewKitchenForm();
+	return `
+		<form class="calc-card" id="calcForm">
+			<h2>Küchenanpassung</h2>
+			<p>Wählen Sie die gewünschte Anpassung aus und beschreiben Sie kurz Ihr Projekt.</p>
+
+			<div class="calc-grid">
+				<div class="field field-full furniture-addon-group">
+					<label>Welche Leistung benötigen Sie?</label>
+					<div class="furniture-addon-list">
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Austausch eines Küchenschranks</span>
+								<input name="adjustmentCabinetReplacement" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
+
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Arbeitsplatte austauschen</span>
+								<input name="adjustmentWorktopReplacement" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
+
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Spülmaschine austauschen</span>
+								<input name="adjustmentDishwasherReplacement" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
+
+						<div class="furniture-addon-row">
+							<label class="furniture-addon-toggle">
+								<span class="furniture-addon-title">Küchenschrank anpassen</span>
+								<input name="adjustmentCabinetModification" type="checkbox" value="yes">
+								<span class="furniture-addon-switch"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="field field-full">
+					<label for="notes">Zusätzliche Hinweise</label>
+					<textarea id="notes" name="notes" rows="4" placeholder="z.B. Maße, Hersteller, vorhandene Anschlüsse, gewünschte Anpassung"></textarea>
+				</div>
+			</div>
+
+			<div class="calc-actions">
+				<button id="btn-continue" class="btn-main" type="button">Angebot anfordern</button>
+				<button class="btn-secondary" type="reset">Zurücksetzen</button>
+			</div>
+		</form>
+	`;
 }
 
 /**

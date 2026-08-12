@@ -434,7 +434,7 @@ function attachFormContinueListener(formElement) {
 
 		const selectedService = getSelectedServiceData();
 		const serviceLabel = selectedService?.label?.trim() || '';
-		if ([SERVICE_LABELS.KITCHEN_ASSEMBLY, SERVICE_LABELS.KITCHEN_ADJUSTMENT].includes(serviceLabel)) {
+		if (serviceLabel === SERVICE_LABELS.KITCHEN_ASSEMBLY) {
 			const payload = buildCalculationData(calcState.currentForm, calcState);
 			calcState.latestFrontendFormPayload = payload;
 			formElement.style.display = 'none';
