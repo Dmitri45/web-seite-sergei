@@ -1,0 +1,24 @@
+{
+  "title": "Eingangsbereich gepflastert",
+  "location": "Voerde",
+  "serviceType": "Gartenservice",
+  "shortDescription": "Pflasterarbeiten im Eingangsbereich mit sauberem Abschluss.",
+  "description": "Der Eingangsbereich wurde vorbereitet und neu gepflastert. Die Ausführung erfolgte mit Blick auf eine ordentliche Optik, stabile Verlegung und einen sauberen Übergang zu den angrenzenden Flächen.",
+  "workDone": [
+    "Untergrund vorbereitet",
+    "Pflasterfläche angelegt",
+    "Steine ausgerichtet und eingepasst",
+    "Kanten und Übergänge sauber abgeschlossen"
+  ],
+  "details": [
+    "Projektart: Pflasterarbeiten",
+    "Bereich: Eingangsbereich",
+    "Ort: Voerde"
+  ],
+  "preview": "preview.JPG",
+  "gallery": [
+    "preview.JPG",
+    "01.JPG"
+  ],
+  "sortOrder": 4
+}

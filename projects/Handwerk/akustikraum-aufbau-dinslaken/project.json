@@ -1,0 +1,26 @@
+{
+  "title": "Aufbau eines Akustikraums",
+  "location": "Dinslaken",
+  "serviceType": "Handwerk",
+  "shortDescription": "Montagearbeiten für einen funktionalen Akustikraum.",
+  "description": "Bei diesem Projekt wurde ein Akustikraum aufgebaut und sorgfältig montiert. Die Arbeiten umfassten die Vorbereitung, Ausrichtung und Befestigung der Bauteile für eine saubere und stabile Ausführung.",
+  "workDone": [
+    "Bauteile vorbereitet und sortiert",
+    "Akustikraum montiert",
+    "Elemente ausgerichtet und befestigt",
+    "Abschlusskontrolle durchgeführt"
+  ],
+  "details": [
+    "Projektart: Montagearbeiten",
+    "Bereich: Akustikraum",
+    "Ort: Dinslaken"
+  ],
+  "preview": "preview.JPG",
+  "gallery": [
+    "preview.JPG",
+    "01.JPG",
+    "02.JPG",
+    "03.JPG"
+  ],
+  "sortOrder": 2
+}

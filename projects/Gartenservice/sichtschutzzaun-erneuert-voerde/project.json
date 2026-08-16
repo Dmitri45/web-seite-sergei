@@ -1,0 +1,26 @@
+{
+  "title": "Sichtschutzzaun erneuert",
+  "location": "Voerde",
+  "serviceType": "Gartenservice",
+  "shortDescription": "Erneuerung eines Sichtschutzzauns im Gartenbereich.",
+  "description": "Der alte Sichtschutz wurde erneuert und sauber ausgerichtet. Die Arbeiten umfassten die Demontage beziehungsweise Vorbereitung der vorhandenen Elemente sowie die fachgerechte Montage des neuen Sichtschutzes.",
+  "workDone": [
+    "Vorhandenen Sichtschutz geprüft und vorbereitet",
+    "Neue Zaunelemente montiert",
+    "Elemente ausgerichtet und befestigt",
+    "Gartenbereich ordentlich hinterlassen"
+  ],
+  "details": [
+    "Projektart: Sichtschutzzaun",
+    "Ausführung: Erneuerung",
+    "Ort: Voerde"
+  ],
+  "preview": "preview.jpg",
+  "gallery": [
+    "preview.jpg",
+    "01.jpg",
+    "02.jpg",
+    "03.jpg"
+  ],
+  "sortOrder": 2
+}

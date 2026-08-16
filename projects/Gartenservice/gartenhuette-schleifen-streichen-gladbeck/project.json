@@ -1,0 +1,29 @@
+{
+  "title": "Gartenhütte schleifen und streichen",
+  "location": "Gladbeck",
+  "serviceType": "Gartenservice",
+  "shortDescription": "Aufbereitung einer Gartenhütte mit Schleifarbeiten und neuem Farbanstrich.",
+  "description": "Bei diesem Projekt wurde eine bestehende Gartenhütte fachgerecht vorbereitet, geschliffen und anschließend in einer neuen Farbe gestrichen. Ziel war ein sauberes, gepflegtes Erscheinungsbild und ein besserer Schutz der Holzoberfläche.",
+  "workDone": [
+    "Holzoberflächen vorbereitet und geschliffen",
+    "Alte Beschichtungen nachgearbeitet",
+    "Gartenhütte neu gestrichen",
+    "Arbeitsbereich sauber übergeben"
+  ],
+  "details": [
+    "Projektart: Gartenhütte",
+    "Ausführung: Schleifen und Streichen",
+    "Ort: Gladbeck"
+  ],
+  "preview": "preview.JPG",
+  "gallery": [
+    "preview.JPG",
+    "01.JPG",
+    "02.JPG",
+    "03.JPG",
+    "04.JPG",
+    "05.JPG",
+    "06.JPG"
+  ],
+  "sortOrder": 1
+}

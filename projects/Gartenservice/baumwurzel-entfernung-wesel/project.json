@@ -1,0 +1,26 @@
+{
+  "title": "Baumwurzel entfernt",
+  "location": "Wesel",
+  "serviceType": "Gartenservice",
+  "shortDescription": "Entfernung einer Baumwurzel im Gartenbereich.",
+  "description": "Eine störende Baumwurzel wurde fachgerecht entfernt, damit die Fläche anschließend wieder nutzbar ist. Die Arbeiten wurden kontrolliert durchgeführt und der Arbeitsbereich ordentlich hinterlassen.",
+  "workDone": [
+    "Arbeitsbereich vorbereitet",
+    "Baumwurzel freigelegt",
+    "Wurzel entfernt",
+    "Fläche grob bereinigt und sauber übergeben"
+  ],
+  "details": [
+    "Projektart: Baumwurzelentfernung",
+    "Bereich: Garten",
+    "Ort: Wesel"
+  ],
+  "preview": "preview..JPG",
+  "gallery": [
+    "preview..JPG",
+    "01.JPG",
+    "02.JPG",
+    "03.JPG"
+  ],
+  "sortOrder": 3
+}
