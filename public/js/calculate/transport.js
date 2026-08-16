@@ -7,6 +7,7 @@ import { GARDEN_CALCULATION_SERVICE_LABELS } from './constants.js';
 import { getCalcMainContainer } from './dom.js';
 import { createStrictAddressAutocomplete, mapLocationToTransportPoint, markAddressAutocompleteInvalid } from './autocomplete.js';
 import { getSelectedServiceData } from './state.js';
+import { SERVICE_LABELS } from './serviceLabels.js';
 
 /**
  * Renders the optional transportation survey into the calculator layout.
@@ -29,11 +30,21 @@ export function renderTransportationSurvey() {
 		const description = survey.querySelector('.survey-card > p');
 		const noDesc = survey.querySelector('.survey-btn[data-value="no"] .survey-desc');
 		const yesDesc = survey.querySelector('.survey-btn[data-value="yes"] .survey-desc');
+		const fromLabel = survey.querySelector('label');
+		const toLabel = survey.querySelectorAll('#transportFields .field label')[1];
 
 		if (title) title.textContent = 'Transport erforderlich?';
-		if (description) description.textContent = 'Müssen Material, Werkzeug oder Teile zum Einsatzort transportiert werden?';
-		if (noDesc) noDesc.textContent = 'Kein zusätzlicher Transport nötig';
-		if (yesDesc) yesDesc.textContent = 'Transport zum Einsatzort nötig';
+		if (serviceLabel === SERVICE_LABELS.FENCE_ASSEMBLY) {
+			if (description) description.textContent = 'Sollen wir Ihren Zaun von einem Baumarkt oder einem anderen Ort zum Einsatzort transportieren?';
+			if (noDesc) noDesc.textContent = 'Kein Zauntransport nötig';
+			if (yesDesc) yesDesc.textContent = 'Zauntransport zum Einsatzort benötigt';
+			if (fromLabel) fromLabel.textContent = 'Abholort (Baumarkt / Adresse)';
+			if (toLabel) toLabel.textContent = 'Einsatzort (Adresse)';
+		} else {
+			if (description) description.textContent = 'Müssen Material, Werkzeug oder Teile zum Einsatzort transportiert werden?';
+			if (noDesc) noDesc.textContent = 'Kein zusätzlicher Transport nötig';
+			if (yesDesc) yesDesc.textContent = 'Transport zum Einsatzort nötig';
+		}
 	}
 
 	calcContainer.appendChild(survey);
