@@ -11,12 +11,13 @@ import {
 	TRADES_CALCULATION_SERVICE_LABELS
 } from './constants.js';
 import { appendTemplateToCalcLayout, getCalcMainContainer, removeFeedbackBlocks, removeFlowBlocks } from './dom.js';
-import { createAddressAutocomplete, markAddressAutocompleteInvalid } from './autocomplete.js';
+import { clearAddressAutocompleteStatus, createAddressAutocomplete, markAddressAutocompleteInvalid } from './autocomplete.js';
 import { createServiceFormTemplates } from './serviceTemplates.js';
 import {
 	initServiceAreaField,
 	markServiceAreaDenied,
 	renderStandaloneForm,
+	validateRequiredFormFields,
 	validateServiceAreaSelection
 } from './forms.js';
 import {
@@ -231,6 +232,8 @@ function showKitchenTransportAssemblyDetailsForm(previousForm, basePayload, opti
 
 	const continueButton = detailsForm.querySelector('#btn-continue');
 	continueButton?.addEventListener('click', () => {
+		if (!validateRequiredFormFields(detailsForm)) return;
+
 		const payload = mergeFormValuesIntoPayload(basePayload, detailsForm);
 		payload.assembly = 'yes';
 		payload.condition = 'new';
@@ -330,6 +333,7 @@ function initOfferRequestButtons(formElement) {
 		const selectedService = getSelectedServiceData();
 		const serviceLabel = selectedService?.label?.trim() || '';
 
+		if (!validateRequiredFormFields(formElement)) return;
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
 		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
 
@@ -429,6 +433,7 @@ function attachFormContinueListener(formElement) {
 	button.dataset.transportContinueBound = '1';
 
 	button.addEventListener('click', async () => {
+		if (!validateRequiredFormFields(formElement)) return;
 		if (!await validateServiceAreaBeforeContinue(formElement)) return;
 		if (!await validateStandaloneTransportEndpointServiceArea(formElement)) return;
 
@@ -725,6 +730,7 @@ function openOfferRequestForm(baseData) {
 
 	const form = block.querySelector('#offerRequestForm');
 	if (!form) return;
+	form.noValidate = true;
 	calcState.selectedOfferAddress = '';
 
 	const privacyCheckbox = form.querySelector('#offerPrivacyAccepted');
@@ -739,10 +745,13 @@ function openOfferRequestForm(baseData) {
 	const offerAddressAutocomplete = createAddressAutocomplete('offerAddressAutocomplete');
 	offerAddressAutocomplete.on('select', (location) => {
 		calcState.selectedOfferAddress = location?.properties?.formatted || '';
+		clearAddressAutocompleteStatus(document.getElementById('offerAddressAutocomplete'));
 	});
 
 	form.addEventListener('submit', async (event) => {
 		event.preventDefault();
+
+		if (!validateRequiredFormFields(form)) return;
 
 		if (!privacyCheckbox?.checked) {
 			privacyCheckbox?.reportValidity();
@@ -751,7 +760,9 @@ function openOfferRequestForm(baseData) {
 
 		const contact = collectOfferContactData(form);
 		if (!contact.address) {
-			alert('Bitte wählen Sie eine Adresse aus der Vorschlagsliste aus.');
+			const addressContainer = document.getElementById('offerAddressAutocomplete');
+			markAddressAutocompleteInvalid(addressContainer, 'Bitte Adresse aus der Vorschlagsliste wählen.');
+			addressContainer?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			return;
 		}
 

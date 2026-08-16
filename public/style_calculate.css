@@ -274,6 +274,7 @@ body.page-calculate .hero-subtitle {
 
 .field {
     min-width: 0;
+    position: relative;
 }
 
 .field label {
@@ -432,6 +433,24 @@ body.page-calculate .hero-subtitle {
 .autocomplete-container.is-address-invalid input {
     border-color: rgba(191, 69, 69, 0.55);
     box-shadow: 0 0 0 3px rgba(191, 69, 69, 0.10);
+}
+
+.field.field--invalid input,
+.field.field--invalid select,
+.field.field--invalid textarea {
+    border-color: rgba(191, 69, 69, 0.55);
+    box-shadow: 0 0 0 3px rgba(191, 69, 69, 0.10);
+}
+
+.field-validation-message {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 2px);
+    z-index: 2;
+    margin: 0;
+    font-size: 10px !important;
+    line-height: 1.35;
+    color: #a83d3d;
 }
 
 .address-confirmation-status {

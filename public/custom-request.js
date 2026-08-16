@@ -107,6 +107,83 @@
 	}
 
 	/**
+	 * Finds the validation wrapper for a custom request field.
+	 * @param {HTMLElement} control - Form control.
+	 * @returns {HTMLElement|null} Field wrapper.
+	 */
+	function getValidationWrapper(control) {
+		return control.closest('.custom-request-field, .custom-request-privacy') || control.parentElement;
+	}
+
+	/**
+	 * Clears one inline validation message.
+	 * @param {HTMLElement} control - Form control.
+	 * @returns {void}
+	 */
+	function clearValidation(control) {
+		const wrapper = getValidationWrapper(control);
+		if (!wrapper) return;
+
+		wrapper.classList.remove('is-invalid');
+		wrapper.querySelector('.custom-request-validation')?.remove();
+		control.removeAttribute('aria-invalid');
+	}
+
+	/**
+	 * Shows one inline validation message.
+	 * @param {HTMLElement} control - Form control.
+	 * @param {string} message - Message text.
+	 * @returns {void}
+	 */
+	function markInvalid(control, message) {
+		const wrapper = getValidationWrapper(control);
+		if (!wrapper) return;
+
+		wrapper.classList.add('is-invalid');
+		control.setAttribute('aria-invalid', 'true');
+
+		let messageElement = wrapper.querySelector('.custom-request-validation');
+		if (!messageElement) {
+			messageElement = document.createElement('p');
+			messageElement.className = 'custom-request-validation';
+			wrapper.appendChild(messageElement);
+		}
+		messageElement.textContent = message;
+	}
+
+	/**
+	 * Validates the custom request form with inline messages.
+	 * @param {HTMLFormElement} form - Active custom request form.
+	 * @returns {boolean} True when the form is valid.
+	 */
+	function validateForm(form) {
+		let firstInvalid = null;
+
+		form.querySelectorAll('input, textarea').forEach((control) => {
+			clearValidation(control);
+			if (control.disabled || !control.required) return;
+
+			const isCheckbox = control.type === 'checkbox';
+			const isFilled = Boolean(String(control.value || '').trim());
+			const isValid = isCheckbox ? control.checked : isFilled && (!control.validity || control.validity.valid);
+			if (isValid) return;
+
+			markInvalid(control, isCheckbox
+				? 'Bitte bestätigen Sie die Datenschutzerklärung.'
+				: (isFilled && control.type === 'email'
+					? 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+					: 'Bitte füllen Sie dieses Feld aus.'));
+			firstInvalid ||= control;
+		});
+
+		if (!firstInvalid) return true;
+
+		firstInvalid.focus?.({ preventScroll: true });
+		getValidationWrapper(firstInvalid)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		return false;
+	}
+
+	/**
 	 * Binds validation and submit behavior to a rendered form.
 	 * @param {HTMLElement} root - Rendered custom request section.
 	 * @returns {void}
@@ -117,17 +194,24 @@
 		const privacy = form?.elements.privacyPolicyAccepted;
 		const status = root.querySelector('.custom-request-status');
 		if (!form || !submitButton || !privacy || !status) return;
+		form.noValidate = true;
 
 		const syncSubmitState = () => {
 			submitButton.disabled = !privacy.checked;
 		};
+
+		form.querySelectorAll('input, textarea').forEach((control) => {
+			['input', 'change'].forEach((eventName) => {
+				control.addEventListener(eventName, () => clearValidation(control));
+			});
+		});
 
 		privacy.addEventListener('change', syncSubmitState);
 		syncSubmitState();
 
 		form.addEventListener('submit', async (event) => {
 			event.preventDefault();
-			if (!form.reportValidity()) return;
+			if (!validateForm(form)) return;
 
 			submitButton.disabled = true;
 			status.className = 'custom-request-status';

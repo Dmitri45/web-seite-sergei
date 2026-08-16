@@ -2182,6 +2182,19 @@ body.has-portfolio-open {
     box-shadow: 0 0 0 3px rgba(15, 61, 46, 0.1);
 }
 
+.custom-request-field.is-invalid input,
+.custom-request-field.is-invalid textarea {
+    border-color: rgba(191, 69, 69, 0.55);
+    box-shadow: 0 0 0 3px rgba(191, 69, 69, 0.10);
+}
+
+.custom-request-validation {
+    margin: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #a83d3d;
+}
+
 .custom-request-privacy {
     display: grid;
     grid-template-columns: 18px minmax(0, 1fr);

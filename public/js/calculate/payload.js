@@ -85,17 +85,14 @@ export function buildCalculationData(currentForm, state) {
  */
 export function validateCustomRequestPayload(payload) {
 	if (!payload.firstName?.trim() || !payload.lastName?.trim()) {
-		alert('Bitte geben Sie Vorname und Nachname ein.');
 		return false;
 	}
 
 	if (!payload.phone?.trim()) {
-		alert('Bitte geben Sie Ihre Telefonnummer ein.');
 		return false;
 	}
 
 	if (!payload.address?.trim()) {
-		alert('Bitte wählen Sie eine Adresse aus der Vorschlagsliste aus.');
 		return false;
 	}
 

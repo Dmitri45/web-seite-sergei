@@ -274,6 +274,16 @@ export function markAddressAutocompleteInvalid(container, message = 'Bitte wähl
 }
 
 /**
+ * Clears the visible validation state from an autocomplete field.
+ * @param {HTMLElement|null} container - Autocomplete container.
+ * @returns {void}
+ */
+export function clearAddressAutocompleteStatus(container) {
+	if (!container) return;
+	setAddressConfirmationState(container, 'idle', '');
+}
+
+/**
  * Creates an autocomplete instance that requires choosing a dropdown result.
  * @param {string} elementId - Container element id.
  * @param {Object} handlers - Selection and invalidation callbacks.
@@ -354,6 +364,7 @@ export function initInlineAddressAutocompletes(formElement) {
 			if (targetInput) {
 				targetInput.value = location?.properties?.formatted || '';
 			}
+			clearAddressAutocompleteStatus(element);
 		});
 	});
 }

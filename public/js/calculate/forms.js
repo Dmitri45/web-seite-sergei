@@ -7,6 +7,7 @@ import { getCalcMainContainer } from './dom.js';
 import {
 	initInlineAddressAutocompletes,
 	createStrictAddressAutocomplete,
+	clearAddressAutocompleteStatus,
 	markAddressAutocompleteInvalid,
 	mapLocationToTransportPoint
 } from './autocomplete.js';
@@ -14,6 +15,12 @@ import { SERVICE_AREA_EXCLUDED_LABELS } from './constants.js';
 import { applySelectedServiceData, calcState, getSelectedServiceData, setSelectedServiceData } from './state.js';
 
 const SERVICE_AREA_AUTOCOMPLETE_ID = 'serviceAreaAutocomplete';
+const OPTIONAL_FIELD_NAMES = new Set([
+	'additionalNotes',
+	'notes',
+	'offerPhone',
+	'workDescription'
+]);
 
 /**
  * Renders a standalone calculator form and initializes its interactive controls.
@@ -46,6 +53,7 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 	initTransportAssemblyAddonVisibility(newForm);
 	initTradeAddonToggles(newForm);
 	initServiceSwitchButtons(newForm, hooks.renderServiceSpecificFormFromStorage);
+	bindFormValidationReset(newForm);
 
 	if (typeof hooks.initOfferRequestButtons === 'function') {
 		hooks.initOfferRequestButtons(newForm);
@@ -123,6 +131,252 @@ export function markServiceAreaDenied(formElement, message) {
 }
 
 /**
+ * Returns whether a form control is currently visible and can be edited.
+ * @param {HTMLElement} control - Form control.
+ * @returns {boolean} True when the control is visible.
+ */
+function isVisibleFormControl(control) {
+	return Boolean(control.offsetParent || control.getClientRects().length);
+}
+
+/**
+ * Finds the field wrapper used for inline validation styling.
+ * @param {HTMLElement} control - Form control.
+ * @returns {HTMLElement|null} Field wrapper.
+ */
+function getValidationField(control) {
+	return control.closest('.field') || control.parentElement;
+}
+
+/**
+ * Removes inline validation styling from a regular form control.
+ * @param {HTMLElement} control - Form control.
+ * @returns {void}
+ */
+function clearFieldValidation(control) {
+	const field = getValidationField(control);
+	if (!field) return;
+
+	field.classList.remove('field--invalid');
+	field.querySelector('.field-validation-message')?.remove();
+	control.removeAttribute('aria-invalid');
+}
+
+/**
+ * Clears all generic inline validation messages in a form.
+ * @param {HTMLElement} formElement - Form to clean up.
+ * @returns {void}
+ */
+function clearFormValidation(formElement) {
+	formElement.querySelectorAll('input, select, textarea').forEach(clearFieldValidation);
+	formElement.querySelectorAll('[data-address-autocomplete]').forEach(clearAddressAutocompleteStatus);
+}
+
+/**
+ * Clears inline validation messages when the form is reset.
+ * @param {HTMLElement} formElement - Form to bind.
+ * @returns {void}
+ */
+function bindFormValidationReset(formElement) {
+	if (!formElement || formElement.dataset.validationResetBound === '1') return;
+	formElement.dataset.validationResetBound = '1';
+
+	formElement.addEventListener('reset', () => {
+		window.setTimeout(() => clearFormValidation(formElement), 0);
+	});
+}
+
+/**
+ * Shows an inline validation message for a regular form control.
+ * @param {HTMLElement} control - Form control.
+ * @param {string} message - Message text.
+ * @returns {void}
+ */
+function markFieldInvalid(control, message) {
+	const field = getValidationField(control);
+	if (!field) return;
+
+	field.classList.add('field--invalid');
+	control.setAttribute('aria-invalid', 'true');
+
+	let messageElement = field.querySelector('.field-validation-message');
+	if (!messageElement) {
+		messageElement = document.createElement('p');
+		messageElement.className = 'field-validation-message';
+		field.appendChild(messageElement);
+	}
+	messageElement.textContent = message;
+}
+
+/**
+ * Binds live cleanup for a form control after the user edits it.
+ * @param {HTMLElement} control - Form control.
+ * @returns {void}
+ */
+function bindFieldValidationCleanup(control) {
+	if (control.dataset.requiredValidationBound === '1') return;
+	control.dataset.requiredValidationBound = '1';
+
+	['input', 'change'].forEach((eventName) => {
+		control.addEventListener(eventName, () => {
+			if (isControlFilledAndValid(control)) clearFieldValidation(control);
+		});
+	});
+}
+
+/**
+ * Checks whether a control should be ignored by the generic required-field validator.
+ * @param {HTMLElement} control - Form control.
+ * @returns {boolean} True when the control is optional or handled elsewhere.
+ */
+function shouldSkipRequiredValidation(control) {
+	const tagName = control.tagName.toLowerCase();
+	const type = String(control.type || '').toLowerCase();
+	const field = getValidationField(control);
+	const label = field?.querySelector('label')?.textContent?.toLowerCase() || '';
+
+	if (!control.name || control.disabled || !isVisibleFormControl(control)) return true;
+	if (['button', 'checkbox', 'file', 'hidden', 'radio', 'reset', 'submit'].includes(type)) return true;
+	if (tagName === 'textarea' && !control.required) return true;
+	if (OPTIONAL_FIELD_NAMES.has(control.name) || OPTIONAL_FIELD_NAMES.has(control.id)) return true;
+	if (label.includes('optional') || label.includes('zusätzliche hinweise')) return true;
+
+	return false;
+}
+
+/**
+ * Gets the correct German validation text for a control.
+ * @param {HTMLElement} control - Form control.
+ * @returns {string} Validation message.
+ */
+function getRequiredMessage(control) {
+	if (control.tagName.toLowerCase() === 'select') return 'Bitte wählen Sie eine Option aus.';
+	if (!String(control.value || '').trim()) return 'Bitte füllen Sie dieses Feld aus.';
+	if (control.type === 'email') return 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+	if (control.validity && control.value && !control.validity.valid) return 'Bitte geben Sie einen gültigen Wert ein.';
+	return 'Bitte füllen Sie dieses Feld aus.';
+}
+
+/**
+ * Checks whether a control has a usable value and passes native constraints.
+ * @param {HTMLElement} control - Form control.
+ * @returns {boolean} True when filled and valid.
+ */
+function isControlFilledAndValid(control) {
+	if (!String(control.value || '').trim()) return false;
+	return !control.validity || control.validity.valid;
+}
+
+/**
+ * Returns enabled regular controls in an option block.
+ * @param {HTMLElement} block - Option block.
+ * @returns {HTMLElement[]} Controls inside the block.
+ */
+function getOptionBlockControls(block) {
+	return [...block.querySelectorAll('input, select, textarea')]
+		.filter(control => !shouldSkipRequiredValidation(control));
+}
+
+/**
+ * Validates an either/or option group, such as area total or length and width.
+ * @param {HTMLElement} group - Option group wrapper.
+ * @returns {{valid: boolean, firstInvalid: HTMLElement|null}} Validation result.
+ */
+function validateOptionGroup(group) {
+	const blocks = [...group.querySelectorAll('.calc-option-block')];
+	if (blocks.length < 2) return { valid: true, firstInvalid: null };
+
+	const blockStates = blocks.map((block) => {
+		const controls = getOptionBlockControls(block);
+		const filledControls = controls.filter(isControlFilledAndValid);
+		return {
+			controls,
+			filledControls,
+			isComplete: controls.length > 0 && filledControls.length === controls.length,
+			isStarted: filledControls.length > 0
+		};
+	});
+
+	if (blockStates.some(state => state.isComplete)) {
+		blockStates.forEach(state => state.controls.forEach(clearFieldValidation));
+		return { valid: true, firstInvalid: null };
+	}
+
+	const activeState = blockStates.find(state => state.isStarted) || blockStates[0];
+	const invalidControl = activeState.controls.find(control => !isControlFilledAndValid(control)) || activeState.controls[0] || null;
+	if (invalidControl) {
+		markFieldInvalid(invalidControl, 'Bitte füllen Sie eine Variante vollständig aus.');
+	}
+
+	return { valid: false, firstInvalid: invalidControl };
+}
+
+/**
+ * Validates inline address autocompletes that write into hidden address fields.
+ * @param {HTMLElement} formElement - Form being validated.
+ * @returns {{valid: boolean, firstInvalid: HTMLElement|null}} Validation result.
+ */
+function validateInlineAddressFields(formElement) {
+	let firstInvalid = null;
+
+	formElement.querySelectorAll('[data-address-autocomplete]').forEach((container) => {
+		const targetName = container.dataset.addressTarget || 'address';
+		const targetInput = formElement.querySelector(`[name="${targetName}"]`);
+		if (!targetInput || targetInput.disabled) return;
+
+		if (String(targetInput.value || '').trim()) {
+			clearAddressAutocompleteStatus(container);
+			return;
+		}
+
+		markAddressAutocompleteInvalid(container, 'Bitte Adresse aus der Vorschlagsliste wählen.');
+		firstInvalid ||= container;
+	});
+
+	return { valid: !firstInvalid, firstInvalid };
+}
+
+/**
+ * Validates visible required controls in a calculator form with inline messages.
+ * @param {HTMLFormElement|HTMLElement|null} formElement - Form to validate.
+ * @returns {boolean} True when all required fields are filled.
+ */
+export function validateRequiredFormFields(formElement) {
+	if (!formElement) return true;
+
+	let firstInvalid = null;
+	const optionGroupControls = new Set();
+
+	formElement.querySelectorAll('.field-full').forEach((group) => {
+		if (!group.querySelector('.calc-option-divider')) return;
+		group.querySelectorAll('input, select, textarea').forEach(control => optionGroupControls.add(control));
+
+		const result = validateOptionGroup(group);
+		if (!result.valid) firstInvalid ||= result.firstInvalid;
+	});
+
+	formElement.querySelectorAll('input, select, textarea').forEach((control) => {
+		bindFieldValidationCleanup(control);
+		if (optionGroupControls.has(control)) return;
+		clearFieldValidation(control);
+		if (shouldSkipRequiredValidation(control)) return;
+		if (isControlFilledAndValid(control)) return;
+
+		markFieldInvalid(control, getRequiredMessage(control));
+		firstInvalid ||= control;
+	});
+
+	const addressResult = validateInlineAddressFields(formElement);
+	if (!addressResult.valid) firstInvalid ||= addressResult.firstInvalid;
+
+	if (!firstInvalid) return true;
+
+	firstInvalid.focus?.({ preventScroll: true });
+	(firstInvalid.closest?.('.field') || firstInvalid).scrollIntoView({ behavior: 'smooth', block: 'center' });
+	return false;
+}
+
+/**
  * Binds optional furniture addon toggles to their quantity fields.
  * @param {HTMLElement|null} containerElement - Container with addon controls.
  * @returns {void}
@@ -193,7 +447,8 @@ export function initTradeAddonToggles(containerElement) {
 
 			event.preventDefault();
 			event.stopImmediatePropagation();
-			invalidInput.reportValidity();
+			markFieldInvalid(invalidInput, 'Bitte wählen Sie eine Option aus.');
+			invalidInput.closest('.field')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}, true);
 	}
 }
