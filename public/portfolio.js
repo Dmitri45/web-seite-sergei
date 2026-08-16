@@ -39,6 +39,30 @@ function flattenPortfolioProjects(data) {
 	return (data?.categories || []).flatMap(category => category.projects || []);
 }
 
+function getDistinctHomeReferenceProjects(data, limit = 3) {
+	const categories = data?.categories || [];
+	const selectedProjects = [];
+	const selectedProjectIds = new Set();
+
+	categories.forEach((category) => {
+		const project = (category.projects || []).find(item => item.preview);
+		if (!project || selectedProjects.length >= limit) return;
+
+		selectedProjects.push(project);
+		selectedProjectIds.add(project.id);
+	});
+
+	if (selectedProjects.length < limit) {
+		flattenPortfolioProjects(data).forEach((project) => {
+			if (selectedProjects.length >= limit || selectedProjectIds.has(project.id)) return;
+			selectedProjects.push(project);
+			selectedProjectIds.add(project.id);
+		});
+	}
+
+	return selectedProjects.slice(0, limit);
+}
+
 function getPortfolioDialog() {
 	return document.getElementById('portfolioDialog');
 }
@@ -422,7 +446,7 @@ function renderHomeReferenceCards(data) {
 	const grid = document.querySelector('.references-grid');
 	if (!grid) return;
 
-	const projects = flattenPortfolioProjects(data).slice(0, 3);
+	const projects = getDistinctHomeReferenceProjects(data, 3);
 	if (!projects.length) return;
 	const [featuredProject, ...sideProjects] = projects;
 
