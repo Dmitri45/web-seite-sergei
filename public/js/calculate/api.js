@@ -134,6 +134,22 @@ export function buildLocalCalculationFallback(data = {}) {
 	if (serviceLabel === SERVICE_LABELS.FENCE_ASSEMBLY) {
 		const elementsCount = Math.max(0, Math.floor(Number.parseFloat(String(data.fenceElementsCount || '0').replace(',', '.')) || 0));
 		const kerbstoneLengthM = Math.max(0, Number.parseFloat(String(data.kerbstoneLengthM || '0').replace(',', '.')) || 0);
+		const postCount = elementsCount > 0 ? elementsCount + 1 : 0;
+		const fasteningRates = {
+			concrete: 45,
+			'post-shoe': 25,
+			'wall-holder': 35
+		};
+		const fasteningLabels = {
+			concrete: 'Einbetonieren',
+			'post-shoe': 'Pfostenschuh',
+			'wall-holder': 'Pfostenhalter für Betonmauer'
+		};
+		const fasteningKey = String(data.fencePostFastening || '').trim().toLowerCase();
+		const materialPrice = String(data.fenceMaterialMode || '').trim().toLowerCase() === 'with'
+			? elementsCount * 120
+			: 0;
+		const fasteningPrice = postCount * (fasteningRates[fasteningKey] || 0);
 		const fencePrice = elementsCount > 0
 			? 230 + Math.max(0, elementsCount - 2) * 80
 			: 0;
@@ -141,22 +157,40 @@ export function buildLocalCalculationFallback(data = {}) {
 			? kerbstoneLengthM * 14
 			: 0;
 
+		const items = [
+			{
+				index: 0,
+				name: `Zaunmontage x ${elementsCount} Elemente`,
+				price: fencePrice
+			}
+		];
+		if (materialPrice > 0) {
+			items.push({
+				index: items.length,
+				name: `Zaunmaterial x ${elementsCount} Elemente`,
+				price: materialPrice
+			});
+		}
+		if (fasteningPrice > 0) {
+			items.push({
+				index: items.length,
+				name: `Pfostenbefestigung: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
+				price: fasteningPrice
+			});
+		}
+		if (kerbstonePrice > 0) {
+			items.push({
+				index: items.length,
+				name: `Kantenstein / Bordstein x ${kerbstoneLengthM} m`,
+				price: kerbstonePrice
+			});
+		}
+
 		return {
 			...data,
 			prices: {
-				totalPrice: fencePrice + kerbstonePrice,
-				items: [
-					{
-						index: 0,
-						name: `Zaunmontage x ${elementsCount} Elemente`,
-						price: fencePrice
-					},
-					...(kerbstonePrice > 0 ? [{
-						index: 1,
-						name: `Kantenstein / Bordstein x ${kerbstoneLengthM} m`,
-						price: kerbstonePrice
-					}] : [])
-				]
+				totalPrice: fencePrice + materialPrice + fasteningPrice + kerbstonePrice,
+				items
 			}
 		};
 	}

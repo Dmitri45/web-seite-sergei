@@ -1490,7 +1490,7 @@ function getFenceAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Zaunmontage</h2>
-			<p>Bitte geben Sie die Anzahl der Zaunelemente und optionale Bordstein-Angaben an.</p>
+			<p>Bitte geben Sie die Anzahl der Zaunelemente, Materialwunsch und Befestigungsart an.</p>
 
 			<div class="calc-grid">
 				<div class="field">
@@ -1502,6 +1502,25 @@ function getFenceAssemblyForm() {
 						</span>
 					</label>
 					<input id="fenceElementsCount" name="fenceElementsCount" type="number" min="1" step="1" placeholder="z.B. 5">
+				</div>
+
+				<div class="field">
+					<label for="fenceMaterialMode">Materialien</label>
+					<select id="fenceMaterialMode" name="fenceMaterialMode">
+						<option value="">Bitte wählen…</option>
+						<option value="without">Ohne Material</option>
+						<option value="with">Mit Material</option>
+					</select>
+				</div>
+
+				<div class="field field-full">
+					<label for="fencePostFastening">Wie sollen die Pfosten befestigt werden?</label>
+					<select id="fencePostFastening" name="fencePostFastening">
+						<option value="">Bitte wählen…</option>
+						<option value="concrete">Einbetonieren</option>
+						<option value="post-shoe">Pfostenschuh</option>
+						<option value="wall-holder">Pfostenhalter für Betonmauer</option>
+					</select>
 				</div>
 
 				<div class="field">

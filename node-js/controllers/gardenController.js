@@ -1,5 +1,9 @@
 const {
-	calculateFenceAssemblyPrice
+	FENCE_MATERIAL_RATE_PER_ELEMENT,
+	calculateFenceAssemblyPrice,
+	getFencePostCount,
+	getFencePostFasteningRate,
+	isWithFenceMaterial
 } = require('../calculators/gardenCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
@@ -23,6 +27,14 @@ function buildFenceAssemblyItems(formData = {}) {
 	const elementsCount = Math.max(0, Math.floor(toNumber(formData.fenceElementsCount)));
 	const kerbstoneLengthM = Math.max(0, toNumber(formData.kerbstoneLengthM));
 	const withKerbstone = String(formData.withKerbstone || '').trim().toLowerCase() === 'with';
+	const postCount = getFencePostCount(elementsCount);
+	const fasteningRate = getFencePostFasteningRate(formData.fencePostFastening);
+	const fasteningLabels = {
+		concrete: 'Einbetonieren',
+		'post-shoe': 'Pfostenschuh',
+		'wall-holder': 'Pfostenhalter für Betonmauer'
+	};
+	const fasteningKey = String(formData.fencePostFastening || '').trim().toLowerCase();
 
 	let fencePrice = 0;
 	if (elementsCount > 0) {
@@ -38,9 +50,25 @@ function buildFenceAssemblyItems(formData = {}) {
 		price: fencePrice
 	}];
 
+	if (isWithFenceMaterial(formData.fenceMaterialMode) && elementsCount > 0) {
+		items.push({
+			index: items.length,
+			name: `Zaunmaterial x ${elementsCount} Elemente`,
+			price: elementsCount * FENCE_MATERIAL_RATE_PER_ELEMENT
+		});
+	}
+
+	if (fasteningRate > 0 && postCount > 0) {
+		items.push({
+			index: items.length,
+			name: `Pfostenbefestigung: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
+			price: postCount * fasteningRate
+		});
+	}
+
 	if (withKerbstone && kerbstoneLengthM > 0) {
 		items.push({
-			index: 1,
+			index: items.length,
 			name: `Kantenstein / Bordstein x ${kerbstoneLengthM} m`,
 			price: kerbstoneLengthM * 14
 		});

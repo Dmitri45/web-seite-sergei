@@ -84,7 +84,10 @@ function formatChoice(value) {
 		'l-form': 'L-Form',
 		'u-form': 'U-Form',
 		'grobeschicht-frei-hand': 'Grobeschicht frei Hand, nicht lotgerecht',
-		'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht'
+		'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht',
+		concrete: 'Einbetonieren',
+		'post-shoe': 'Pfostenschuh',
+		'wall-holder': 'Pfostenhalter für Betonmauer'
 	};
 	const normalized = String(value ?? '').trim();
 	return choices[normalized] || value;
@@ -161,6 +164,8 @@ const FIELD_LABELS = {
 	estimatedVolume: 'Geschätztes Volumen',
 	currentGroundType: 'Aktueller Untergrund',
 	fenceElementsCount: 'Zaunelemente',
+	fenceMaterialMode: 'Materialien',
+	fencePostFastening: 'Pfostenbefestigung',
 	withKerbstone: 'Kantenstein / Bordstein',
 	kerbstoneLengthM: 'Kantenstein Länge',
 	closedSides: 'Geschlossene Seiten',
@@ -229,6 +234,9 @@ function formatFieldValue(key, value) {
 	if (key.endsWith('Height') || key.endsWith('Width') || key.endsWith('Length')) return `${value} m`;
 	if (key === 'distanceToGarden' || key === 'distanceToEntrance') return `${value} m`;
 	if (key === 'kerbstoneLengthM') return `${value} m`;
+	if (key === 'fenceMaterialMode') {
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Material' : 'Ohne Material';
+	}
 	if (typeof value === 'object') {
 		if (value.address) return value.address;
 		return JSON.stringify(value, null, 2);
@@ -308,6 +316,8 @@ function buildDetailsHtml(payload = {}) {
 		'helpersCount',
 		'workHours',
 		'fenceElementsCount',
+		'fenceMaterialMode',
+		'fencePostFastening',
 		'withKerbstone',
 		'kerbstoneLengthM'
 	];
