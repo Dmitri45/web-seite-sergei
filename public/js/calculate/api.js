@@ -135,12 +135,12 @@ export function buildLocalCalculationFallback(data = {}) {
 		const elementsCount = Math.max(0, Math.floor(Number.parseFloat(String(data.fenceElementsCount || '0').replace(',', '.')) || 0));
 		const kerbstoneLengthM = Math.max(0, Number.parseFloat(String(data.kerbstoneLengthM || '0').replace(',', '.')) || 0);
 		const postCount = elementsCount > 0 ? elementsCount + 1 : 0;
-		const materialRates = {
-			'wood-fence': 120,
-			'wpc-fence': 145,
-			'metal-fence': 135,
-			'aluminium-fence': 165,
-			'concrete-fence': 210
+		const materialAssemblySurcharges = {
+			'wood-fence': 8,
+			'wpc-fence': 15,
+			'metal-fence': 20,
+			'aluminium-fence': 20,
+			'concrete-fence': 100
 		};
 		const materialLabels = {
 			'wood-fence': 'Holzzaun',
@@ -159,67 +159,33 @@ export function buildLocalCalculationFallback(data = {}) {
 			'post-shoe': 22,
 			'wall-holder': 28
 		};
-		const fasteningLabels = {
-			concrete: 'Einbetonieren',
-			'post-shoe': 'Pfostenschuh',
-			'wall-holder': 'Pfostenhalter für Betonmauer'
-		};
 		const fasteningKey = String(data.fencePostFastening || '').trim().toLowerCase();
 		const materialKey = String(data.fenceMaterialType || '').trim().toLowerCase();
-		const materialPrice = String(data.fenceMaterialMode || '').trim().toLowerCase() === 'with'
-			? elementsCount * (materialRates[materialKey] || 0)
-			: 0;
+		const materialAssemblySurcharge = elementsCount * (materialAssemblySurcharges[materialKey] || 0);
 		const fasteningPrice = postCount * (fasteningRates[fasteningKey] || 0);
 		const fasteningMaterialPrice = String(data.postFasteningMaterialMode || '').trim().toLowerCase() === 'with'
 			? postCount * (fasteningMaterialRates[fasteningKey] || 0)
 			: 0;
 		const fencePrice = elementsCount > 0
-			? 230 + Math.max(0, elementsCount - 2) * 80
+			? 230 + Math.max(0, elementsCount - 2) * 80 + materialAssemblySurcharge
 			: 0;
 		const kerbstonePrice = String(data.withKerbstone || '').trim().toLowerCase() === 'with'
 			? kerbstoneLengthM * 14
 			: 0;
+		const montagePrice = fencePrice + fasteningPrice + fasteningMaterialPrice + kerbstonePrice;
 
 		const items = [
 			{
 				index: 0,
-				name: `Zaunmontage x ${elementsCount} Elemente`,
-				price: fencePrice
+				name: `Zaunmontage ${materialLabels[materialKey] ? `(${materialLabels[materialKey]}) ` : ''}x ${elementsCount} Elemente`,
+				price: montagePrice
 			}
 		];
-		if (materialPrice > 0) {
-			items.push({
-				index: items.length,
-				name: `Zaunmaterial: ${materialLabels[materialKey] || 'Material'} x ${elementsCount} Elemente`,
-				price: materialPrice
-			});
-		}
-		if (fasteningPrice > 0) {
-			items.push({
-				index: items.length,
-				name: `Pfostenbefestigung: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
-				price: fasteningPrice
-			});
-		}
-		if (fasteningMaterialPrice > 0) {
-			items.push({
-				index: items.length,
-				name: `Befestigungsmaterial: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
-				price: fasteningMaterialPrice
-			});
-		}
-		if (kerbstonePrice > 0) {
-			items.push({
-				index: items.length,
-				name: `Kantenstein / Bordstein x ${kerbstoneLengthM} m`,
-				price: kerbstonePrice
-			});
-		}
 
 		return {
 			...data,
 			prices: {
-				totalPrice: fencePrice + materialPrice + fasteningPrice + fasteningMaterialPrice + kerbstonePrice,
+				totalPrice: montagePrice,
 				items
 			}
 		};

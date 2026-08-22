@@ -290,15 +290,6 @@ function getServiceFormTemplates() {
 }
 
 /**
- * Checks whether the active fence assembly form includes materials.
- * @param {HTMLFormElement|null} formElement - Active service form.
- * @returns {boolean} True when material is included.
- */
-function isFenceMaterialIncluded(formElement) {
-	return String(formElement?.querySelector('[name="fenceMaterialMode"]')?.value || '').trim().toLowerCase() === 'with';
-}
-
-/**
  * Renders the service-specific form selected in sessionStorage.
  * @returns {boolean} True when a form was rendered.
  */
@@ -420,18 +411,6 @@ function initOfferRequestButtons(formElement) {
 		}
 
 		if (GARDEN_CALCULATION_SERVICE_LABELS.has(serviceLabel)) {
-			if (serviceLabel === SERVICE_LABELS.FENCE_ASSEMBLY && isFenceMaterialIncluded(formElement)) {
-				resetTransportSelection(calcState);
-				calcState.selectedTransportation = 'no';
-
-				const payload = buildCalculationData(calcState.currentForm, calcState);
-				calcState.latestFrontendFormPayload = payload;
-				formElement.style.display = 'none';
-				showLoadingIndicator();
-				await requestCalculation(payload);
-				return;
-			}
-
 			formElement.style.display = 'none';
 			showTransportationSurvey();
 			return;

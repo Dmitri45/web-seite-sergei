@@ -212,7 +212,6 @@ const FIELD_LABELS = {
 	estimatedVolume: 'Geschätztes Volumen',
 	currentGroundType: 'Aktueller Untergrund',
 	fenceElementsCount: 'Zaunelemente',
-	fenceMaterialMode: 'Zaunmaterial',
 	fenceMaterialType: 'Zaunart',
 	fencePostFastening: 'Pfostenbefestigung',
 	postFasteningMaterialMode: 'Befestigungsmaterial',
@@ -284,9 +283,6 @@ function formatFieldValue(key, value) {
 	if (key.endsWith('Height') || key.endsWith('Width') || key.endsWith('Length')) return `${value} m`;
 	if (key === 'distanceToGarden' || key === 'distanceToEntrance') return `${value} m`;
 	if (key === 'kerbstoneLengthM') return `${value} m`;
-	if (key === 'fenceMaterialMode') {
-		return String(value).trim().toLowerCase() === 'with' ? 'Mit Zaunmaterial' : 'Ohne Zaunmaterial';
-	}
 	if (key === 'postFasteningMaterialMode') {
 		return String(value).trim().toLowerCase() === 'with' ? 'Mit Befestigungsmaterial' : 'Ohne Befestigungsmaterial';
 	}
@@ -369,7 +365,6 @@ function buildDetailsHtml(payload = {}) {
 		'helpersCount',
 		'workHours',
 		'fenceElementsCount',
-		'fenceMaterialMode',
 		'fenceMaterialType',
 		'fencePostFastening',
 		'postFasteningMaterialMode',
