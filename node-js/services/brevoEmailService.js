@@ -2,6 +2,23 @@ const { BrevoClient } = require('@getbrevo/brevo');
 
 const DEFAULT_SENDER_NAME = 'S.K SERVICE';
 const DEFAULT_SUBJECT = 'Neue Anfrage von der Website';
+const DEFAULT_GARDEN_RECIPIENT_EMAIL = 'schiling2000@gmail.com';
+const GARDEN_SERVICE_LABELS = new Set([
+	'heckenschnitt',
+	'rasenmähen',
+	'rollrasenverlegung',
+	'wurzelentfernung',
+	'pflasterarbeiten',
+	'minibaggerarbeiten',
+	'gartenhausmontage',
+	'gartenhaus-renovierung',
+	'heckenentfernung',
+	'baumfällung (kleine bäume)',
+	'strauchschnitt',
+	'grünschnittentsorgung',
+	'überdachungsmontage',
+	'holzhäckselarbeiten'
+]);
 
 function getRequiredEnv(name) {
 	const value = process.env[name];
@@ -15,6 +32,32 @@ function buildBrevoClient() {
 	return new BrevoClient({
 		apiKey: getRequiredEnv('BREVO_API_KEY')
 	});
+}
+
+function normalizeRoutingValue(value) {
+	return String(value || '').trim().toLowerCase();
+}
+
+function isNonFenceGardenRequest(payload = {}) {
+	const serviceLabel = normalizeRoutingValue(payload.serviceLabel);
+	const serviceCategory = normalizeRoutingValue(payload.serviceCategory || payload.category);
+	const pageTitle = normalizeRoutingValue(payload.pageTitle);
+
+	if (serviceLabel === 'zaunmontage') return false;
+
+	return (
+		serviceCategory === 'gartenservice' ||
+		GARDEN_SERVICE_LABELS.has(serviceLabel) ||
+		pageTitle.includes('gartenservice')
+	);
+}
+
+function resolveRecipientEmail(payload = {}) {
+	if (isNonFenceGardenRequest(payload)) {
+		return process.env.BREVO_GARDEN_RECIPIENT_EMAIL || DEFAULT_GARDEN_RECIPIENT_EMAIL;
+	}
+
+	return getRequiredEnv('BREVO_RECIPIENT_EMAIL');
 }
 
 function buildFallbackText(payload) {
@@ -436,7 +479,7 @@ function buildCustomRequestTemplateParams(payload = {}) {
 }
 
 function buildEmailRequest(payload) {
-	const recipientEmail = getRequiredEnv('BREVO_RECIPIENT_EMAIL');
+	const recipientEmail = resolveRecipientEmail(payload);
 	const senderEmail = process.env.BREVO_SENDER_EMAIL || recipientEmail;
 	const senderName = process.env.BREVO_SENDER_NAME || DEFAULT_SENDER_NAME;
 	const templateId = Number.parseInt(process.env.BREVO_TEMPLATE_ID || '', 10);
@@ -462,7 +505,7 @@ function buildEmailRequest(payload) {
 }
 
 function buildCustomRequestEmailRequest(payload) {
-	const recipientEmail = getRequiredEnv('BREVO_RECIPIENT_EMAIL');
+	const recipientEmail = resolveRecipientEmail(payload);
 	const senderEmail = process.env.BREVO_SENDER_EMAIL || recipientEmail;
 	const senderName = process.env.BREVO_SENDER_NAME || DEFAULT_SENDER_NAME;
 	const templateId = Number.parseInt(process.env.BREVO_TEMPLATE_ID || '', 10);
