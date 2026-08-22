@@ -87,7 +87,12 @@ function formatChoice(value) {
 		'lotgerecht-wasserwaage': 'Mit Wasserwaage, lotgerecht',
 		concrete: 'Einbetonieren',
 		'post-shoe': 'Pfostenschuh',
-		'wall-holder': 'Pfostenhalter für Betonmauer'
+		'wall-holder': 'Pfostenhalter für Betonmauer',
+		'wood-fence': 'Holzzaun',
+		'wpc-fence': 'WPC- / Kunststoffzaun',
+		'metal-fence': 'Doppelstabmattenzaun / Metallzaun',
+		'aluminium-fence': 'Aluminiumzaun',
+		'concrete-fence': 'Betonzaun'
 	};
 	const normalized = String(value ?? '').trim();
 	return choices[normalized] || value;
@@ -164,8 +169,10 @@ const FIELD_LABELS = {
 	estimatedVolume: 'Geschätztes Volumen',
 	currentGroundType: 'Aktueller Untergrund',
 	fenceElementsCount: 'Zaunelemente',
-	fenceMaterialMode: 'Materialien',
+	fenceMaterialMode: 'Zaunmaterial',
+	fenceMaterialType: 'Zaunart',
 	fencePostFastening: 'Pfostenbefestigung',
+	postFasteningMaterialMode: 'Befestigungsmaterial',
 	withKerbstone: 'Kantenstein / Bordstein',
 	kerbstoneLengthM: 'Kantenstein Länge',
 	closedSides: 'Geschlossene Seiten',
@@ -235,7 +242,10 @@ function formatFieldValue(key, value) {
 	if (key === 'distanceToGarden' || key === 'distanceToEntrance') return `${value} m`;
 	if (key === 'kerbstoneLengthM') return `${value} m`;
 	if (key === 'fenceMaterialMode') {
-		return String(value).trim().toLowerCase() === 'with' ? 'Mit Material' : 'Ohne Material';
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Zaunmaterial' : 'Ohne Zaunmaterial';
+	}
+	if (key === 'postFasteningMaterialMode') {
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Befestigungsmaterial' : 'Ohne Befestigungsmaterial';
 	}
 	if (typeof value === 'object') {
 		if (value.address) return value.address;
@@ -317,7 +327,9 @@ function buildDetailsHtml(payload = {}) {
 		'workHours',
 		'fenceElementsCount',
 		'fenceMaterialMode',
+		'fenceMaterialType',
 		'fencePostFastening',
+		'postFasteningMaterialMode',
 		'withKerbstone',
 		'kerbstoneLengthM'
 	];

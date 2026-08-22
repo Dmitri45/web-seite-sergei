@@ -1490,7 +1490,7 @@ function getFenceAssemblyForm() {
 	return `
 		<form class="calc-card" id="calcForm">
 			<h2>Zaunmontage</h2>
-			<p>Bitte geben Sie die Anzahl der Zaunelemente, Materialwunsch und Befestigungsart an.</p>
+			<p>Bitte geben Sie die Anzahl der Zaunelemente, den Materialwunsch und die Befestigung der Pfosten an.</p>
 
 			<div class="calc-grid">
 				<div class="field">
@@ -1509,7 +1509,19 @@ function getFenceAssemblyForm() {
 					<select id="fenceMaterialMode" name="fenceMaterialMode">
 						<option value="">Bitte wählen…</option>
 						<option value="without">Ohne Material</option>
-						<option value="with">Mit Material</option>
+						<option value="with">Mit Zaunmaterial</option>
+					</select>
+				</div>
+
+				<div class="field field-full" data-fence-material-type-field>
+					<label for="fenceMaterialType">Welche Zaunart soll montiert werden?</label>
+					<select id="fenceMaterialType" name="fenceMaterialType">
+						<option value="">Bitte wählen…</option>
+						<option value="wood-fence">Holzzaun</option>
+						<option value="wpc-fence">WPC- / Kunststoffzaun</option>
+						<option value="metal-fence">Doppelstabmattenzaun / Metallzaun</option>
+						<option value="aluminium-fence">Aluminiumzaun</option>
+						<option value="concrete-fence">Betonzaun</option>
 					</select>
 				</div>
 
@@ -1520,6 +1532,15 @@ function getFenceAssemblyForm() {
 						<option value="concrete">Einbetonieren</option>
 						<option value="post-shoe">Pfostenschuh</option>
 						<option value="wall-holder">Pfostenhalter für Betonmauer</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="postFasteningMaterialMode">Befestigungsmaterial für Pfosten benötigt?</label>
+					<select id="postFasteningMaterialMode" name="postFasteningMaterialMode">
+						<option value="">Bitte wählen…</option>
+						<option value="without">Ohne Befestigungsmaterial</option>
+						<option value="with">Mit Befestigungsmaterial</option>
 					</select>
 				</div>
 

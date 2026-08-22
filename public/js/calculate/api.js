@@ -135,10 +135,29 @@ export function buildLocalCalculationFallback(data = {}) {
 		const elementsCount = Math.max(0, Math.floor(Number.parseFloat(String(data.fenceElementsCount || '0').replace(',', '.')) || 0));
 		const kerbstoneLengthM = Math.max(0, Number.parseFloat(String(data.kerbstoneLengthM || '0').replace(',', '.')) || 0);
 		const postCount = elementsCount > 0 ? elementsCount + 1 : 0;
+		const materialRates = {
+			'wood-fence': 120,
+			'wpc-fence': 145,
+			'metal-fence': 135,
+			'aluminium-fence': 165,
+			'concrete-fence': 210
+		};
+		const materialLabels = {
+			'wood-fence': 'Holzzaun',
+			'wpc-fence': 'WPC- / Kunststoffzaun',
+			'metal-fence': 'Doppelstabmattenzaun / Metallzaun',
+			'aluminium-fence': 'Aluminiumzaun',
+			'concrete-fence': 'Betonzaun'
+		};
 		const fasteningRates = {
 			concrete: 45,
 			'post-shoe': 25,
 			'wall-holder': 35
+		};
+		const fasteningMaterialRates = {
+			concrete: 18,
+			'post-shoe': 22,
+			'wall-holder': 28
 		};
 		const fasteningLabels = {
 			concrete: 'Einbetonieren',
@@ -146,10 +165,14 @@ export function buildLocalCalculationFallback(data = {}) {
 			'wall-holder': 'Pfostenhalter für Betonmauer'
 		};
 		const fasteningKey = String(data.fencePostFastening || '').trim().toLowerCase();
+		const materialKey = String(data.fenceMaterialType || '').trim().toLowerCase();
 		const materialPrice = String(data.fenceMaterialMode || '').trim().toLowerCase() === 'with'
-			? elementsCount * 120
+			? elementsCount * (materialRates[materialKey] || 0)
 			: 0;
 		const fasteningPrice = postCount * (fasteningRates[fasteningKey] || 0);
+		const fasteningMaterialPrice = String(data.postFasteningMaterialMode || '').trim().toLowerCase() === 'with'
+			? postCount * (fasteningMaterialRates[fasteningKey] || 0)
+			: 0;
 		const fencePrice = elementsCount > 0
 			? 230 + Math.max(0, elementsCount - 2) * 80
 			: 0;
@@ -167,7 +190,7 @@ export function buildLocalCalculationFallback(data = {}) {
 		if (materialPrice > 0) {
 			items.push({
 				index: items.length,
-				name: `Zaunmaterial x ${elementsCount} Elemente`,
+				name: `Zaunmaterial: ${materialLabels[materialKey] || 'Material'} x ${elementsCount} Elemente`,
 				price: materialPrice
 			});
 		}
@@ -176,6 +199,13 @@ export function buildLocalCalculationFallback(data = {}) {
 				index: items.length,
 				name: `Pfostenbefestigung: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
 				price: fasteningPrice
+			});
+		}
+		if (fasteningMaterialPrice > 0) {
+			items.push({
+				index: items.length,
+				name: `Befestigungsmaterial: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
+				price: fasteningMaterialPrice
 			});
 		}
 		if (kerbstonePrice > 0) {
@@ -189,7 +219,7 @@ export function buildLocalCalculationFallback(data = {}) {
 		return {
 			...data,
 			prices: {
-				totalPrice: fencePrice + materialPrice + fasteningPrice + kerbstonePrice,
+				totalPrice: fencePrice + materialPrice + fasteningPrice + fasteningMaterialPrice + kerbstonePrice,
 				items
 			}
 		};

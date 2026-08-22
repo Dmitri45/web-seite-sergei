@@ -1,9 +1,11 @@
 const {
-	FENCE_MATERIAL_RATE_PER_ELEMENT,
 	calculateFenceAssemblyPrice,
+	getFenceMaterialRate,
 	getFencePostCount,
 	getFencePostFasteningRate,
-	isWithFenceMaterial
+	getPostFasteningMaterialRate,
+	isWithFenceMaterial,
+	isWithPostFasteningMaterial
 } = require('../calculators/gardenCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
 
@@ -34,7 +36,17 @@ function buildFenceAssemblyItems(formData = {}) {
 		'post-shoe': 'Pfostenschuh',
 		'wall-holder': 'Pfostenhalter für Betonmauer'
 	};
+	const materialLabels = {
+		'wood-fence': 'Holzzaun',
+		'wpc-fence': 'WPC- / Kunststoffzaun',
+		'metal-fence': 'Doppelstabmattenzaun / Metallzaun',
+		'aluminium-fence': 'Aluminiumzaun',
+		'concrete-fence': 'Betonzaun'
+	};
 	const fasteningKey = String(formData.fencePostFastening || '').trim().toLowerCase();
+	const materialKey = String(formData.fenceMaterialType || '').trim().toLowerCase();
+	const materialRate = getFenceMaterialRate(materialKey);
+	const fasteningMaterialRate = getPostFasteningMaterialRate(fasteningKey);
 
 	let fencePrice = 0;
 	if (elementsCount > 0) {
@@ -50,11 +62,11 @@ function buildFenceAssemblyItems(formData = {}) {
 		price: fencePrice
 	}];
 
-	if (isWithFenceMaterial(formData.fenceMaterialMode) && elementsCount > 0) {
+	if (isWithFenceMaterial(formData.fenceMaterialMode) && materialRate > 0 && elementsCount > 0) {
 		items.push({
 			index: items.length,
-			name: `Zaunmaterial x ${elementsCount} Elemente`,
-			price: elementsCount * FENCE_MATERIAL_RATE_PER_ELEMENT
+			name: `Zaunmaterial: ${materialLabels[materialKey] || 'Material'} x ${elementsCount} Elemente`,
+			price: elementsCount * materialRate
 		});
 	}
 
@@ -63,6 +75,14 @@ function buildFenceAssemblyItems(formData = {}) {
 			index: items.length,
 			name: `Pfostenbefestigung: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
 			price: postCount * fasteningRate
+		});
+	}
+
+	if (isWithPostFasteningMaterial(formData.postFasteningMaterialMode) && fasteningMaterialRate > 0 && postCount > 0) {
+		items.push({
+			index: items.length,
+			name: `Befestigungsmaterial: ${fasteningLabels[fasteningKey] || 'Befestigung'} x ${postCount} Pfosten`,
+			price: postCount * fasteningMaterialRate
 		});
 	}
 

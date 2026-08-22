@@ -550,6 +550,9 @@ export function initFenceAssemblyForm(formElement) {
 	const withKerbstoneSelect = formElement.querySelector('#withKerbstone');
 	const kerbstoneLengthInput = formElement.querySelector('#kerbstoneLengthM');
 	const kerbstoneLengthField = kerbstoneLengthInput?.closest('.field');
+	const fenceMaterialModeSelect = formElement.querySelector('#fenceMaterialMode');
+	const fenceMaterialTypeSelect = formElement.querySelector('#fenceMaterialType');
+	const fenceMaterialTypeField = formElement.querySelector('[data-fence-material-type-field]');
 
 	if (!withKerbstoneSelect || !kerbstoneLengthInput || !kerbstoneLengthField) return;
 
@@ -564,6 +567,21 @@ export function initFenceAssemblyForm(formElement) {
 
 	withKerbstoneSelect.addEventListener('change', syncKerbstoneField);
 	syncKerbstoneField();
+
+	const syncFenceMaterialTypeField = () => {
+		if (!fenceMaterialModeSelect || !fenceMaterialTypeSelect || !fenceMaterialTypeField) return;
+
+		const isWithFenceMaterial = fenceMaterialModeSelect.value === 'with';
+		fenceMaterialTypeField.style.display = isWithFenceMaterial ? '' : 'none';
+		fenceMaterialTypeSelect.disabled = !isWithFenceMaterial;
+
+		if (!isWithFenceMaterial) {
+			fenceMaterialTypeSelect.value = '';
+		}
+	};
+
+	fenceMaterialModeSelect?.addEventListener('change', syncFenceMaterialTypeField);
+	syncFenceMaterialTypeField();
 }
 
 /**

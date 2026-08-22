@@ -57,11 +57,22 @@ function isWithKerbstone(value) {
   return String(value || '').trim().toLowerCase() === 'with';
 }
 
-const FENCE_MATERIAL_RATE_PER_ELEMENT = 120;
+const FENCE_MATERIAL_RATES_PER_ELEMENT = {
+  'wood-fence': 120,
+  'wpc-fence': 145,
+  'metal-fence': 135,
+  'aluminium-fence': 165,
+  'concrete-fence': 210
+};
 const FENCE_POST_FASTENING_RATES = {
   concrete: 45,
   'post-shoe': 25,
   'wall-holder': 35
+};
+const FENCE_POST_FASTENING_MATERIAL_RATES = {
+  concrete: 18,
+  'post-shoe': 22,
+  'wall-holder': 28
 };
 
 function isWithFenceMaterial(value) {
@@ -76,19 +87,34 @@ function getFencePostFasteningRate(value) {
   return FENCE_POST_FASTENING_RATES[String(value || '').trim().toLowerCase()] || 0;
 }
 
+function getFenceMaterialRate(value) {
+  return FENCE_MATERIAL_RATES_PER_ELEMENT[String(value || '').trim().toLowerCase()] || 0;
+}
+
+function isWithPostFasteningMaterial(value) {
+  return String(value || '').trim().toLowerCase() === 'with';
+}
+
+function getPostFasteningMaterialRate(value) {
+  return FENCE_POST_FASTENING_MATERIAL_RATES[String(value || '').trim().toLowerCase()] || 0;
+}
+
 /**
  * Calculates the price for fence assembly.
  * Rules:
  * - First 2 fence elements: 230 € total
  * - From the 3rd element: +80 € per element
- * - Optional material: +120 € per element
+ * - Optional fence material by selected fence type, per element
  * - Post fastening by selected method, per post
+ * - Optional fastening material by selected method, per post
  * - Optional Kantenstein/Bordstein: +14 € per meter
  *
  * @param {Object} formData
  * @param {string|number} [formData.fenceElementsCount]
  * @param {string} [formData.fenceMaterialMode] - with | without
+ * @param {string} [formData.fenceMaterialType]
  * @param {string} [formData.fencePostFastening]
+ * @param {string} [formData.postFasteningMaterialMode] - with | without
  * @param {string} [formData.withKerbstone] - with | without
  * @param {string|number} [formData.kerbstoneLengthM]
  * @returns {number}
@@ -110,19 +136,26 @@ function calculateFenceAssemblyPrice(formData = {}) {
     ? kerbstoneLengthM * 14
     : 0;
   const materialPrice = isWithFenceMaterial(formData.fenceMaterialMode)
-    ? elementsCount * FENCE_MATERIAL_RATE_PER_ELEMENT
+    ? elementsCount * getFenceMaterialRate(formData.fenceMaterialType)
     : 0;
   const fasteningPrice = getFencePostCount(elementsCount) * getFencePostFasteningRate(formData.fencePostFastening);
+  const fasteningMaterialPrice = isWithPostFasteningMaterial(formData.postFasteningMaterialMode)
+    ? getFencePostCount(elementsCount) * getPostFasteningMaterialRate(formData.fencePostFastening)
+    : 0;
 
-  return fencePrice + materialPrice + fasteningPrice + kerbstonePrice;
+  return fencePrice + materialPrice + fasteningPrice + fasteningMaterialPrice + kerbstonePrice;
 }
 
 module.exports = {
   calculateRollrasenVerlegenPrice,
   calculateFenceAssemblyPrice,
-  FENCE_MATERIAL_RATE_PER_ELEMENT,
+  FENCE_MATERIAL_RATES_PER_ELEMENT,
   FENCE_POST_FASTENING_RATES,
+  FENCE_POST_FASTENING_MATERIAL_RATES,
+  getFenceMaterialRate,
   getFencePostCount,
   getFencePostFasteningRate,
+  getPostFasteningMaterialRate,
+  isWithPostFasteningMaterial,
   isWithFenceMaterial
 };
