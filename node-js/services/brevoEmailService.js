@@ -234,9 +234,12 @@ const SKIPPED_DETAIL_KEYS = new Set([
 	'customer',
 	'prices',
 	'moebelstuecke',
+	'transportation',
 	'transportFrom',
 	'transportVia',
 	'transportTo',
+	'transportFromAddress',
+	'transportToAddress',
 	'einsatzort'
 ]);
 
@@ -245,8 +248,26 @@ const ALIAS_DETAIL_KEYS = new Set([
 	'worktopMaterial'
 ]);
 
+const DETAIL_SKIP_KEYS_BY_SERVICE = {
+	'küchendemontage': new Set([
+		'abbau',
+		'assembly',
+		'condition',
+		'kitchenCondition'
+	])
+};
+
 function normalizeDetailKey(key) {
 	return String(key || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
+
+function shouldSkipDetailKey(payload = {}, key = '') {
+	if (SKIPPED_DETAIL_KEYS.has(key)) return true;
+
+	const serviceLabel = String(payload.serviceLabel || '').trim().toLowerCase();
+	const serviceSkipKeys = DETAIL_SKIP_KEYS_BY_SERVICE[serviceLabel];
+
+	return Boolean(serviceSkipKeys?.has(key));
 }
 
 function fieldLabel(key) {
@@ -315,7 +336,7 @@ function buildCustomerHtml(customer = {}) {
 
 function buildTransportHtml(payload = {}) {
 	const rows = [
-		row('Transport', payload.transportation),
+		row('Transport', formatChoice(payload.transportation)),
 		row('Von', payload.transportFrom?.address)
 	];
 
@@ -355,7 +376,6 @@ function buildDetailsHtml(payload = {}) {
 		'adjustmentWorktopReplacement',
 		'adjustmentDishwasherReplacement',
 		'adjustmentCabinetModification',
-		'transportation',
 		'areaTotal',
 		'length',
 		'width',
@@ -372,7 +392,9 @@ function buildDetailsHtml(payload = {}) {
 		'kerbstoneLengthM'
 	];
 
-	const rows = priorityKeys.map(key => detailRow(key, payload[key], renderedKeys));
+	const rows = priorityKeys
+		.filter(key => !shouldSkipDetailKey(payload, key))
+		.map(key => detailRow(key, payload[key], renderedKeys));
 
 	if (!payload.areaTotal && payload.length && payload.width) {
 		rows.push(row('Berechnete Fläche', `${Number(payload.length) * Number(payload.width)} m²`));
@@ -391,7 +413,7 @@ function buildDetailsHtml(payload = {}) {
 			renderedKeys.has(normalizeDetailKey(key)) ||
 			renderedKeys.has(fieldLabel(key)) ||
 			(ALIAS_DETAIL_KEYS.has(key) && isDuplicateAlias) ||
-			SKIPPED_DETAIL_KEYS.has(key)
+			shouldSkipDetailKey(payload, key)
 		) return;
 		rows.push(detailRow(key, value, renderedKeys));
 	});
