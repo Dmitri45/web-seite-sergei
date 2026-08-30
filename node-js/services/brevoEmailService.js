@@ -430,6 +430,7 @@ function buildFurnitureHtml(payload = {}) {
 			row('Länge', item.length ? `${item.length} m` : ''),
 			row('Breite', item.width ? `${item.width} m` : ''),
 			row('Höhe', item.height ? `${item.height} m` : ''),
+			row('Ab-/Aufbau', formatChoice(item.assemblyNeed)),
 			row('Schubladen', item.drawers),
 			row('Ausziehboden', item.pullouts),
 			row('Beleuchtung', item.lighting || item.lights)

@@ -222,7 +222,7 @@ export function toCamelCaseFieldName(rawFieldName = '') {
 }
 
 /**
- * Groups dynamic furniture item form fields into the moebelstuecke array.
+ * Groups dynamic furniture and transport item form fields into the moebelstuecke array.
  * @param {Object} payload - Payload to mutate.
  * @returns {void}
  */
@@ -232,7 +232,7 @@ export function groupFurnitureItemsInPayload(payload) {
 	const furnitureItemsByIndex = new Map();
 
 	Object.keys(payload).forEach((key) => {
-		const match = key.match(/^furnitureItem([A-Za-z0-9]+)_(\d+)$/);
+		const match = key.match(/^(?:furnitureItem|transportItem)([A-Za-z0-9]+)_(\d+)$/);
 		if (!match) return;
 
 		const fieldName = toCamelCaseFieldName(match[1]);

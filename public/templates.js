@@ -554,10 +554,6 @@ function getSmallItemsTransportForm() {
 									<input id="transportItemLength_0" name="transportItemLength_0" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
 								</div>
 								<div class="field">
-									<label for="transportItemWidth_0">Breite (m)</label>
-									<input id="transportItemWidth_0" name="transportItemWidth_0" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
-								</div>
-								<div class="field">
 									<label for="transportItemHeight_0">Höhe (m)</label>
 									<input id="transportItemHeight_0" name="transportItemHeight_0" type="number" min="0" step="0.01" placeholder="z.B. 0.80">
 								</div>
@@ -2152,7 +2148,7 @@ function getIntermediateAddressTemplate(index, idPrefix = 'transportViaAutocompl
  * @param {number} index - Zero-based item index.
  * @returns {string} HTML template.
  */
-function getFurnitureAddonControls(index) {
+function getFurnitureAddonControls(index, fieldPrefix = 'furnitureItem') {
 	return `
 		<div class="field field-full furniture-addon-group">
 			<label>Optionale Ausstattung</label>
@@ -2160,33 +2156,33 @@ function getFurnitureAddonControls(index) {
 				<div class="furniture-addon-row">
 					<label class="furniture-addon-toggle">
 						<span class="furniture-addon-title">Schubladen</span>
-						<input type="checkbox" data-addon-toggle data-target="furnitureItemDrawers_${index}">
+						<input type="checkbox" data-addon-toggle data-target="${fieldPrefix}Drawers_${index}">
 						<span class="furniture-addon-switch"></span>
 					</label>
-					<div class="furniture-addon-qty" data-addon-qty="furnitureItemDrawers_${index}" hidden>
-						<input id="furnitureItemDrawers_${index}" name="furnitureItemDrawers_${index}" type="number" min="0" step="1" placeholder="Anzahl Schubladen">
+					<div class="furniture-addon-qty" data-addon-qty="${fieldPrefix}Drawers_${index}" hidden>
+						<input id="${fieldPrefix}Drawers_${index}" name="${fieldPrefix}Drawers_${index}" type="number" min="0" step="1" placeholder="Anzahl Schubladen">
 					</div>
 				</div>
 
 				<div class="furniture-addon-row">
 					<label class="furniture-addon-toggle">
 						<span class="furniture-addon-title">Ausziehboden</span>
-						<input type="checkbox" data-addon-toggle data-target="furnitureItemPullouts_${index}">
+						<input type="checkbox" data-addon-toggle data-target="${fieldPrefix}Pullouts_${index}">
 						<span class="furniture-addon-switch"></span>
 					</label>
-					<div class="furniture-addon-qty" data-addon-qty="furnitureItemPullouts_${index}" hidden>
-						<input id="furnitureItemPullouts_${index}" name="furnitureItemPullouts_${index}" type="number" min="0" step="1" placeholder="Anzahl Ausziehboden">
+					<div class="furniture-addon-qty" data-addon-qty="${fieldPrefix}Pullouts_${index}" hidden>
+						<input id="${fieldPrefix}Pullouts_${index}" name="${fieldPrefix}Pullouts_${index}" type="number" min="0" step="1" placeholder="Anzahl Ausziehboden">
 					</div>
 				</div>
 
 				<div class="furniture-addon-row">
 					<label class="furniture-addon-toggle">
 						<span class="furniture-addon-title">Beleuchtung</span>
-						<input type="checkbox" data-addon-toggle data-target="furnitureItemLighting_${index}">
+						<input type="checkbox" data-addon-toggle data-target="${fieldPrefix}Lighting_${index}">
 						<span class="furniture-addon-switch"></span>
 					</label>
-					<div class="furniture-addon-qty" data-addon-qty="furnitureItemLighting_${index}" hidden>
-						<input id="furnitureItemLighting_${index}" name="furnitureItemLighting_${index}" type="number" min="0" step="1" placeholder="Anzahl Beleuchtung">
+					<div class="furniture-addon-qty" data-addon-qty="${fieldPrefix}Lighting_${index}" hidden>
+						<input id="${fieldPrefix}Lighting_${index}" name="${fieldPrefix}Lighting_${index}" type="number" min="0" step="1" placeholder="Anzahl Beleuchtung">
 					</div>
 				</div>
 			</div>
@@ -2202,7 +2198,7 @@ function getFurnitureAddonControls(index) {
 function getTransportAssemblyAddonControls(index) {
 	return `
 		<div class="transport-assembly-addons" data-transport-assembly-addons hidden>
-			${getFurnitureAddonControls(index)}
+			${getFurnitureAddonControls(index, 'transportItem')}
 		</div>
 	`;
 }
@@ -2288,10 +2284,6 @@ function getTransportItemCardTemplate(index) {
 				<div class="field">
 					<label for="transportItemLength_${index}">Länge (m)</label>
 					<input id="transportItemLength_${index}" name="transportItemLength_${index}" type="number" min="0" step="0.01" placeholder="z.B. 1.20">
-				</div>
-				<div class="field">
-					<label for="transportItemWidth_${index}">Breite (m)</label>
-					<input id="transportItemWidth_${index}" name="transportItemWidth_${index}" type="number" min="0" step="0.01" placeholder="z.B. 0.60">
 				</div>
 				<div class="field">
 					<label for="transportItemHeight_${index}">Höhe (m)</label>
@@ -2530,8 +2522,7 @@ const SERVICES_BY_CATEGORY = {
     trades: [
         { label: 'Feinputz / Fertigbeschichtung', href: '/calculate', img: 'img/services/handwerker/feinputz.png', desc: 'Saubere Endschicht in passender Qualitätsstufe' },
         { label: 'Wandverputz', href: '/calculate', img: 'img/services/handwerker/waendeverputzen.png', desc: 'Grobeschicht oder lotgerechte Ausführung' },
-        { label: 'Trockenbau', href: '/calculate', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' },
-        { label: 'Fugenreinigung', href: '/calculate', img: 'img/services/handwerker/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' }
+        { label: 'Trockenbau', href: '/calculate', img: 'img/services/handwerker/trockenbau.png', desc: 'Ausbau mit Trockenbau-Systemen' }
     ],
     garden: [
         { label: 'Heckenschnitt', href: '/calculate', img: 'img/services/gartenservice/heckenschneiden.png', desc: 'Heckenpflege & Formschnitt' },
@@ -2539,6 +2530,7 @@ const SERVICES_BY_CATEGORY = {
         { label: 'Rollrasenverlegung', href: '/calculate', img: 'img/services/gartenservice/rollrasenverlegen.png', desc: 'Fertigrasen ohne Bodenvorbereitung' },
         { label: 'Wurzelentfernung', href: '/calculate', img: 'img/services/gartenservice/wurzelnentfernen.png', desc: 'Entfernung alter Wurzelstöcke' },
         { label: 'Pflasterarbeiten', href: '/calculate', img: 'img/services/gartenservice/pflastern.png', desc: 'Wege, Terrassen und Einfahrten' },
+        { label: 'Fugenreinigung', href: '/calculate', img: 'img/services/gartenservice/fugenreinigung.png', desc: 'Saubere Flächen und klare Kanten' },
         { label: 'Zaunmontage', href: '/calculate', img: 'img/services/gartenservice/zaeuneaufbauen.png', desc: 'Montage für Garten und Grundstück' },
         { label: 'Minibaggerarbeiten', href: '/calculate', img: 'img/services/gartenservice/minibaggerarbeiten.png', desc: 'Kleine Erdarbeiten & Aushub' },
         { label: 'Gartenhausmontage', href: '/calculate', img: 'img/services/gartenservice/gartenhuettenaufbauen.png', desc: 'Aufbau inkl. Bodenvorbereitung optional' },
