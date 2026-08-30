@@ -9,6 +9,8 @@ const {
 	calculateMovingHelpersItems
 } = require('../calculators/furnitureCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
+const { sendValidationError } = require('../validation/commonValidation');
+const { validateFurnitureCalculation } = require('../validation/furnitureValidation');
 
 /**
  * Resolves furniture calculation mode from request payload.
@@ -56,6 +58,11 @@ async function calculateFurniture(req, res) {
 	try {
 		const formData = req.body || {};
 		const mode = resolveFurnitureMode(formData);
+		const validation = validateFurnitureCalculation(formData);
+
+		if (!validation.ok) {
+			return sendValidationError(res, validation);
+		}
 
 		let price = 0;
 		let items = [];

@@ -1,5 +1,7 @@
 const { sendRequestEmail } = require('../services/brevoEmailService');
 const { sendBrevoSmtpTestEmail } = require('../services/brevoSmtpService');
+const { sendValidationError } = require('../validation/commonValidation');
+const { validateOfferRequestPayload } = require('../validation/requestValidation');
 
 async function sendRequest(req, res) {
 	try {
@@ -11,11 +13,10 @@ async function sendRequest(req, res) {
 			});
 		}
 
-		if (payload.requestType === 'offer' && payload.privacyPolicyAccepted !== true) {
-			return res.status(400).json({
-				ok: false,
-				error: 'Privacy policy confirmation is required'
-			});
+		const validation = validateOfferRequestPayload(payload);
+
+		if (!validation.ok) {
+			return sendValidationError(res, validation);
 		}
 
 		const { result } = await sendRequestEmail(payload);

@@ -4,6 +4,8 @@ const {
 	calculateKitchenDisassembly
 } = require('../calculators/kitchenCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
+const { sendValidationError } = require('../validation/commonValidation');
+const { validateKitchenCalculation } = require('../validation/kitchenValidation');
 
 function toNumber(value) {
 	const number = Number.parseFloat(String(value || '0').replace(',', '.'));
@@ -28,6 +30,12 @@ function calculateKitchenTransportLoadingPrice(formData = {}) {
 async function calculateKitchen(req, res) {
 	try {
 		const formData = req.body;
+		const validation = validateKitchenCalculation(formData);
+
+		if (!validation.ok) {
+			return sendValidationError(res, validation);
+		}
+
 		const serviceLabel = String(formData.serviceLabel || '').trim().toLowerCase();
 		const isKitchenDismantlingService = serviceLabel === 'küchendemontage';
 		const isKitchenTransportService = serviceLabel === 'küchentransport';

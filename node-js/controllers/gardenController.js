@@ -2,6 +2,8 @@ const {
 	calculateFenceAssemblyPrice
 } = require('../calculators/gardenCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
+const { sendValidationError } = require('../validation/commonValidation');
+const { validateGardenCalculation } = require('../validation/gardenValidation');
 
 function toNumber(value) {
 	if (value === null || value === undefined) return 0;
@@ -46,6 +48,11 @@ async function calculateGarden(req, res) {
 	try {
 		const formData = req.body || {};
 		const mode = resolveGardenMode(formData);
+		const validation = validateGardenCalculation(formData);
+
+		if (!validation.ok) {
+			return sendValidationError(res, validation);
+		}
 
 		if (mode !== 'fence-assembly') {
 			return res.status(400).json({

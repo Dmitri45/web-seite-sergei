@@ -4,6 +4,8 @@ const {
 	calculateTrockenbauPrice
 } = require('../calculators/tradesCalculator');
 const { getRouteCostBreakdown } = require('../calculators/transportCalculator');
+const { sendValidationError } = require('../validation/commonValidation');
+const { validateTradesCalculation } = require('../validation/tradesValidation');
 
 function resolveTradesMode(formData = {}) {
 	const rawMode = String(formData.mode || formData.tradesMode || '').trim().toLowerCase();
@@ -46,6 +48,11 @@ async function calculateTrades(req, res) {
 	try {
 		const formData = req.body || {};
 		const mode = resolveTradesMode(formData);
+		const validation = validateTradesCalculation(formData);
+
+		if (!validation.ok) {
+			return sendValidationError(res, validation);
+		}
 
 		if (!mode) {
 			return res.status(400).json({
