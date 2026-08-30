@@ -48,6 +48,7 @@ export function renderStandaloneForm(templateHTML, hooks = {}) {
 	initDynamicFurnitureItems(newForm);
 	initFenceAssemblyForm(newForm);
 	initKitchenTransportForm(newForm);
+	initShrubTrimmingForm(newForm);
 	initInlineAddressAutocompletes(newForm);
 	initFurnitureAddonToggles(newForm);
 	initTransportAssemblyAddonVisibility(newForm);
@@ -451,6 +452,58 @@ export function initTradeAddonToggles(containerElement) {
 			invalidInput.closest('.field')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}, true);
 	}
+}
+
+/**
+ * Shows only the shrub fields that match the selected current and target shape modes.
+ * @param {HTMLFormElement|HTMLElement} formElement - Shrub trimming form.
+ * @returns {void}
+ */
+export function initShrubTrimmingForm(formElement) {
+	const currentModeSelect = formElement.querySelector('#currentShapeMode');
+	const currentTypeWrap = formElement.querySelector('#currentShapeTypeWrap');
+	const currentSizeWrap = formElement.querySelector('#currentSizeFieldsWrap');
+	const targetModeSelect = formElement.querySelector('#targetShapeMode');
+	const targetTypeWrap = formElement.querySelector('#targetShapeTypeWrap');
+	const targetSizeWrap = formElement.querySelector('#targetSizeFieldsWrap');
+
+	if (!currentModeSelect && !targetModeSelect) return;
+
+	const setGroupEnabled = (wrap, enabled) => {
+		if (!wrap) return;
+		wrap.hidden = !enabled;
+		wrap.querySelectorAll('input, select, textarea').forEach((control) => {
+			control.disabled = !enabled;
+			if (!enabled) {
+				control.value = '';
+				clearFieldValidation(control);
+			}
+		});
+	};
+
+	const syncCurrentFields = () => {
+		const mode = currentModeSelect?.value || '';
+		setGroupEnabled(currentTypeWrap, mode === 'in-shape');
+		setGroupEnabled(currentSizeWrap, mode === 'not-in-shape');
+	};
+
+	const syncTargetFields = () => {
+		const mode = targetModeSelect?.value || '';
+		setGroupEnabled(targetTypeWrap, mode === 'in-shape');
+		setGroupEnabled(targetSizeWrap, mode === 'not-in-shape');
+	};
+
+	currentModeSelect?.addEventListener('change', syncCurrentFields);
+	targetModeSelect?.addEventListener('change', syncTargetFields);
+	formElement.addEventListener('reset', () => {
+		window.setTimeout(() => {
+			syncCurrentFields();
+			syncTargetFields();
+		}, 0);
+	});
+
+	syncCurrentFields();
+	syncTargetFields();
 }
 
 /**
