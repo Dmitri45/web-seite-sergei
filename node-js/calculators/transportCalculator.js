@@ -9,8 +9,6 @@
  * All errors and logs are output in German.
  */
 
-const axios = require('axios');
-
 /**
  * OpenRouteService API Key
  * @type {string}
@@ -97,18 +95,29 @@ function calculateDistancePrice(distanceKm) {
  */
 async function fetchORSMatrixForLocations(locations) {
     try {
-        const orsResponse = await axios.post('https://api.openrouteservice.org/v2/matrix/driving-car', {
+        const orsResponse = await fetch('https://api.openrouteservice.org/v2/matrix/driving-car', {
+            method: 'POST',
+            headers: {
+                'Authorization': ORS_API_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
             locations,
             metrics: ['distance'],
             units: 'km'
-        }, {
-            headers: { 'Authorization': ORS_API_KEY },
-            timeout: 5000
+            }),
+            signal: AbortSignal.timeout(5000)
         });
+
+        const responseBody = await orsResponse.json().catch(() => ({}));
+
+        if (!orsResponse.ok) {
+            throw new Error(JSON.stringify(responseBody) || `ORS status ${orsResponse.status}`);
+        }
         
-        return orsResponse.data.distances;
+        return responseBody.distances;
     } catch (err) {
-        console.error('Fehler beim Abrufen der ORS-Matrix:', err.response?.data || err.message);
+        console.error('Fehler beim Abrufen der ORS-Matrix:', err.message);
         throw new Error('Navigationsfehler');
     }
 }

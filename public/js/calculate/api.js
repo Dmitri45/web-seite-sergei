@@ -215,11 +215,16 @@ export async function postCalculation(data) {
 		body: JSON.stringify(data)
 	});
 
+	const result = await response.json().catch(() => ({}));
+
 	if (!response.ok) {
-		throw new Error(`Serverfehler: ${response.status}`);
+		const validationMessages = result.fields && typeof result.fields === 'object'
+			? Object.values(result.fields).filter(Boolean).join(' ')
+			: '';
+		throw new Error(result.details || result.message || validationMessages || `Serverfehler: ${response.status}`);
 	}
 
-	return response.json();
+	return result;
 }
 
 /**
