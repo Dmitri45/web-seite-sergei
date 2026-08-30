@@ -135,7 +135,24 @@ function formatChoice(value) {
 		'wpc-fence': 'WPC- / Kunststoffzaun',
 		'metal-fence': 'Doppelstabmattenzaun / Metallzaun',
 		'aluminium-fence': 'Aluminiumzaun',
-		'concrete-fence': 'Betonzaun'
+		'concrete-fence': 'Betonzaun',
+		fundament: 'Fundament',
+		'paving-stones': 'Pflastersteine',
+		plates: 'Platten',
+		supports: 'Fundamentstützen',
+		'in-shape': 'Ja, in Form',
+		'not-in-shape': 'Nein, nicht in Form',
+		round: 'Rund',
+		box: 'Kasten / Rechteckig',
+		cone: 'Kegelform',
+		other: 'Sonstiges',
+		oldPaving: 'Alte Pflaster',
+		gravelPath: 'Schotterweg',
+		topsoil: 'Mutterboden',
+		bitumen: 'Bitumen',
+		polycarbonate: 'Polycarbonat',
+		glass: 'Glas',
+		metal: 'Metall'
 	};
 	const normalized = String(value ?? '').trim();
 	return choices[normalized] || value;
@@ -304,6 +321,18 @@ function formatFieldValue(key, value) {
 	if (key.endsWith('Height') || key.endsWith('Width') || key.endsWith('Length')) return `${value} m`;
 	if (key === 'distanceToGarden' || key === 'distanceToEntrance') return `${value} m`;
 	if (key === 'kerbstoneLengthM') return `${value} m`;
+	if (key === 'withDisposal') {
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Entsorgung' : 'Ohne Entsorgung';
+	}
+	if (key === 'withGroundPreparation') {
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Bodenvorbereitung' : 'Ohne Bodenvorbereitung';
+	}
+	if (key === 'withRootRemoval') {
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Wurzelentfernung' : 'Ohne Wurzelentfernung';
+	}
+	if (key === 'withKerbstone') {
+		return String(value).trim().toLowerCase() === 'with' ? 'Mit Kantenstein / Bordstein' : 'Ohne Kantenstein / Bordstein';
+	}
 	if (key === 'postFasteningMaterialMode') {
 		return String(value).trim().toLowerCase() === 'with' ? 'Mit Befestigungsmaterial' : 'Ohne Befestigungsmaterial';
 	}
